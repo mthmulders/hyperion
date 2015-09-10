@@ -4,7 +4,7 @@
 
     <parent>
         <groupId>tk.mulders.hyperion</groupId>
-        <artifactId>hyperion-parent</artifactId>
+        <artifactId>hyperion</artifactId>
         <version>1.0.0-SNAPSHOT</version>
         <relativePath>../</relativePath>
     </parent>
