@@ -2,15 +2,19 @@
 // Define dependency versions
 //
 lazy val akkaVer = "2.4.0"
+lazy val flowVer = "2.3.0"
 lazy val logbackVer = "1.1.3"
 lazy val scalaTestVer = "2.2.4"
 
 //
 // Define dependencies
 //
-lazy val akkaSlf4j = "com.typesafe.akka"        %% "akka-slf4j"                    % akkaVer
-lazy val logback   = "ch.qos.logback"           %  "logback-classic"               % logbackVer
-lazy val scalaTest = "org.scalatest"            %% "scalatest"                     % scalaTestVer
+lazy val akkaActor  = "com.typesafe.akka"        %% "akka-actor"                    % akkaVer
+lazy val akkaSlf4j  = "com.typesafe.akka"        %% "akka-slf4j"                    % akkaVer
+lazy val flow       = "com.github.jodersky"      %% "flow"                          % flowVer
+lazy val flowNative = "com.github.jodersky"      % "flow-native"                    % flowVer
+lazy val logback    = "ch.qos.logback"           %  "logback-classic"               % logbackVer
+lazy val scalaTest  = "org.scalatest"            %% "scalatest"                     % scalaTestVer
 
 //
 // Shared settings
@@ -43,12 +47,15 @@ lazy val commonSettings = Seq(
 // Per-module settings
 //
 
-lazy val meterAgent = (project in file("meter-agent"))
+lazy val meteragent = (project in file("meter-agent"))
   .settings(commonSettings: _*)
   .settings(Seq(
     name := "hyperion-meter-agent",
     libraryDependencies ++= Seq(
+      akkaActor,
       akkaSlf4j,
+      flow,
+      flowNative,
       logback,
       scalaTest % "test"
     )
@@ -56,6 +63,6 @@ lazy val meterAgent = (project in file("meter-agent"))
 
 lazy val root = (project in file("."))
   .settings(commonSettings: _*)
-  .aggregate(meterAgent)
+  .aggregate(meteragent)
 
 
