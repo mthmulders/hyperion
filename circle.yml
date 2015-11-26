@@ -1,4 +1,6 @@
 machine:
+  java:
+    version: oraclejdk8
   environment:
     SBT_VERSION: 0.13.9
 test:
