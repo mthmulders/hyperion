@@ -8,4 +8,4 @@ test:
     - sbt coverage test
   post:
     - sbt coverageAggregate
-    - sbt coveralls
+#    - sbt coveralls
