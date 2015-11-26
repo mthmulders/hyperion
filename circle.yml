@@ -4,5 +4,7 @@ machine:
   environment:
     SBT_VERSION: 0.13.9
 test:
+  override:
+    - sbt coverage test
   post:
     - sbt coverageAggregate coveralls
