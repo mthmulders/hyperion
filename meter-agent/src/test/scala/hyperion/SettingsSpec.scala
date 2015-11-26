@@ -7,7 +7,7 @@ class SettingsSpec extends BaseSpec {
   val settings = Settings(system)
 
   "Inspecting meter" should {
-    "return the correct values for the \"meter\" configuration section" in {
+    "return correct values for the \"meter\" configuration section" in {
       settings.meter.serialPort    shouldBe "/dev/ttyUSB0"
       settings.meter.baudRate      shouldBe 115200
       settings.meter.characterSize shouldBe 8
