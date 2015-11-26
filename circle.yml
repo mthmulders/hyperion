@@ -7,4 +7,5 @@ test:
   override:
     - sbt coverage test
   post:
-    - sbt coverageAggregate coveralls
+    - sbt coverageAggregate
+    - sbt coveralls
