@@ -3,6 +3,16 @@ machine:
     version: oraclejdk8
   environment:
     SBT_VERSION: 0.13.9
+
+dependencies:
+  # Cache the resolution-cache and build streams to speed things up
+  cache_directories:
+    - "~/.sbt"
+    - "target/resolution-cache"
+    - "target/streams"
+    - "project/target/resolution-cache"
+    - "project/target/streams"
+
 test:
   override:
     - sbt coverage test
