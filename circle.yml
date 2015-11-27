@@ -7,5 +7,7 @@ test:
   override:
     - sbt coverage test
   post:
-    - sbt coverageAggregate
+    - mkdir -p $CIRCLE_TEST_REPORTS/junit/
+    - find . -type f -regex ".*/target/test-reports/.*xml" -exec cp {} $CIRCLE_TEST_REPORTS/junit/ \;
+#    - sbt coverageAggregate
 #    - sbt coveralls
