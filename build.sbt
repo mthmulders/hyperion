@@ -24,6 +24,7 @@ lazy val commonSettings = Seq(
   version := "1.0.0-SNAPSHOT",
   description := "",
   scalaVersion := "2.11.7",
+  test in assembly := {},
   scalacOptions ++= Seq(
     "-unchecked",
     "-deprecation",
@@ -51,6 +52,7 @@ lazy val meteragent = (project in file("meter-agent"))
   .settings(commonSettings: _*)
   .settings(Seq(
     name := "hyperion-meter-agent",
+    assemblyJarName in assembly := "hyperion-meter-agent.jar",
     libraryDependencies ++= Seq(
       akkaActor,
       akkaSlf4j,
