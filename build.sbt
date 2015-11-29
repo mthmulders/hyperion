@@ -9,12 +9,13 @@ lazy val scalaTestVer = "2.2.4"
 //
 // Define dependencies
 //
-lazy val akkaActor  = "com.typesafe.akka"        %% "akka-actor"                    % akkaVer
-lazy val akkaSlf4j  = "com.typesafe.akka"        %% "akka-slf4j"                    % akkaVer
-lazy val flow       = "com.github.jodersky"      %% "flow"                          % flowVer
-lazy val flowNative = "com.github.jodersky"      % "flow-native"                    % flowVer
-lazy val logback    = "ch.qos.logback"           %  "logback-classic"               % logbackVer
-lazy val scalaTest  = "org.scalatest"            %% "scalatest"                     % scalaTestVer
+lazy val akkaActor   = "com.typesafe.akka"        %% "akka-actor"                    % akkaVer
+lazy val akkaSlf4j   = "com.typesafe.akka"        %% "akka-slf4j"                    % akkaVer
+lazy val akkaTestKit = "com.typesafe.akka"        %% "akka-testkit"                  % akkaVer
+lazy val flow        = "com.github.jodersky"      %% "flow"                          % flowVer
+lazy val flowNative  = "com.github.jodersky"      % "flow-native"                    % flowVer
+lazy val logback     = "ch.qos.logback"           %  "logback-classic"               % logbackVer
+lazy val scalaTest   = "org.scalatest"            %% "scalatest"                     % scalaTestVer
 
 //
 // Shared settings
@@ -56,6 +57,7 @@ lazy val meteragent = (project in file("meter-agent"))
     libraryDependencies ++= Seq(
       akkaActor,
       akkaSlf4j,
+      akkaTestKit % "test",
       flow,
       flowNative,
       logback,

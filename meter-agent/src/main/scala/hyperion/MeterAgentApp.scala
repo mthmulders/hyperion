@@ -1,6 +1,6 @@
 package hyperion
 
-import akka.actor.{Terminated, ActorSystem}
+import akka.actor.{ActorRef, Terminated, ActorSystem}
 import akka.event.Logging
 
 import scala.concurrent.duration.Duration
@@ -13,15 +13,11 @@ import scala.util.{Failure, Success}
 object MeterAgentApp {
   def main(args: Array[String]): Unit = {
     val system = ActorSystem("hyperion-system")
-    val logging = Logging(system, getClass.getName)
-
-    logging.info("Started the Hyperion Meter Agent")
-
-    logging.info("Reading settings")
-    val settings = Settings(system)
 
     sys.addShutdownHook({
       import ExecutionContext.Implicits.global
+
+      val logging = Logging(system, getClass.getName)
 
       logging.info("Shutting down the Hyperion Meter Agent")
       val termination: Future[Terminated] = system.terminate()
@@ -31,5 +27,25 @@ object MeterAgentApp {
       }
       Await.result(termination, Duration.Inf)
     })
+
+    new MeterAgentApp(system).run()
+  }
+}
+
+class MeterAgentApp(system: ActorSystem) {
+  private val log = Logging(system, getClass.getName)
+
+  log.info("Reading settings")
+  private val settings = Settings(system)
+
+  log.info("Starting the Hyperion Meter Agent")
+  private val meterAgent = createMeterAgent()
+
+  def run(): Unit = {
+    Await.result(system.whenTerminated, Duration.Inf)
+  }
+
+  protected def createMeterAgent(): ActorRef = {
+    system.actorOf(MeterAgent.props(), "meter-agent")
   }
 }
