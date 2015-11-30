@@ -1,6 +1,6 @@
 package hyperion
 
-import akka.actor.{Extension, ExtendedActorSystem, ExtensionKey}
+import akka.actor.{Actor, Extension, ExtendedActorSystem, ExtensionKey}
 
 /**
   * Provides convenient access to the settings in application.conf.
@@ -17,4 +17,10 @@ class Settings(system: ExtendedActorSystem) extends Extension {
     val stopBits: Int      = hyperion getInt    "meter.stop-bits"
     val parity: String     = hyperion getString "meter.parity"
   }
+}
+
+trait SettingsActor {
+  this: Actor =>
+
+  val settings: Settings = Settings(context.system)
 }
