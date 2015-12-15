@@ -2,12 +2,13 @@ package hyperion
 
 import akka.actor.{ActorIdentity, Identify, ActorRef, ActorSystem}
 import akka.testkit.{TestProbe, EventFilter, TestEvent}
-import org.scalatest.BeforeAndAfterAll
+import org.scalactic.TypeCheckedTripleEquals
+import org.scalatest.{Matchers, BeforeAndAfterAll}
 
 import scala.concurrent.Await
 import scala.concurrent.duration.{Duration, DurationInt, FiniteDuration}
 
-abstract class BaseAkkaSpec extends BaseSpec with BeforeAndAfterAll {
+abstract class BaseAkkaSpec extends BaseSpec with Matchers with BeforeAndAfterAll with TypeCheckedTripleEquals {
   implicit class TestProbeOps(probe: TestProbe) {
     private val maxWaitForActor = 100 milliseconds
 

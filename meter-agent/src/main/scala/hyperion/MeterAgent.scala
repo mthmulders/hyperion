@@ -5,22 +5,34 @@ import akka.io.IO
 import com.github.jodersky.flow.{Serial, Parity, SerialSettings}
 
 object MeterAgent {
-  def props(): Props = {
-    Props(new MeterAgent)
+  case class IncomingData(data: String)
+
+  def props(collectingActor: ActorRef): Props = {
+    Props(new MeterAgent(collectingActor))
   }
 }
 
-class MeterAgent extends Actor with ActorLogging with SettingsActor {
-  private val port = settings.meter.serialPort
-  private val serialSettings = SerialSettings(
-    baud = settings.meter.baudRate,
-    characterSize = settings.meter.characterSize,
-    twoStopBits = settings.meter.stopBits == 2,
-    parity = Parity.withName(settings.meter.parity)
-  )
-  log.debug(s"Opening serial port $port")
+/**
+  * This actor is an intermediary between Flow (for reading the serial port) and the Hyperion Meter Agent. It receives data from Flow and forwards it for processing to the Collecting Actor.
+  * @param collectingActor The Collecting Actor that collects data from the serial line.
+  */
+class MeterAgent(collectingActor: ActorRef) extends Actor with ActorLogging with SettingsActor {
+  import MeterAgent._
+
   private val operator = IO(Serial)(context.system)
-  operator ! Serial.Open(port, serialSettings)
+
+  override def preStart = {
+    val port = settings.meter.serialPort
+    val serialSettings = SerialSettings(
+      baud = settings.meter.baudRate,
+      characterSize = settings.meter.characterSize,
+      twoStopBits = settings.meter.stopBits == 2,
+      parity = Parity.withName(settings.meter.parity)
+    )
+
+    log.debug(s"Opening serial port $port")
+    operator ! Serial.Open(port, serialSettings)
+  }
 
   override def receive = {
     case Serial.CommandFailed(command, reason) =>
@@ -30,17 +42,12 @@ class MeterAgent extends Actor with ActorLogging with SettingsActor {
     case Serial.Opened(openedPort) =>
       val message = s"Opened serial port $openedPort"
       log.info(message)
-      context become opened(sender)
-    case a: Any =>
-      log.debug(s"Ignoring message $a")
-  }
-
-  def opened(operator: ActorRef): Receive = {
-    // Other messages that can be received:
-    // - Received(ByteString(48, 45, 48, 58, 57, 54, 46, 49))
+    case Serial.Received(bytes) =>
+      val data = bytes.utf8String
+      collectingActor ! IncomingData(data)
     case Serial.Closed =>
       log.info("Serial port operator closed normally")
-    case Terminated(`operator`) =>
+    case Terminated(_) =>
       log.error("Serial port operator crashed unexpectedly")
     case a: Any =>
       log.debug(s"Ignoring message $a")

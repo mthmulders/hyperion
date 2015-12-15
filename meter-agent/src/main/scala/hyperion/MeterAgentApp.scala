@@ -1,6 +1,6 @@
 package hyperion
 
-import akka.actor.{ActorRef, Terminated, ActorSystem}
+import akka.actor.{Actor, ActorLogging, ActorRef, Terminated, ActorSystem, Props}
 import akka.event.Logging
 
 import scala.concurrent.duration.Duration
@@ -38,6 +38,8 @@ class MeterAgentApp(system: ActorSystem) {
   log.info("Reading settings")
   private val settings = Settings(system)
 
+  private val collectingActor = createCollectingActor()
+
   log.info("Starting the Hyperion Meter Agent")
   private val meterAgent = createMeterAgent()
 
@@ -46,6 +48,18 @@ class MeterAgentApp(system: ActorSystem) {
   }
 
   protected def createMeterAgent(): ActorRef = {
-    system.actorOf(MeterAgent.props(), "meter-agent")
+    system.actorOf(MeterAgent.props(collectingActor), "meter-agent")
+  }
+
+  protected def createCollectingActor(): ActorRef = {
+    val receiver = system.actorOf(Props(new LoggingActor()))
+    system.actorOf(CollectingActor.props(receiver), "collecting-actor")
+  }
+
+}
+
+class LoggingActor extends Actor with ActorLogging {
+  override def receive = {
+    case a: Any => log.info(s"Received message $a")
   }
 }
