@@ -9,19 +9,27 @@ class CollectingActorSpec extends BaseAkkaSpec {
     "skip data until the first complete Telegram comes in" in {
       val receiver = TestProbe()
       val actor = system.actorOf(CollectingActor.props(receiver.ref), "skip-data")
-      val data = "1-3:0.2.8(42)\r\n!522B\r\n/TEST"
 
-      actor ! MeterAgent.IncomingData(data)
-      actor ! MeterAgent.IncomingData("\r\nbla\r\n!522B")
+      actor ! MeterAgent.IncomingData("1-3:0.2.8(42)\r\n!522B\r\n/TEST")
+
+      receiver.expectNoMsg(500 milliseconds)
+    }
+
+    "emit only complete Telegrams" in {
+      val receiver = TestProbe()
+      val actor = system.actorOf(CollectingActor.props(receiver.ref), "emit-telegrams")
+
+      actor ! MeterAgent.IncomingData("/TEST")
+      actor ! MeterAgent.IncomingData("\r\n\r\nbla\r\n!522B")
       actor ! MeterAgent.IncomingData("\r\n")
 
-      receiver.expectMsgPF(100 milliseconds) {
-        case CollectingActor.TelegramReceived(lines) =>
-          lines.head should ===("/TEST")
-          lines.head should ===("")
-          lines.head should ===("bla")
-          lines.head should ===("!522B")
+      val lines = receiver.expectMsgPF(100 milliseconds) {
+        case CollectingActor.TelegramReceived(content) => content
       }
+      lines(0) should ===("/TEST")
+      lines(1) should ===("")
+      lines(2) should ===("bla")
+      lines(3) should ===("!522B")
     }
   }
 }
