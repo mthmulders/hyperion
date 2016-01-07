@@ -4,6 +4,7 @@
 lazy val akkaVer = "2.4.0"
 lazy val flowVer = "2.3.0"
 lazy val logbackVer = "1.1.3"
+lazy val parserCombVer = "1.0.4"
 lazy val scalaTestVer = "2.2.4"
 
 //
@@ -13,8 +14,9 @@ lazy val akkaActor   = "com.typesafe.akka"        %% "akka-actor"               
 lazy val akkaSlf4j   = "com.typesafe.akka"        %% "akka-slf4j"                    % akkaVer
 lazy val akkaTestKit = "com.typesafe.akka"        %% "akka-testkit"                  % akkaVer
 lazy val flow        = "com.github.jodersky"      %% "flow"                          % flowVer
-lazy val flowNative  = "com.github.jodersky"      % "flow-native"                    % flowVer
+lazy val flowNative  = "com.github.jodersky"      %  "flow-native"                   % flowVer
 lazy val logback     = "ch.qos.logback"           %  "logback-classic"               % logbackVer
+lazy val parserComb  = "org.scala-lang.modules"   %% "scala-parser-combinators"      % parserCombVer
 lazy val scalaTest   = "org.scalatest"            %% "scalatest"                     % scalaTestVer
 
 //
@@ -61,6 +63,7 @@ lazy val meteragent = (project in file("meter-agent"))
       flow,
       flowNative,
       logback,
+      parserComb,
       scalaTest % "test"
     )
   ))
