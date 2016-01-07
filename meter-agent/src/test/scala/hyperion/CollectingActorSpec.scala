@@ -58,7 +58,6 @@ class CollectingActorSpec extends BaseAkkaSpec {
       for (line <- data) {
         actor ! MeterAgent.IncomingData(line + CRLF)
       }
-//      actor ! MeterAgent.IncomingData("garbage2" + CRLF)
 
       val lines = receiver.expectMsgPF(1000 milliseconds) {
         case CollectingActor.TelegramReceived(content) => content
