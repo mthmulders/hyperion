@@ -3,12 +3,12 @@ package hyperion
 import akka.actor.{ActorRef, ActorLogging, Actor, Props}
 
 import scala.collection.mutable
-import scala.collection.immutable
 
 object CollectingActor {
   case object ProcessBuffer
 
-  case class TelegramReceived(lines: immutable.Seq[String])
+  case class TelegramReceived(telegram: P1Telegram)
+
   def props(receiver: ActorRef): Props = {
     Props(new CollectingActor(receiver))
   }
@@ -33,7 +33,7 @@ class CollectingActor(receiver: ActorRef) extends Actor with ActorLogging {
   private def extractLines(): Unit = {
     var linebreak = dataBuffer.indexOf(CRLF)
     while (linebreak != -1) {
-      lineBuffer += dataBuffer.substring(0, linebreak)
+      lineBuffer += dataBuffer.substring(0, linebreak + CRLF.length)
       dataBuffer.replace(0, linebreak + CRLF.length, "")
       linebreak = dataBuffer.indexOf(CRLF)
     }
@@ -47,14 +47,19 @@ class CollectingActor(receiver: ActorRef) extends Actor with ActorLogging {
     val firstLine = lineBuffer.find(s => s != null && s.length > 0 && s.charAt(0) == '/')
     val lastLine = lineBuffer.find(s => s != null && s.length > 0 && s.charAt(0) == '!')
 
-
     if (firstLine.isEmpty && lastLine.isDefined) {
       lineBuffer --= lineBuffer.slice(0, lineBuffer.indexOf(lastLine.get) + 1)
     } else if (lastLine.isDefined) {
-      val telegram = lineBuffer.slice(0, lineBuffer.indexOf(lastLine.get) + 1)
-      lineBuffer --= telegram
+      val telegramLines = lineBuffer.slice(0, lineBuffer.indexOf(lastLine.get) + 1)
+      lineBuffer --= telegramLines
 
-      receiver ! TelegramReceived(telegram.toIndexedSeq)
+      val telegramText = telegramLines.foldLeft(new StringBuilder())((builder, line) => builder.append(line)).toString()
+      log.debug("About to parse text --[{}]--", telegramText)
+
+      P1TelegramParser.parse(telegramText) match {
+        case Some(telegram) => receiver ! TelegramReceived(telegram)
+        case None           => log.info("Failed to parse telegram")
+      }
     }
   }
 }

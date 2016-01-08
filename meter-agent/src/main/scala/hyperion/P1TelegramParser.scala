@@ -78,7 +78,7 @@ object P1TelegramParser extends RegexParsers {
   private val deviceType        = extract("""0-(\d):24\.1\.0\((\w{2,3})\)""")      to EXTERNAL_DEVICE_TYPE          using ((s1, s2) => (s1.toInt, s2))
   private val deviceEquipmentId = extract("""0-(\d):96\.1\.0\((\w{34})\)""")       to EXTERNAL_DEVICE_EQUIPMENT_ID  using ((s1, s2) => (s1.toInt, s2))
   private val deviceGasReading  = extract("""0-(\d):24\.2\.1\((\d{12})[SW]\)""" +
-                                  """\((\d*\.?\d*)\*m3\)""")               to EXTERNAL_DEVICE_GAS_READING     using ((s1, s2, s3) => (s1.toInt, LocalDateTime.parse(s2, dateFormat), BigDecimal(s3)))
+                                          """\((\d*\.?\d*)\*m3\)""")               to EXTERNAL_DEVICE_GAS_READING   using ((s1, s2, s3) => (s1.toInt, LocalDateTime.parse(s2, dateFormat), BigDecimal(s3)))
 
   private val ignored           = extract("""\d\-\d:\d+[\.:]\d+\.\d+\(.*\)""")                                      using ()
 
