@@ -54,7 +54,6 @@ class CollectingActor(receiver: ActorRef) extends Actor with ActorLogging {
       lineBuffer --= telegramLines
 
       val telegramText = telegramLines.foldLeft(new StringBuilder())((builder, line) => builder.append(line)).toString()
-      log.debug("About to parse text --[{}]--", telegramText)
 
       P1TelegramParser.parse(telegramText) match {
         case Some(telegram) => receiver ! TelegramReceived(telegram)
