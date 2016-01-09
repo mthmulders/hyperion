@@ -27,7 +27,7 @@ class CollectingActor(receiver: ActorRef) extends Actor with ActorLogging {
     case MeterAgent.IncomingData(data) =>
       dataBuffer.append(data)
       extractLines()
-      extractTelegram()
+      if (!lineBuffer.isEmpty) extractTelegram()
   }
 
   private def extractLines(): Unit = {
@@ -41,10 +41,6 @@ class CollectingActor(receiver: ActorRef) extends Actor with ActorLogging {
   }
 
   private def extractTelegram(): Unit = {
-    if (lineBuffer.isEmpty) {
-      return
-    }
-
     val firstLine = lineBuffer.find(s => s != null && s.length > 0 && s.charAt(0) == '/')
     val lastLine = lineBuffer.find(s => s != null && s.length > 0 && s.charAt(0) == '!')
 
