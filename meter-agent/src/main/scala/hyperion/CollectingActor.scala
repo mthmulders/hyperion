@@ -31,12 +31,13 @@ class CollectingActor(receiver: ActorRef) extends Actor with ActorLogging {
   }
 
   private def extractLines(): Unit = {
-    var linebreak = dataBuffer.indexOf(CRLF)
-    while (linebreak != -1) {
-      lineBuffer += dataBuffer.substring(0, linebreak + CRLF.length)
-      dataBuffer.replace(0, linebreak + CRLF.length, "")
-      linebreak = dataBuffer.indexOf(CRLF)
-    }
+    dataBuffer.indexOf(CRLF) match {
+      case -1              => ;
+      case idx if idx >= 0 =>
+        lineBuffer += dataBuffer.substring(0, idx + CRLF.length)
+        dataBuffer.replace(0, idx + CRLF.length, "")
+        extractLines()
+      }
   }
 
   private def extractTelegram(): Unit = {
