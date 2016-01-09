@@ -4,6 +4,8 @@ import akka.actor.{ActorRef, ActorLogging, Actor, Props}
 
 import scala.collection.mutable
 
+import CollectingActor._
+
 object CollectingActor {
   case object ProcessBuffer
 
@@ -16,8 +18,6 @@ object CollectingActor {
 
 /** This actor collects incoming bytes and emits them in lines (seperated by CR LF) */
 class CollectingActor(receiver: ActorRef) extends Actor with ActorLogging {
-  import CollectingActor._
-
   private val CRLF = "\r\n"
 
   private val dataBuffer = new StringBuilder

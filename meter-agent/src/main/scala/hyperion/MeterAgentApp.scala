@@ -4,7 +4,8 @@ import akka.actor.{Actor, ActorLogging, ActorRef, Terminated, ActorSystem, Props
 import akka.event.Logging
 
 import scala.concurrent.duration.Duration
-import scala.concurrent.{ExecutionContext, Future, Await}
+import scala.concurrent.{Await, Future}
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.util.{Failure, Success}
 
 /**
@@ -15,8 +16,6 @@ object MeterAgentApp {
     val system = ActorSystem("hyperion-system")
 
     sys.addShutdownHook({
-      import ExecutionContext.Implicits.global
-
       val logging = Logging(system, getClass.getName)
 
       logging.info("Shutting down the Hyperion Meter Agent")

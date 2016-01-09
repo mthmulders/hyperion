@@ -4,8 +4,9 @@ import org.scalatest.Inside
 
 import scala.io.Source
 
+import P1TelegramParser._
+
 class P1TelegramParserSpec extends BaseSpec with Inside {
-  import P1TelegramParser._
 
   val CRLF = "\r\n"
 

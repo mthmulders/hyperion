@@ -10,8 +10,9 @@ import scala.collection.{mutable, immutable}
 import scala.reflect.ClassTag
 import util.parsing.combinator.RegexParsers
 
+import P1RecordType._
+
 object P1TelegramParser extends RegexParsers {
-  import P1RecordType._
 
   private val logger = LoggerFactory.getLogger("P1TelegramParser")
 

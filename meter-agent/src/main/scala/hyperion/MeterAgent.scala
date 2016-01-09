@@ -4,6 +4,8 @@ import akka.actor.{Actor, ActorLogging, ActorRef, Props, Terminated}
 import akka.io.IO
 import com.github.jodersky.flow.{Serial, Parity, SerialSettings}
 
+import MeterAgent._
+
 object MeterAgent {
   case class IncomingData(data: String)
 
@@ -17,8 +19,6 @@ object MeterAgent {
   * @param collectingActor The Collecting Actor that collects data from the serial line.
   */
 class MeterAgent(collectingActor: ActorRef) extends Actor with ActorLogging with SettingsActor {
-  import MeterAgent._
-
   private val operator = IO(Serial)(context.system)
 
   override def preStart = {
