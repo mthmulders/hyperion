@@ -47,18 +47,20 @@ class CollectingActor(receiver: ActorRef) extends Actor with ActorLogging {
     val firstLine = lineBuffer.find(s => s != null && s.length > 0 && s.charAt(0) == '/')
     val lastLine = lineBuffer.find(s => s != null && s.length > 0 && s.charAt(0) == '!')
 
-    if (firstLine.isEmpty && lastLine.isDefined) {
-      lineBuffer --= lineBuffer.slice(0, lineBuffer.indexOf(lastLine.get) + 1)
-    } else if (lastLine.isDefined) {
-      val telegramLines = lineBuffer.slice(0, lineBuffer.indexOf(lastLine.get) + 1)
-      lineBuffer --= telegramLines
+    (firstLine, lastLine) match {
+      case (None, None)              => ;
+      case (None, Some(last))        => lineBuffer --= lineBuffer.slice(0, lineBuffer.indexOf(last) + 1)
+      case (Some(first), None)       => ;
+      case (Some(first), Some(last)) =>
+        val telegramLines = lineBuffer.slice(0, lineBuffer.indexOf(lastLine.get) + 1)
+        lineBuffer --= telegramLines
 
-      val telegramText = telegramLines.foldLeft(new StringBuilder())((builder, line) => builder.append(line)).toString()
+        val telegramText = telegramLines.mkString("")
 
-      P1TelegramParser.parse(telegramText) match {
-        case Some(telegram) => receiver ! TelegramReceived(telegram)
-        case None           => log.info("Failed to parse telegram")
-      }
+        P1TelegramParser.parse(telegramText) match {
+          case Some(telegram) => receiver ! TelegramReceived(telegram)
+          case None           => log.info("Failed to parse telegram")
+        }
     }
   }
 }
