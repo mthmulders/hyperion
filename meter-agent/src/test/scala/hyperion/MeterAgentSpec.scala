@@ -5,13 +5,15 @@ import akka.util.ByteString
 import com.github.jodersky.flow.Serial
 import com.github.jodersky.flow.Serial.Open
 
+import scala.concurrent.duration.DurationInt
+
 class MeterAgentSpec extends BaseAkkaSpec {
   private val dummy = TestProbe().ref
 
   "Creating the Meter Agent" should {
     "result in creating a IO-SERIAL system actor" in {
       system.actorOf(MeterAgent.props(dummy), "create-system-actor")
-      TestProbe().expectActor("/system/IO-SERIAL")
+      TestProbe().expectActor("/system/IO-SERIAL", 250 milliseconds)
     }
   }
 
