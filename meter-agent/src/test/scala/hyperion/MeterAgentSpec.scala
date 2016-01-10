@@ -2,18 +2,19 @@ package hyperion
 
 import akka.testkit.{EventFilter, TestProbe}
 import akka.util.ByteString
-import com.github.jodersky.flow.Serial
+import com.github.jodersky.flow.{SerialSettings, Serial}
 import com.github.jodersky.flow.Serial.Open
+import org.scalatest.mock.MockitoSugar
 
 import scala.concurrent.duration.DurationInt
 
-class MeterAgentSpec extends BaseAkkaSpec {
+class MeterAgentSpec extends BaseAkkaSpec with MockitoSugar {
   private val dummy = TestProbe().ref
 
   "Creating the Meter Agent" should {
     "result in creating a IO-SERIAL system actor" in {
       system.actorOf(MeterAgent.props(dummy), "create-system-actor")
-      TestProbe().expectActor("/system/IO-SERIAL", 250 milliseconds)
+      TestProbe().expectActor("/system/IO-SERIAL", 250 milliseconds) should not be empty
     }
   }
 
@@ -22,7 +23,7 @@ class MeterAgentSpec extends BaseAkkaSpec {
       val actor = system.actorOf(MeterAgent.props(dummy), "log-command-failure")
       EventFilter[IllegalArgumentException](pattern = "Could not open serial port due to IllegalArgumentException", occurrences = 1) intercept {
         val reason = new IllegalArgumentException("test")
-        actor ! Serial.CommandFailed(Open("", null, 1), reason)
+        actor ! Serial.CommandFailed(Open("", mock[SerialSettings], 1), reason)
       }
     }
   }

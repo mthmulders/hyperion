@@ -34,13 +34,11 @@ class P1TelegramParserSpec extends BaseSpec with Inside {
             currentConsumption shouldBe 1.193
             currentProduction shouldBe 0
 
-            totalConsumption should not be null
-            totalConsumption("1") shouldBe 123456.789
-            totalConsumption("2") shouldBe 123456.789
+            totalConsumption should contain("1" -> 123456.789)
+            totalConsumption should contain("2" -> 123456.789)
 
-            totalProduction should not be null
-            totalProduction("1") shouldBe 123456.789
-            totalProduction("2") shouldBe 123456.789
+            totalProduction should contain("1" -> 123456.789)
+            totalProduction should contain("2" -> 123456.789)
           }
           inside(checksum) { case P1Checksum(value) =>
             value shouldBe "522B"
