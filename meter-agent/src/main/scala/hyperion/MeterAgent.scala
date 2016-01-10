@@ -6,6 +6,7 @@ import com.github.jodersky.flow.{Serial, Parity, SerialSettings}
 
 import MeterAgent._
 
+
 object MeterAgent {
   case class IncomingData(data: String)
 
