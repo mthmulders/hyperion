@@ -25,21 +25,7 @@ object P1TelegramParser extends RegexParsers {
   private val checksum = checksumPattern ^^ { case checksumPattern(value) => P1Checksum(value) }
 
   private val dateFormat = DateTimeFormatter.ofPattern("yyMMddHHmmss")
-  private class ParseAs(val s: String) {
-    private var recordType: P1RecordType = null
-
-    def to(recordType: P1RecordType) = {
-      this.recordType = recordType
-      this
-    }
-
-    def using[T: ClassTag](): Parser[Option[P1Record[T]]] = {
-      val compiledPattern = s.r
-      compiledPattern ^^ {
-        case compiledPattern => None
-      }
-    }
-
+  private class ParseAs(val s: String, recordType: P1RecordType) {
     def using[T: ClassTag](extractor: String => T): Parser[Option[P1Record[T]]] = {
       val compiledPattern = s.r
       compiledPattern ^^ {
@@ -62,26 +48,26 @@ object P1TelegramParser extends RegexParsers {
     }
   }
 
-  private def extract[T:ClassTag](s: String) = new ParseAs(s)
+  private def extract[T:ClassTag](s: String)(recordType: P1RecordType) = new ParseAs(s, recordType)
 
   // Patterns and parsers for various P1 Records
-  private val versionInfo       = extract("""1-3:0\.2\.8\((\d*)\)""")              to VERSION_INFORMATION           using (s => s)
-  private val dateTimeStamp     = extract("""0-0:1\.0\.0\((\d{12})[SW]\)""")       to DATE_TIME_STAMP               using (s => LocalDateTime.parse(s, dateFormat))
-  private val equipmentId       = extract("""0-0:96\.1\.1\((\w*)\)""")             to EQUIPMENT_IDENTIFIER          using (s => s)
-  private val elecConsTariff1   = extract("""1-0:1\.8\.1\((\d*\.?\d*)\*kWh\)""")   to ELECTRICITY_CONSUMED_TARIFF_1 using (s => BigDecimal(s))
-  private val elecConsTariff2   = extract("""1-0:1\.8\.2\((\d*\.?\d*)\*kWh\)""")   to ELECTRICITY_CONSUMED_TARIFF_2 using (s => BigDecimal(s))
-  private val elecProdTariff1   = extract("""1-0:2\.8\.1\((\d*\.?\d*)\*kWh\)""")   to ELECTRICITY_PRODUCED_TARIFF_1 using (s => BigDecimal(s))
-  private val elecProdTariff2   = extract("""1-0:2\.8\.2\((\d*\.?\d*)\*kWh\)""")   to ELECTRICITY_PRODUCED_TARIFF_2 using (s => BigDecimal(s))
-  private val tariffIndicator   = extract("""0-0:96\.14\.0\((\d{4})\)""")          to TARIFF_INDICATOR              using (s => s)
-  private val currentCons       = extract("""1-0:1\.7\.0\((\d*\.?\d*)\*kW\)""")    to CURRENT_CONSUMPTION           using (s => BigDecimal(s))
-  private val currentProd       = extract("""1-0:2\.7\.0\((\d*\.?\d*)\*kW\)""")    to CURRENT_PRODUCTION            using (s => BigDecimal(s))
+  private val versionInfo       = extract("""1-3:0\.2\.8\((\d*)\)""")              (VERSION_INFORMATION)            using (s => s)
+  private val dateTimeStamp     = extract("""0-0:1\.0\.0\((\d{12})[SW]\)""")       (DATE_TIME_STAMP)                using (s => LocalDateTime.parse(s, dateFormat))
+  private val equipmentId       = extract("""0-0:96\.1\.1\((\w*)\)""")             (EQUIPMENT_IDENTIFIER)           using (s => s)
+  private val elecConsTariff1   = extract("""1-0:1\.8\.1\((\d*\.?\d*)\*kWh\)""")   (ELECTRICITY_CONSUMED_TARIFF_1)  using (s => BigDecimal(s))
+  private val elecConsTariff2   = extract("""1-0:1\.8\.2\((\d*\.?\d*)\*kWh\)""")   (ELECTRICITY_CONSUMED_TARIFF_2)  using (s => BigDecimal(s))
+  private val elecProdTariff1   = extract("""1-0:2\.8\.1\((\d*\.?\d*)\*kWh\)""")   (ELECTRICITY_PRODUCED_TARIFF_1)  using (s => BigDecimal(s))
+  private val elecProdTariff2   = extract("""1-0:2\.8\.2\((\d*\.?\d*)\*kWh\)""")   (ELECTRICITY_PRODUCED_TARIFF_2)  using (s => BigDecimal(s))
+  private val tariffIndicator   = extract("""0-0:96\.14\.0\((\d{4})\)""")          (TARIFF_INDICATOR)               using (s => s)
+  private val currentCons       = extract("""1-0:1\.7\.0\((\d*\.?\d*)\*kW\)""")    (CURRENT_CONSUMPTION)            using (s => BigDecimal(s))
+  private val currentProd       = extract("""1-0:2\.7\.0\((\d*\.?\d*)\*kW\)""")    (CURRENT_PRODUCTION)             using (s => BigDecimal(s))
 
-  private val deviceType        = extract("""0-(\d):24\.1\.0\((\w{2,3})\)""")      to EXTERNAL_DEVICE_TYPE          using ((s1, s2) => (s1.toInt, s2))
-  private val deviceEquipmentId = extract("""0-(\d):96\.1\.0\((\w{34})\)""")       to EXTERNAL_DEVICE_EQUIPMENT_ID  using ((s1, s2) => (s1.toInt, s2))
+  private val deviceType        = extract("""0-(\d):24\.1\.0\((\w{2,3})\)""")      (EXTERNAL_DEVICE_TYPE)           using ((s1, s2) => (s1.toInt, s2))
+  private val deviceEquipmentId = extract("""0-(\d):96\.1\.0\((\w{34})\)""")       (EXTERNAL_DEVICE_EQUIPMENT_ID)   using ((s1, s2) => (s1.toInt, s2))
   private val deviceGasReading  = extract("""0-(\d):24\.2\.1\((\d{12})[SW]\)""" +
-                                          """\((\d*\.?\d*)\*m3\)""")               to EXTERNAL_DEVICE_GAS_READING   using ((s1, s2, s3) => (s1.toInt, LocalDateTime.parse(s2, dateFormat), BigDecimal(s3)))
+                                          """\((\d*\.?\d*)\*m3\)""")               (EXTERNAL_DEVICE_GAS_READING)    using ((s1, s2, s3) => (s1.toInt, LocalDateTime.parse(s2, dateFormat), BigDecimal(s3)))
 
-  private val ignored           = extract("""\d\-\d:\d+[\.:]\d+\.\d+\(.*\)""")                                      using ()
+  private val ignored           = """\d\-\d:\d+[\.:]\d+\.\d+\(.*\)""".r ^^ { case _ => None }
 
   private val record = versionInfo | dateTimeStamp | equipmentId | elecConsTariff1 | elecConsTariff2 |
     elecProdTariff1 | elecProdTariff2 | tariffIndicator | currentCons | currentProd | deviceType | deviceEquipmentId |
