@@ -5,6 +5,7 @@ import akka.testkit.{TestProbe, EventFilter, TestEvent}
 import org.scalactic.TypeCheckedTripleEquals
 import org.scalatest.{Matchers, BeforeAndAfterAll}
 
+import scala.collection.{immutable, mutable}
 import scala.concurrent.Await
 import scala.concurrent.duration.{Duration, DurationInt, FiniteDuration}
 
@@ -12,16 +13,16 @@ abstract class BaseAkkaSpec extends BaseSpec with Matchers with BeforeAndAfterAl
   implicit class TestProbeOps(probe: TestProbe) {
     private val maxWaitForActor = 100 milliseconds
 
-    def expectActor(path: String, max: FiniteDuration = maxWaitForActor): Option[ActorRef] = {
+    def expectActor(path: String, max: FiniteDuration = maxWaitForActor): immutable.Seq[ActorRef] = {
       probe.within(max) {
-        var actor: Option[ActorRef] = None
+        val actors = mutable.ArrayBuffer.empty[ActorRef]
         probe.awaitAssert {
           (probe.system actorSelection path).tell(Identify(path), probe.ref)
           probe.expectMsgPF(100 milliseconds) {
-            case ActorIdentity(`path`, Some(ref)) => actor = Some(ref)
+            case ActorIdentity(`path`, Some(ref)) => actors += ref
           }
         }
-        actor
+        immutable.Seq(actors:_*)
       }
     }
   }
