@@ -21,13 +21,13 @@ class CollectingActor(receiver: ActorRef) extends Actor with ActorLogging {
   private val CRLF = "\r\n"
 
   private val dataBuffer = new StringBuilder
-  private var lineBuffer = mutable.Buffer.empty[String]
+  private val lineBuffer = mutable.Buffer.empty[String]
 
   override def receive = {
     case MeterAgent.IncomingData(data) =>
       dataBuffer.append(data)
       extractLines()
-      if (!lineBuffer.isEmpty) extractTelegram()
+      if (lineBuffer.nonEmpty) extractTelegram()
   }
 
   private def extractLines(): Unit = {
@@ -41,8 +41,8 @@ class CollectingActor(receiver: ActorRef) extends Actor with ActorLogging {
   }
 
   private def extractTelegram(): Unit = {
-    val firstLine = lineBuffer.find(s => s != null && s.length > 0 && s.charAt(0) == '/')
-    val lastLine = lineBuffer.find(s => s != null && s.length > 0 && s.charAt(0) == '!')
+    val firstLine = lineBuffer.find(s => s.length > 0 && s.charAt(0) == '/')
+    val lastLine = lineBuffer.find(s => s.length > 0 && s.charAt(0) == '!')
 
     (firstLine, lastLine) match {
       case (None, None)              => ;
