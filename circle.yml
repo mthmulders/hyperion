@@ -20,5 +20,5 @@ test:
     - mkdir -p $CIRCLE_TEST_REPORTS/junit/
     - find . -type f -regex ".*/target/test-reports/.*xml" -exec cp {} $CIRCLE_TEST_REPORTS/junit/ \;
     - sbt assembly
-#    - sbt coverageAggregate
-#    - sbt coveralls
+    - sbt coverageAggregate
+    - sbt coveralls
