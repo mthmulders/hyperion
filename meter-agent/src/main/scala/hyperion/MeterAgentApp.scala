@@ -3,9 +3,9 @@ package hyperion
 import akka.actor.{Actor, ActorLogging, ActorRef, Terminated, ActorSystem, Props}
 import akka.event.Logging
 
-import scala.concurrent.duration.Duration
 import scala.concurrent.{Await, Future}
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.duration.Duration
 import scala.util.{Failure, Success}
 
 /**
