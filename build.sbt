@@ -71,8 +71,20 @@ lazy val meteragent = (project in file("meter-agent"))
     )
   ))
 
+lazy val core = (project in file("core"))
+  .settings(commonSettings: _*)
+  .settings(Seq(
+    name := "hyperion-core",
+    assemblyJarName in assembly := "hyperion-core.jar",
+    libraryDependencies ++= Seq(
+      akkaActor,
+      akkaSlf4j,
+      akkaTestKit % "test",
+      logback
+    )
+  ))
+
 lazy val root = (project in file("."))
   .settings(commonSettings: _*)
-  .aggregate(meteragent)
-
+  .aggregate(meteragent, core)
 
