@@ -32,7 +32,7 @@ object MeterAgentApp {
 }
 
 class MeterAgentApp(system: ActorSystem) {
-  private val log = Logging(system, getClass.getName)
+  private[this] val log = Logging(system, getClass.getName)
 
   log.info("Reading settings")
   private val settings = Settings(system)

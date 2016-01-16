@@ -28,5 +28,5 @@ object CoreApp extends App {
 }
 
 class CoreApp(system: ActorSystem) {
-  private val log = Logging(system, getClass.getName)
+  private[this] val log = Logging(system, getClass.getName)
 }
