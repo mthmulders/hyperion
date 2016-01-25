@@ -2,7 +2,7 @@
 // Define dependency versions
 //
 lazy val akkaVer = "2.4.0"
-lazy val flowVer = "2.3.0"
+lazy val flowVer = "2.4.1"
 lazy val logbackVer = "1.1.3"
 lazy val mockitoVer = "1.10.19"
 lazy val parserCombVer = "1.0.4"
@@ -58,6 +58,7 @@ lazy val meteragent = (project in file("meter-agent"))
   .settings(Seq(
     name := "hyperion-meter-agent",
     assemblyJarName in assembly := "hyperion-meter-agent.jar",
+    resolvers += Resolver.bintrayRepo("jodersky", "maven"),
     libraryDependencies ++= Seq(
       akkaActor,
       akkaSlf4j,
@@ -87,4 +88,3 @@ lazy val core = (project in file("core"))
 lazy val root = (project in file("."))
   .settings(commonSettings: _*)
   .aggregate(meteragent, core)
-
