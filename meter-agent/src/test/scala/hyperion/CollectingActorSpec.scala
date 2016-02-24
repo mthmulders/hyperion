@@ -19,6 +19,7 @@ class CollectingActorSpec extends BaseAkkaSpec {
     }
 
     "emit only complete Telegrams" in {
+      //Arrange
       val receiver = TestProbe()
       val actor = system.actorOf(CollectingActor.props(receiver.ref), "emit-telegrams")
 
@@ -27,11 +28,13 @@ class CollectingActorSpec extends BaseAkkaSpec {
 
       val data = text.grouped(15).toIndexedSeq
 
+      // Act
       actor ! MeterAgent.IncomingData("!XXXX" + CRLF) // simulate end of previous message
       for (chunk <- data) {
         actor ! MeterAgent.IncomingData(chunk)
       }
 
+      // Assert
       val telegram = receiver.expectMsgPF(1000 milliseconds) {
         case CollectingActor.TelegramReceived(content) => content
       }

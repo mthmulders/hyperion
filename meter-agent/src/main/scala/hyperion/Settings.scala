@@ -1,6 +1,8 @@
 package hyperion
 
 import akka.actor.{Actor, Extension, ExtendedActorSystem, ExtensionKey}
+import com.github.jodersky.flow.{Parity => EParity}
+import com.github.jodersky.flow.Parity.Parity
 
 /**
   * Provides convenient access to the settings in application.conf.
@@ -15,7 +17,8 @@ class Settings(system: ExtendedActorSystem) extends Extension {
     val baudRate: Int      = hyperion getInt    "meter.baud-rate"
     val characterSize: Int = hyperion getInt    "meter.character-size"
     val stopBits: Int      = hyperion getInt    "meter.stop-bits"
-    val parity: String     = hyperion getString "meter.parity"
+    val parity: Parity     = EParity.values.find(_.toString.equalsIgnoreCase(hyperion getString "meter.parity"))
+                                  .getOrElse(EParity.None)
   }
 }
 

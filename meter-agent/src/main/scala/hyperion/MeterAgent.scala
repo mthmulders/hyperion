@@ -2,7 +2,7 @@ package hyperion
 
 import akka.actor.{Actor, ActorLogging, ActorRef, Props, Terminated}
 import akka.io.IO
-import com.github.jodersky.flow.{Serial, Parity, SerialSettings}
+import com.github.jodersky.flow.{Serial, SerialSettings}
 
 import MeterAgent._
 
@@ -28,7 +28,7 @@ class MeterAgent(collectingActor: ActorRef) extends Actor with ActorLogging with
       baud = settings.meter.baudRate,
       characterSize = settings.meter.characterSize,
       twoStopBits = settings.meter.stopBits == 2,
-      parity = Parity.withName(settings.meter.parity)
+      parity = settings.meter.parity
     )
 
     log.debug(s"Opening serial port $port")

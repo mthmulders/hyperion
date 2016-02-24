@@ -1,6 +1,7 @@
 package hyperion
 
 import akka.actor.ActorSystem
+import com.github.jodersky.flow.Parity
 
 class SettingsSpec extends BaseSpec {
   implicit val system = ActorSystem()
@@ -12,7 +13,7 @@ class SettingsSpec extends BaseSpec {
       settings.meter.baudRate      shouldBe 115200
       settings.meter.characterSize shouldBe 8
       settings.meter.stopBits      shouldBe 1
-      settings.meter.parity        shouldBe "None"
+      settings.meter.parity        shouldBe Parity.Odd
     }
   }
 }
