@@ -76,32 +76,39 @@ object P1TelegramParser extends RegexParsers {
   private def collectRecords(list: immutable.List[Option[P1Record[_]]]): mutable.Map[P1RecordType, mutable.Set[Any]] = {
     val mm = new mutable.HashMap[P1RecordType, mutable.Set[Any]] with mutable.MultiMap[P1RecordType, Any]
 
-    list.filter(p => p.isDefined)
-        .map(p => p.get)
-        .foldLeft(mm)((mm, record) => mm.addBinding(record.recordType, record.value))
+    list.flatten.foldLeft(mm)((mm, record) => mm.addBinding(record.recordType, record.value))
   }
 
   private val records = rep(record)
 
-  private val parser: Parser[P1Telegram] = header ~ (records ^^ { x => collectRecords(x) }) ~ checksum ^^ {
+  private val parser: Parser[P1Telegram] = header ~ (records ^^ { _.flatten}) ~ checksum ^^ {
     case parsedHeader ~ parsedRecords ~ parsedChecksum =>
-      val metadata = P1MetaData(parsedRecords(VERSION_INFORMATION).head.asInstanceOf[String],
-                                parsedRecords(DATE_TIME_STAMP).head.asInstanceOf[LocalDateTime],
-                                parsedRecords(EQUIPMENT_IDENTIFIER).head.asInstanceOf[String])
+      def findRecord(recordType: P1RecordType) = {
+        parsedRecords.find(_.recordType == recordType).map(_.value)
+      }
 
-      val currentTariff = parsedRecords(TARIFF_INDICATOR).head.asInstanceOf[String]
-      val currentConsumption = parsedRecords(CURRENT_CONSUMPTION).head.asInstanceOf[BigDecimal]
-      val currentProduction = parsedRecords(CURRENT_PRODUCTION).head.asInstanceOf[BigDecimal]
+      (for {
+        versionInfo <- findRecord(VERSION_INFORMATION).map(_.asInstanceOf[String])
+        dateTimeStamp <- findRecord(DATE_TIME_STAMP).map(_.asInstanceOf[LocalDateTime])
+        equipmentIdentifier <- findRecord(EQUIPMENT_IDENTIFIER).map(_.asInstanceOf[String])
+        metadata = P1MetaData(versionInfo, dateTimeStamp, equipmentIdentifier)
 
-      val totalConsumption = immutable.Map(("1", parsedRecords(ELECTRICITY_CONSUMED_TARIFF_1).head.asInstanceOf[BigDecimal]),
-                                           ("2", parsedRecords(ELECTRICITY_CONSUMED_TARIFF_2).head.asInstanceOf[BigDecimal]))
-      val totalProduction = immutable.Map(("1", parsedRecords(ELECTRICITY_PRODUCED_TARIFF_1).head.asInstanceOf[BigDecimal]),
-                                          ("2", parsedRecords(ELECTRICITY_PRODUCED_TARIFF_2).head.asInstanceOf[BigDecimal]))
+        currentTariff <- findRecord(TARIFF_INDICATOR).map(_.asInstanceOf[String])
+        currentConsumption <- findRecord(CURRENT_CONSUMPTION).map(_.asInstanceOf[BigDecimal])
+        currentProduction <- findRecord(CURRENT_PRODUCTION).map(_.asInstanceOf[BigDecimal])
 
-      val data = P1Data(currentTariff, currentConsumption, currentProduction, totalConsumption, totalProduction, None)
+        consumptionMeter1 <- findRecord(ELECTRICITY_CONSUMED_TARIFF_1).map(_.asInstanceOf[BigDecimal])
+        consumptionMeter2 <- findRecord(ELECTRICITY_CONSUMED_TARIFF_2).map(_.asInstanceOf[BigDecimal])
+        totalConsumption = immutable.Map("1" -> consumptionMeter1, "2" -> consumptionMeter2)
 
-      new P1Telegram(parsedHeader, metadata, data, parsedChecksum)
-    }
+        productionMeter1 <- findRecord(ELECTRICITY_PRODUCED_TARIFF_1).map(_.asInstanceOf[BigDecimal])
+        productionMeter2 <- findRecord(ELECTRICITY_PRODUCED_TARIFF_2).map(_.asInstanceOf[BigDecimal])
+        totalProduction = immutable.Map("1" -> productionMeter1, "2" -> productionMeter2)
+
+        data = P1Data(currentTariff, currentConsumption, currentProduction, totalConsumption, totalProduction, None)
+
+      } yield P1Telegram(parsedHeader, metadata, data, parsedChecksum)).get
+    } | failure("Not all required data objects are found")
 
   def parse(text: String): Option[P1Telegram] = parseAll(parser, text) match {
     case Success(result, _) => Some(result)
