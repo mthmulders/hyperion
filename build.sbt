@@ -29,7 +29,6 @@ lazy val commonSettings = Seq(
   version := "1.0.0-SNAPSHOT",
   description := "",
   scalaVersion := "2.11.7",
-  test in assembly := {},
   scalacOptions ++= Seq(
     "-unchecked",
     "-deprecation",
@@ -54,10 +53,10 @@ lazy val commonSettings = Seq(
 //
 
 lazy val meteragent = (project in file("meter-agent"))
+  .enablePlugins(JavaServerAppPackaging)
   .settings(commonSettings: _*)
   .settings(Seq(
     name := "hyperion-meter-agent",
-    assemblyJarName in assembly := "hyperion-meter-agent.jar",
     resolvers += Resolver.bintrayRepo("jodersky", "maven"),
     libraryDependencies ++= Seq(
       akkaActor,
@@ -69,21 +68,38 @@ lazy val meteragent = (project in file("meter-agent"))
       mockito % "test",
       parserComb,
       scalaTest % "test"
-    )
-  ))
+    ),
+    packageName in Linux := "hyperion-meter-agent",
+    maintainer in Linux := "Maarten Mulders",
+    packageSummary in Linux := "Hyperion meter agent",
+    packageDescription in Linux := "The Hyperion meter agent that connects the Smart Meter to Hyperion",
+    mappings in Universal += {
+      sourceDirectory.value / "main" / "deb" / "application.conf" -> "conf/meter-agent.conf"
+    },
+    daemonUser in Linux := "hyperion",
+    daemonGroup in Linux := "hyperion",
+    serverLoading in Debian := com.typesafe.sbt.packager.archetypes.ServerLoader.SystemV,
+    debianPackageDependencies in Debian ++= Seq("oracle-java8-jdk"),
+    bashScriptExtraDefines += """addJava "-Dconfig.file=${app_home}/../conf/meter-agent.conf""""
+  )
+)
+
+// TODO [MM] This user should be in a secondary group, 'tty'.
+// Maybe this can be done with maintainerScripts in Debian; see
+// http://www.scala-sbt.org/sbt-native-packager/formats/debian.html
 
 lazy val core = (project in file("core"))
   .settings(commonSettings: _*)
   .settings(Seq(
     name := "hyperion-core",
-    assemblyJarName in assembly := "hyperion-core.jar",
     libraryDependencies ++= Seq(
       akkaActor,
       akkaSlf4j,
       akkaTestKit % "test",
       logback
     )
-  ))
+  )
+)
 
 lazy val root = (project in file("."))
   .settings(commonSettings: _*)
