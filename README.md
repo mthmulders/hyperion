@@ -1,9 +1,9 @@
 # Hyperion
 Hyperion (Υπερίων) was probably the god of observation in ancient Greece.
-Fast-forward to 2015, Hyperion is a system that observes a ['Smart Meter'](https://en.wikipedia.org/wiki/Smart_meter) system.
+Fast-forward to the present, Hyperion is a system that observes a ['Smart Meter'](https://en.wikipedia.org/wiki/Smart_meter) system.
 Using Hyperion you can read your smart meter from your computer or Raspberry Pi.
 You will need a way to connect your smart meter to the computer.
-The smart meter has a P1 port, which is in fact RJ11.
+The smart meter has a P1 port, which is in fact an RJ11 connector.
 You can connect to the serial port or the USB-port as long as your operating system supports reading from it.
 On a Raspberry Pi, using a RJ11-to-USB cable, the serial port will become visible on `/dev/ttyUSB0`.
 
