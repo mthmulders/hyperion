@@ -97,13 +97,12 @@ lazy val meterAgent = (project in file("meter-agent"))
     daemonGroup in Linux := "hyperion",
     serverLoading in Debian := com.typesafe.sbt.packager.archetypes.ServerLoader.SystemV,
     debianPackageDependencies in Debian ++= Seq("oracle-java8-jdk"),
-    bashScriptExtraDefines += """addJava "-Dconfig.file=${app_home}/../conf/meter-agent.conf""""
+    bashScriptExtraDefines += """addJava "-Dconfig.file=${app_home}/../conf/meter-agent.conf"""",
+    maintainerScripts in Debian := maintainerScriptsAppend((maintainerScripts in Debian).value)(
+      DebianConstants.Postinst -> "usermod -a -G dialout hyperion"
+    )
   )
 ).dependsOn(testSupport % "test->test")
-
-// TODO [MM] This user should be in a secondary group, 'tty'.
-// Maybe this can be done with maintainerScripts in Debian; see
-// http://www.scala-sbt.org/sbt-native-packager/formats/debian.html
 
 lazy val core = (project in file("core"))
   .settings(commonSettings: _*)
