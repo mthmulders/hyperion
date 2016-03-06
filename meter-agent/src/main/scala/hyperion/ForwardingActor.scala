@@ -18,7 +18,7 @@ case class TargetFound(target: ActorRef) extends Data
 case class Queue(q: immutable.Vector[Any], retries: Int) extends Data
 
 /**
-  * This Actor forwards all messages it receives to a remote Actor, identified by [[selection]].
+  * This Actor forwards all messages it receives to a remote Actor, identified by.
   *
   * @param selection the remote Actor.
   */
