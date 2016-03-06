@@ -52,7 +52,22 @@ lazy val commonSettings = Seq(
 // Per-module settings
 //
 
-lazy val meteragent = (project in file("meter-agent"))
+lazy val testSupport = (project in file("test-support"))
+  .settings(commonSettings: _*)
+  .settings(Seq(
+    name := "hyperion-test-support",
+    libraryDependencies ++= Seq(
+      akkaActor,
+      akkaSlf4j,
+      akkaTestKit % "test",
+      logback,
+      mockito % "test",
+      scalaTest % "test"
+    )
+  )
+)
+
+lazy val meterAgent = (project in file("meter-agent"))
   .enablePlugins(JavaServerAppPackaging)
   .settings(commonSettings: _*)
   .settings(Seq(
@@ -82,7 +97,7 @@ lazy val meteragent = (project in file("meter-agent"))
     debianPackageDependencies in Debian ++= Seq("oracle-java8-jdk"),
     bashScriptExtraDefines += """addJava "-Dconfig.file=${app_home}/../conf/meter-agent.conf""""
   )
-)
+).dependsOn(testSupport % "test->test")
 
 // TODO [MM] This user should be in a secondary group, 'tty'.
 // Maybe this can be done with maintainerScripts in Debian; see
@@ -99,8 +114,8 @@ lazy val core = (project in file("core"))
       logback
     )
   )
-)
+).dependsOn(testSupport % "test->test")
 
 lazy val root = (project in file("."))
   .settings(commonSettings: _*)
-  .aggregate(meteragent, core)
+  .aggregate(meterAgent, core)

@@ -1,9 +1,9 @@
 package hyperion
 
-import akka.actor.{ActorIdentity, Identify, ActorRef, ActorSystem}
-import akka.testkit.{TestProbe, EventFilter, TestEvent}
+import akka.actor.{ActorIdentity, ActorRef, ActorSystem, Identify}
+import akka.testkit.{EventFilter, TestEvent, TestProbe}
 import org.scalactic.TypeCheckedTripleEquals
-import org.scalatest.{Matchers, BeforeAndAfterAll}
+import org.scalatest.{BeforeAndAfterAll, Matchers}
 
 import scala.collection.{immutable, mutable}
 import scala.concurrent.Await
