@@ -127,7 +127,7 @@ lazy val core = (project in file("core"))
     daemonGroup in Linux := "hyperion",
     serverLoading in Debian := com.typesafe.sbt.packager.archetypes.ServerLoader.SystemV,
     debianPackageDependencies in Debian ++= Seq("oracle-java8-jdk"),
-    bashScriptExtraDefines += """addJava "-Dconfig.file=${app_home}/../conf/core""""
+    bashScriptExtraDefines += """addJava "-Dconfig.file=${app_home}/../conf/core.conf""""
   )
 ).dependsOn(testSupport % "test->test")
 
