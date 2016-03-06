@@ -2,7 +2,7 @@ package hyperion
 
 import scala.collection.immutable
 import scala.concurrent.duration.DurationInt
-import akka.actor.{ActorIdentity, ActorLogging, ActorRef, ActorSelection, FSM, Identify, Props, Stash, Terminated}
+import akka.actor._
 
 object ForwardingActor {
   def props(target: ActorSelection): Props = {
