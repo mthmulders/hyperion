@@ -15,5 +15,9 @@ class SettingsSpec extends BaseSpec {
       settings.meter.stopBits      shouldBe 1
       settings.meter.parity        shouldBe Parity.Odd
     }
+
+    "return correct values for the \"receiver\" configuration section" in {
+      settings.receiver.host       shouldBe "localhost"
+    }
   }
 }

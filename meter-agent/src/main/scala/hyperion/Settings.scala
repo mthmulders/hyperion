@@ -20,6 +20,10 @@ class Settings(system: ExtendedActorSystem) extends Extension {
     val parity: Parity     = EParity.values.find(_.toString.equalsIgnoreCase(hyperion getString "meter.parity"))
                                   .getOrElse(EParity.None)
   }
+
+  object receiver {
+    val host: String       = hyperion getString "receiver.host"
+  }
 }
 
 trait SettingsActor {
