@@ -9,8 +9,6 @@ import CollectingActor._
 object CollectingActor {
   case object ProcessBuffer
 
-  case class TelegramReceived(telegram: P1Telegram)
-
   def props(receiver: ActorRef): Props = {
     Props(new CollectingActor(receiver))
   }
