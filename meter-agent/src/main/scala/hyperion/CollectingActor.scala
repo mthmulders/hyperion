@@ -18,7 +18,7 @@ object CollectingActor {
 
 /** This actor collects incoming bytes and emits them in lines (seperated by CR LF) */
 class CollectingActor(receiver: ActorRef) extends Actor with ActorLogging {
-  private val CRLF = "\r\n"
+  private val newline = "\r\n"
 
   private val dataBuffer = new StringBuilder
   private val lineBuffer = mutable.Buffer.empty[String]
@@ -31,11 +31,11 @@ class CollectingActor(receiver: ActorRef) extends Actor with ActorLogging {
   }
 
   private def extractLines(): Unit = {
-    dataBuffer.indexOf(CRLF) match {
+    dataBuffer.indexOf(newline) match {
       case -1              => ;
       case idx if idx >= 0 =>
-        lineBuffer += dataBuffer.substring(0, idx + CRLF.length)
-        dataBuffer.replace(0, idx + CRLF.length, "")
+        lineBuffer += dataBuffer.substring(0, idx + newline.length)
+        dataBuffer.replace(0, idx + newline.length, "")
         extractLines()
       }
   }
