@@ -105,6 +105,7 @@ lazy val meterAgent = (project in file("meter-agent"))
 ).dependsOn(testSupport % "test->test")
 
 lazy val core = (project in file("core"))
+  .enablePlugins(JavaServerAppPackaging)
   .settings(commonSettings: _*)
   .settings(Seq(
     name := "hyperion-core",
@@ -114,7 +115,19 @@ lazy val core = (project in file("core"))
       akkaRemote,
       akkaTestKit % "test",
       logback
-    )
+    ),
+    packageName in Linux := "hyperion-core",
+    maintainer in Linux := "Maarten Mulders",
+    packageSummary in Linux := "Hyperion core",
+    packageDescription in Linux := "The Hyperion core that collects and stores data",
+    mappings in Universal += {
+      sourceDirectory.value / "main" / "deb" / "application.conf" -> "conf/core.conf"
+    },
+    daemonUser in Linux := "hyperion",
+    daemonGroup in Linux := "hyperion",
+    serverLoading in Debian := com.typesafe.sbt.packager.archetypes.ServerLoader.SystemV,
+    debianPackageDependencies in Debian ++= Seq("oracle-java8-jdk"),
+    bashScriptExtraDefines += """addJava "-Dconfig.file=${app_home}/../conf/core""""
   )
 ).dependsOn(testSupport % "test->test")
 
