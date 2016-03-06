@@ -13,6 +13,7 @@ lazy val scalaTestVer = "2.2.4"
 //
 lazy val akkaActor   = "com.typesafe.akka"        %% "akka-actor"                    % akkaVer
 lazy val akkaSlf4j   = "com.typesafe.akka"        %% "akka-slf4j"                    % akkaVer
+lazy val akkaRemote  = "com.typesafe.akka"        %% "akka-remote"                   % akkaVer
 lazy val akkaTestKit = "com.typesafe.akka"        %% "akka-testkit"                  % akkaVer
 lazy val flow        = "com.github.jodersky"      %% "flow"                          % flowVer
 lazy val flowNative  = "com.github.jodersky"      %  "flow-native"                   % flowVer
@@ -76,6 +77,7 @@ lazy val meterAgent = (project in file("meter-agent"))
     libraryDependencies ++= Seq(
       akkaActor,
       akkaSlf4j,
+      akkaRemote,
       akkaTestKit % "test",
       flow,
       flowNative,
@@ -110,6 +112,7 @@ lazy val core = (project in file("core"))
     libraryDependencies ++= Seq(
       akkaActor,
       akkaSlf4j,
+      akkaRemote,
       akkaTestKit % "test",
       logback
     )

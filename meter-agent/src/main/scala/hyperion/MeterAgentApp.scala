@@ -1,6 +1,6 @@
 package hyperion
 
-import akka.actor.{Actor, ActorLogging, ActorRef, Terminated, ActorSystem, Props}
+import akka.actor.{Address, ActorSystem, ActorRef, RootActorPath, Terminated}
 import akka.event.Logging
 
 import scala.concurrent.{Await, Future}
@@ -11,24 +11,22 @@ import scala.util.{Failure, Success}
 /**
   * Starts the Meter Agent.
   */
-object MeterAgentApp {
-  def main(args: Array[String]): Unit = {
-    val system = ActorSystem("hyperion-system")
+object MeterAgentApp extends App {
+  val system = ActorSystem("hyperion-system")
 
-    sys.addShutdownHook({
-      val logging = Logging(system, getClass.getName)
+  sys.addShutdownHook({
+    val logging = Logging(system, getClass.getName)
 
-      logging.info("Shutting down the Hyperion Meter Agent")
-      val termination: Future[Terminated] = system.terminate()
-      termination onComplete {
-        case Success(_)     => logging.info("Clean shut down complete")
-        case Failure(cause) => logging.info(s"Shut down with problems: ${cause.getMessage}", cause)
-      }
-      Await.result(termination, Duration.Inf)
-    })
+    logging.info("Shutting down the Hyperion Meter Agent")
+    val termination: Future[Terminated] = system.terminate()
+    termination onComplete {
+      case Success(_)     => logging.info("Clean shut down complete")
+      case Failure(cause) => logging.info(s"Shut down with problems: ${cause.getMessage}", cause)
+    }
+    Await.result(termination, Duration.Inf)
+  })
 
-    new MeterAgentApp(system).run()
-  }
+  new MeterAgentApp(system).run()
 }
 
 class MeterAgentApp(system: ActorSystem) {
@@ -37,13 +35,18 @@ class MeterAgentApp(system: ActorSystem) {
   log.info("Reading settings")
   private val settings = Settings(system)
 
-  private val collectingActor = createCollectingActor()
-
   log.info("Starting the Hyperion Meter Agent")
+  private val telegramReceiver = findTelegramReceiver()
+  private val collectingActor = createCollectingActor()
   private val meterAgent = createMeterAgent()
 
   def run(): Unit = {
     Await.result(system.whenTerminated, Duration.Inf)
+  }
+
+  protected def findTelegramReceiver(): ActorRef = {
+    val path = RootActorPath(Address("akka.tcp", system.name, settings.receiver.host, 2552)) / "user" / "receiver"
+    system.actorOf(ForwardingActor.props(system.actorSelection(path)))
   }
 
   protected def createMeterAgent(): ActorRef = {
@@ -51,14 +54,6 @@ class MeterAgentApp(system: ActorSystem) {
   }
 
   protected def createCollectingActor(): ActorRef = {
-    val receiver = system.actorOf(Props(new LoggingActor()))
-    system.actorOf(CollectingActor.props(receiver), "collecting-actor")
-  }
-
-}
-
-class LoggingActor extends Actor with ActorLogging {
-  override def receive = {
-    case a: Any => log.info(s"Received message $a")
+    system.actorOf(CollectingActor.props(telegramReceiver), "collecting-actor")
   }
 }
