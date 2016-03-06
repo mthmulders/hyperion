@@ -1,6 +1,6 @@
 package hyperion
 
-import akka.actor.{Terminated, ActorSystem}
+import akka.actor.{ActorRef, ActorSystem, Terminated}
 import akka.event.Logging
 
 import scala.concurrent.duration.Duration
@@ -25,8 +25,22 @@ object CoreApp extends App {
     }
     Await.result(termination, Duration.Inf)
   })
+
+  new CoreApp(system).run()
 }
 
 class CoreApp(system: ActorSystem) {
   private[this] val log = Logging(system, getClass.getName)
+
+  log.info("Starting the Hyperion Core")
+
+  private val receiver = createReceiver()
+
+  protected def createReceiver(): ActorRef = {
+    system.actorOf(ReceiverActor.props(), "receiver")
+  }
+
+  def run(): Unit = {
+    Await.result(system.whenTerminated, Duration.Inf)
+  }
 }
