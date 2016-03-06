@@ -53,6 +53,13 @@ lazy val commonSettings = Seq(
 // Per-module settings
 //
 
+lazy val common = (project in file("common"))
+  .settings(commonSettings: _*)
+  .settings(Seq(
+    name := "hyperion-common"
+  )
+)
+
 lazy val testSupport = (project in file("test-support"))
   .settings(commonSettings: _*)
   .settings(Seq(
@@ -102,7 +109,7 @@ lazy val meterAgent = (project in file("meter-agent"))
       DebianConstants.Postinst -> "usermod -a -G dialout hyperion"
     )
   )
-).dependsOn(testSupport % "test->test")
+).dependsOn(common, testSupport % "test->test")
 
 lazy val core = (project in file("core"))
   .enablePlugins(JavaServerAppPackaging)
@@ -129,7 +136,7 @@ lazy val core = (project in file("core"))
     debianPackageDependencies in Debian ++= Seq("oracle-java8-jdk"),
     bashScriptExtraDefines += """addJava "-Dconfig.file=${app_home}/../conf/core.conf""""
   )
-).dependsOn(testSupport % "test->test")
+).dependsOn(common, testSupport % "test->test")
 
 lazy val root = (project in file("."))
   .settings(commonSettings: _*)
