@@ -1,21 +1,11 @@
 package hyperion
 
+import akka.actor.Terminated
 import akka.testkit.{EventFilter, TestProbe}
 import hyperion.ReceiverActor.RegisterReceiver
 
 class ReceiverActorSpec extends BaseAkkaSpec {
   "The Receiver Actor" should {
-    "log incoming messages" in {
-      // Arrange
-      val receiver = system.actorOf(ReceiverActor.props(), "log-messages")
-      val msg = "msg"
-
-      // Act & Assert
-      EventFilter.debug(message = s"Got message [$msg]", occurrences = 1) intercept {
-        receiver ! msg
-      }
-    }
-
     "forward messages it receives to all recipients" in {
       // Arrange
       val receiver = system.actorOf(ReceiverActor.props(), "forward-messages")
@@ -28,6 +18,22 @@ class ReceiverActorSpec extends BaseAkkaSpec {
 
       // Assert
       probe.expectMsgAllOf(msg)
+    }
+
+    "stop forwarding messages once a recipient is stopped" in {
+      // Arrange
+      val receiver = system.actorOf(ReceiverActor.props(), "stop-forwarding")
+      val msg = "msg"
+      val probe = TestProbe()
+
+      // Act
+      probe.send(receiver, RegisterReceiver)
+      system.stop(probe.ref)
+      Thread.sleep(100)
+      receiver ! msg
+
+      // Assert
+      probe.expectNoMsg()
     }
   }
 }
