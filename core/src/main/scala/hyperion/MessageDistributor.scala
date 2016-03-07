@@ -3,17 +3,17 @@ package hyperion
 import scala.collection.mutable
 
 import akka.actor._
-import hyperion.ReceiverActor.RegisterReceiver
+import hyperion.MessageDistributor.RegisterReceiver
 
-object ReceiverActor {
+object MessageDistributor {
   def props(): Props = {
-    Props(new ReceiverActor)
+    Props(new MessageDistributor)
   }
 
   case object RegisterReceiver
 }
 
-class ReceiverActor extends Actor with ActorLogging {
+class MessageDistributor extends Actor with ActorLogging {
   val recipients = mutable.Buffer.empty[ActorRef]
 
   override def receive = {

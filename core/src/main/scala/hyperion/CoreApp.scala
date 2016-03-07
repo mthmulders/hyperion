@@ -37,7 +37,7 @@ class CoreApp(system: ActorSystem) {
   private val receiver = createReceiver()
 
   protected def createReceiver(): ActorRef = {
-    system.actorOf(ReceiverActor.props(), "receiver")
+    system.actorOf(MessageDistributor.props(), "receiver")
   }
 
   def run(): Unit = {
