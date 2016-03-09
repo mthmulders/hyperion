@@ -7,6 +7,7 @@ lazy val logbackVer = "1.1.3"
 lazy val mockitoVer = "1.10.19"
 lazy val parserCombVer = "1.0.4"
 lazy val scalaTestVer = "2.2.4"
+lazy val sprayVer = "1.3.2"
 
 //
 // Define dependencies
@@ -21,6 +22,10 @@ lazy val logback     = "ch.qos.logback"           %  "logback-classic"          
 lazy val mockito     = "org.mockito"              %  "mockito-core"                  % mockitoVer
 lazy val parserComb  = "org.scala-lang.modules"   %% "scala-parser-combinators"      % parserCombVer
 lazy val scalaTest   = "org.scalatest"            %% "scalatest"                     % scalaTestVer
+lazy val sprayCan    = "io.spray"                 %% "spray-can"                     % sprayVer
+lazy val sprayHttpx  = "io.spray"                 %% "spray-httpx"                   % sprayVer
+lazy val sprayJson   = "io.spray"                 %% "spray-json"                    % sprayVer
+
 
 //
 // Shared settings
@@ -121,7 +126,10 @@ lazy val core = (project in file("core"))
       akkaSlf4j,
       akkaRemote,
       akkaTestKit % "test",
-      logback
+      logback,
+      sprayCan,
+      sprayHttpx,
+      sprayJson
     ),
     packageName in Linux := "hyperion-core",
     maintainer in Linux := "Maarten Mulders",

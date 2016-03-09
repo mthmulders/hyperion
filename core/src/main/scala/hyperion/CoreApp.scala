@@ -32,13 +32,11 @@ object CoreApp extends App {
 class CoreApp(system: ActorSystem) {
   private[this] val log = Logging(system, getClass.getName)
 
+  log.info("Reading settings")
+  private val settings = Settings(system)
+
   log.info("Starting the Hyperion Core")
-
-  private val receiver = createReceiver()
-
-  protected def createReceiver(): ActorRef = {
-    system.actorOf(MessageDistributor.props(), "receiver")
-  }
+  system.actorOf(LauncherActor.props(settings.api.port), "launcher-actor")
 
   def run(): Unit = {
     Await.result(system.whenTerminated, Duration.Inf)
