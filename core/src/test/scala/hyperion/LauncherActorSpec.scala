@@ -1,8 +1,7 @@
 package hyperion
 
-import java.net.URL
-
 import akka.testkit.TestProbe
+import scala.concurrent.duration.DurationInt
 
 class LauncherActorSpec extends BaseAkkaSpec {
   "Starting the Launcher Actor" should {
@@ -13,8 +12,8 @@ class LauncherActorSpec extends BaseAkkaSpec {
       val launcher = system.actorOf(LauncherActor.props(8080))
 
       // Assert
-      TestProbe().expectActor("/user/incoming-http-actor")
-      TestProbe().expectActor("/user/receiver")
+      TestProbe().expectActor("/user/incoming-http-actor", 500 millis)
+      TestProbe().expectActor("/user/receiver", 500 millis)
       system.stop(launcher)
     }
   }
