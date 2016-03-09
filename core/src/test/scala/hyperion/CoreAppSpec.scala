@@ -10,7 +10,7 @@ class CoreAppSpec extends BaseAkkaSpec {
   "Creating the CoreApp" should {
     "result in creating the necessary top-level actors" in {
       // Assert
-      TestProbe().expectActor("/user/receiver", 250 milliseconds) should not be empty
+      TestProbe().expectActor("/user/receiver", 500 milliseconds) should not be empty
     }
   }
 }
