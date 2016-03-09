@@ -7,8 +7,8 @@ class SettingsSpec extends BaseSpec {
   implicit val system = ActorSystem()
   val settings = Settings(system)
 
-  "Inspecting meter" should {
-    "return correct values for the \"meter\" configuration section" in {
+  "Inspecting 'meter'" should {
+    "return correct values for the 'meter' configuration section" in {
       settings.meter.serialPort    shouldBe "/dev/ttyUSB0"
       settings.meter.baudRate      shouldBe 115200
       settings.meter.characterSize shouldBe 8
@@ -16,7 +16,7 @@ class SettingsSpec extends BaseSpec {
       settings.meter.parity        shouldBe Parity.Odd
     }
 
-    "return correct values for the \"receiver\" configuration section" in {
+    "return correct values for the 'receiver' configuration section" in {
       settings.receiver.host       shouldBe "localhost"
     }
   }
