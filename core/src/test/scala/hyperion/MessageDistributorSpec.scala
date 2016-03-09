@@ -1,8 +1,8 @@
 package hyperion
 
-import akka.actor.Terminated
-import akka.testkit.{EventFilter, TestProbe}
+import akka.testkit.TestProbe
 import hyperion.MessageDistributor.RegisterReceiver
+import scala.concurrent.duration.DurationInt
 
 class MessageDistributorSpec extends BaseAkkaSpec {
   "The MessageDistributor Actor" should {
@@ -33,7 +33,7 @@ class MessageDistributorSpec extends BaseAkkaSpec {
       receiver ! msg
 
       // Assert
-      probe.expectNoMsg()
+      probe.expectNoMsg(250 millis)
     }
   }
 }
