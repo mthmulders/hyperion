@@ -72,13 +72,14 @@ lazy val testSupport = (project in file("test-support"))
     libraryDependencies ++= Seq(
       akkaActor,
       akkaSlf4j,
+      akkaRemote,
       akkaTestKit % "test",
       logback,
       mockito % "test",
       scalaTest % "test"
     )
   )
-)
+).dependsOn(common)
 
 lazy val meterAgent = (project in file("meter-agent"))
   .enablePlugins(JavaServerAppPackaging)
