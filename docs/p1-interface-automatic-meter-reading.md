@@ -34,7 +34,7 @@ The OBIS Reference describes what kind of data this line describes; between brac
 |1-0:1.8.2     |Actual meter reading for electricity delivered under "normal tariff", in 0,001 kWh                                                               |
 |1-0:2.8.1     |Actual meter reading for electricity produced under "low tariff", in 0,001 kWh                                                                   |
 |1-0:2.8.2     |Actual meter reading for electricity produced under "normal tariff", in 0,001 kWh                                                                |
-|0-0:96.14.0   |Tariff indication (`0001` for _low tariff_ m`0002` for _normal tariff_)                                                                          |
+|0-0:96.14.0   |Tariff indication (`0001` for _low tariff_, `0002` for _normal tariff_)                                                                          |
 |1-0:1.7.0     |Current electricity power consumed, in W                                                                                                         |
 |1-0:2.7.0     |Current electricity power produced, in W                                                                                                         |
 |0-0:17.0.0    |Electricity threshold in kW (not sure yet what this means)                                                                                       |
