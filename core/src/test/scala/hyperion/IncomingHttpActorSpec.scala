@@ -16,7 +16,7 @@ class IncomingHttpActorSpec extends BaseAkkaSpec with OptionValues {
       val request = new HttpRequest(GET, Uri("/wrong"), Nil, HttpEntity.Empty, `HTTP/1.1`)
 
       // Act
-      val sut = actor("wrong-path")(new IncomingHttpActor())
+      val sut = actor("wrong-path")(new IncomingHttpActor(TestProbe().ref))
       client.send(sut, request)
 
       // Assert
@@ -31,7 +31,7 @@ class IncomingHttpActorSpec extends BaseAkkaSpec with OptionValues {
       val request = new HttpRequest(PUT, Uri("/"), Nil, HttpEntity.Empty, `HTTP/1.1`)
 
       // Act
-      val sut = actor("wrong-method")(new IncomingHttpActor())
+      val sut = actor("wrong-method")(new IncomingHttpActor(TestProbe().ref))
       client.send(sut, request)
 
       // Assert

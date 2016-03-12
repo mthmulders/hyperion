@@ -20,8 +20,8 @@ object LauncherActor {
 class LauncherActor(port: Int) extends Actor with ActorLogging {
   override def preStart = {
     implicit val system = context.system
-    val httpRequestActor = system.actorOf(IncomingHttpActor.props(), "incoming-http-actor")
     val messageDistributor = system.actorOf(MessageDistributor.props(), "receiver")
+    val httpRequestActor = system.actorOf(IncomingHttpActor.props(messageDistributor), "incoming-http-actor")
 
     IO(Http) ! Http.Bind(httpRequestActor, interface = "0.0.0.0", port = port)
   }
