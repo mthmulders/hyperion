@@ -9,6 +9,7 @@ import scala.collection.{mutable, immutable}
 import scala.reflect.ClassTag
 import util.parsing.combinator.RegexParsers
 
+import P1Constants._
 import P1RecordType._
 
 object P1TelegramParser extends RegexParsers {
@@ -98,11 +99,11 @@ object P1TelegramParser extends RegexParsers {
 
         consumptionMeter1 <- findRecord(ELECTRICITY_CONSUMED_TARIFF_1).map(_.asInstanceOf[BigDecimal])
         consumptionMeter2 <- findRecord(ELECTRICITY_CONSUMED_TARIFF_2).map(_.asInstanceOf[BigDecimal])
-        totalConsumption = immutable.Map("1" -> consumptionMeter1, "2" -> consumptionMeter2)
+        totalConsumption = immutable.Map(LOW_TARIFF -> consumptionMeter1, NORMAL_TARIFF -> consumptionMeter2)
 
         productionMeter1 <- findRecord(ELECTRICITY_PRODUCED_TARIFF_1).map(_.asInstanceOf[BigDecimal])
         productionMeter2 <- findRecord(ELECTRICITY_PRODUCED_TARIFF_2).map(_.asInstanceOf[BigDecimal])
-        totalProduction = immutable.Map("1" -> productionMeter1, "2" -> productionMeter2)
+        totalProduction = immutable.Map(LOW_TARIFF -> productionMeter1, NORMAL_TARIFF -> productionMeter2)
 
         data = P1Data(currentTariff, currentConsumption, currentProduction, totalConsumption, totalProduction, None)
 

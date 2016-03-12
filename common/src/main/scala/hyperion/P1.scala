@@ -5,6 +5,11 @@ import java.util.Date
 
 import scala.collection.immutable
 
+object P1Constants {
+  val LOW_TARIFF = "0001"
+  val NORMAL_TARIFF = "0002"
+}
+
 /**
   * This is the message that indicates one P1 Telegram was received from the smart meter.
   * @param telegram The telegram with data.
