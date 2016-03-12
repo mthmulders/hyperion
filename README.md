@@ -1,5 +1,5 @@
 # Hyperion
-Hyperion (Υπερίων) was probably the god of observation in ancient Greece.
+Hyperion (Υπερίων) was probably the [god of observation](https://en.wikipedia.org/wiki/Hyperion_%28mythology%29) in ancient Greece.
 Fast-forward to the present, Hyperion is a system that observes a ['Smart Meter'](https://en.wikipedia.org/wiki/Smart_meter) system.
 Using Hyperion you can read your smart meter from your computer or Raspberry Pi.
 To do so, you need a connection between your smart meter to the computer.
