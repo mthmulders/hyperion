@@ -5,6 +5,7 @@ import org.scalatest.Inside
 import scala.io.Source
 
 import P1TelegramParser._
+import P1Constants._
 
 class P1TelegramParserSpec extends BaseSpec with Inside {
 
@@ -34,11 +35,11 @@ class P1TelegramParserSpec extends BaseSpec with Inside {
             currentConsumption shouldBe 1.193
             currentProduction shouldBe 0
 
-            totalConsumption should contain("1" -> 123456.789)
-            totalConsumption should contain("2" -> 123456.789)
+            totalConsumption should contain(LOW_TARIFF -> 123456.789)
+            totalConsumption should contain(NORMAL_TARIFF -> 123456.789)
 
-            totalProduction should contain("1" -> 123456.789)
-            totalProduction should contain("2" -> 123456.789)
+            totalProduction should contain(LOW_TARIFF -> 123456.789)
+            totalProduction should contain(NORMAL_TARIFF -> 123456.789)
           }
           inside(checksum) { case P1Checksum(value) =>
             value shouldBe "522B"
