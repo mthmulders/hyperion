@@ -1,6 +1,7 @@
 package hyperion
 
 import akka.actor.ActorDSL.actor
+import akka.actor.ActorRef
 import akka.testkit.TestProbe
 import org.scalatest.OptionValues
 import spray.http.{HttpEntity, HttpRequest, HttpResponse, StatusCodes, Uri}
@@ -16,7 +17,7 @@ class IncomingHttpActorSpec extends BaseAkkaSpec with OptionValues {
       val request = new HttpRequest(GET, Uri("/wrong"), Nil, HttpEntity.Empty, `HTTP/1.1`)
 
       // Act
-      val sut = actor("wrong-path")(new IncomingHttpActor(TestProbe().ref))
+      val sut = actor("wrong-path")(new IncomingHttpActor())
       client.send(sut, request)
 
       // Assert
@@ -31,13 +32,29 @@ class IncomingHttpActorSpec extends BaseAkkaSpec with OptionValues {
       val request = new HttpRequest(PUT, Uri("/"), Nil, HttpEntity.Empty, `HTTP/1.1`)
 
       // Act
-      val sut = actor("wrong-method")(new IncomingHttpActor(TestProbe().ref))
+      val sut = actor("wrong-method")(new IncomingHttpActor())
       client.send(sut, request)
 
       // Assert
       val response = client.expectMsgAllClassOf(classOf[HttpResponse]).headOption
       response.value.status should be(StatusCodes.NotFound)
       response.value.entity.asString should include("Not found")
+    }
+
+    "forward requests with for the last reading to a new Actor" in {
+      // Arrange
+      val client = TestProbe()
+      val rha = TestProbe()
+      val request = new HttpRequest(GET, Uri("/actual"), Nil, HttpEntity.Empty, `HTTP/1.1`)
+
+      // Act
+      val sut = actor("actual-values")(new IncomingHttpActor() {
+        override def createActualValuesRequestHandlingActor(client: ActorRef) = rha.ref
+      })
+      client.send(sut, request)
+
+      // Assert
+      rha.expectMsg(request)
     }
   }
 }

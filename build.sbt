@@ -8,6 +8,7 @@ lazy val mockitoVer = "1.10.19"
 lazy val parserCombVer = "1.0.4"
 lazy val scalaTestVer = "2.2.4"
 lazy val sprayVer = "1.3.2"
+lazy val sprayWsVer = "0.1.4"
 
 //
 // Define dependencies
@@ -25,6 +26,7 @@ lazy val scalaTest   = "org.scalatest"            %% "scalatest"                
 lazy val sprayCan    = "io.spray"                 %% "spray-can"                     % sprayVer
 lazy val sprayHttpx  = "io.spray"                 %% "spray-httpx"                   % sprayVer
 lazy val sprayJson   = "io.spray"                 %% "spray-json"                    % sprayVer
+lazy val sprayWS     = "com.wandoulabs.akka"      %% "spray-websocket"               % sprayWsVer
 
 
 //
@@ -130,7 +132,8 @@ lazy val core = (project in file("core"))
       logback,
       sprayCan,
       sprayHttpx,
-      sprayJson
+      sprayJson,
+      sprayWS
     ),
     packageName in Linux := "hyperion-core",
     maintainer in Linux := "Maarten Mulders",
