@@ -13,5 +13,4 @@ import java.time.LocalDateTime
 case class MeterReading(ts: LocalDateTime,
                         tariff: String,
                         consumption: BigDecimal,
-                        production: BigDecimal) {
-}
+                        production: BigDecimal)

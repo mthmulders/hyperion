@@ -7,7 +7,7 @@ import scala.util.{Try, Failure, Success}
 
 /** Allows easy mix-in of [[HyperionJsonProtocol]] */
 trait HyperionJsonProtocol {
-  implicit val meterReadingFormat = HyperionJsonProtocol.MeterReadingFormat
+  implicit val meterReadingFormat = HyperionJsonProtocol.meterReadingFormat
 }
 
 /** Converts the model of Hyperions REST API into JSON and back */
@@ -26,5 +26,5 @@ object HyperionJsonProtocol extends DefaultJsonProtocol {
     override def write(input: LocalDateTime): JsValue = JsString(input.atOffset(ZoneOffset.UTC).format(format))
   }
 
-  implicit val MeterReadingFormat = jsonFormat4(MeterReading)
+  implicit val meterReadingFormat = jsonFormat4(MeterReading)
 }
