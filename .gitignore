@@ -3,3 +3,5 @@ hs_err_pid*
 *.iml
 .idea
 *.log
+node_modules
+web/build

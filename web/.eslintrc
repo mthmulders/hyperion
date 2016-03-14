@@ -1,0 +1,42 @@
+{
+  "extends": "eslint-config-airbnb",
+  "rules": {
+    "indent": [
+      2,
+      4
+    ],
+    "quotes": [
+      2,
+      "single"
+    ],
+    "linebreak-style": [
+      0,
+      "unix"
+    ],
+    "semi": [
+      2,
+      "always"
+    ],
+    "block-spacing": [
+      2,
+      "always"
+    ],
+    "react/jsx-quotes": 0,
+    "jsx-quotes": [
+      2,
+      "prefer-double"
+    ],
+    "react/jsx-curly-spacing": [
+      2,
+      "always"
+    ]
+  },
+  "env": {
+    "es6": true,
+    "browser": true,
+    "node": true
+  },
+  "plugins": [
+    "react"
+  ]
+}
