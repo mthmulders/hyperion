@@ -150,19 +150,6 @@ lazy val core = (project in file("core"))
   )
 ).dependsOn(common, testSupport % "test->test")
 
-lazy val web = (project in file("web"))
-  .enablePlugins(SbtNativePackager)
-  .settings(Seq(
-    packageName in Linux := "hyperion-web",
-    maintainer in Linux := "Maarten Mulders",
-    packageSummary in Linux := "Hyperion Web frontend",
-    packageDescription in Linux := "The Hyperion Web frontend that displays data",
-    mappings in Universal += {
-      sourceDirectory.value / "build" -> "/var/www/hyperion"
-    }
-  )
-)
-
 lazy val root = (project in file("."))
   .settings(commonSettings: _*)
-  .aggregate(core, meterAgent, web)
+  .aggregate(core, meterAgent)

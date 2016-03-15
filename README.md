@@ -21,6 +21,10 @@ The core is the part that periodically stores meter readings and makes them avai
 In order to make it reachable from the Meter Agent, you will probably need to change the `akka.remote.netty.tcp.hostname` configuration setting;
 it must be equal to the FQDN that the Meter Agent uses to connect to the Core.
 
+### Web
+There is also a web front-end to Hyperion.
+It is maintained in a [separate Git repository](https://github.com/mthmulders/hyperion-web).
+
 ## About the code
 Hyperion is written in Scala using the Akka-framework.
 
