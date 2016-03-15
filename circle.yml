@@ -21,6 +21,5 @@ test:
     - find . -type f -regex ".*/target/test-reports/.*xml" -exec cp {} $CIRCLE_TEST_REPORTS/junit/ \;
     - sbt coverageAggregate
     - sbt codacyCoverage
-    - pushd web && npm install && npm run build-prod && popd
     - sbt debian:packageBin
     - find . -type f -regex ".*deb" -exec cp {} $CIRCLE_TEST_REPORTS/deb/ \;
