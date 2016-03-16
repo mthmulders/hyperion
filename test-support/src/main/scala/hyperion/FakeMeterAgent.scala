@@ -25,10 +25,11 @@ object FakeMeterAgent extends App {
   private def randomTelegram(): P1Telegram = {
     val totalConsumption = immutable.Map(LOW_TARIFF -> randomBigDecimal(), NORMAL_TARIFF -> randomBigDecimal())
     val totalProduction = immutable.Map(LOW_TARIFF -> randomBigDecimal(), NORMAL_TARIFF -> randomBigDecimal())
+    val extraDevices = immutable.Seq.empty[P1ExtraDevice]
     P1Telegram(
       P1Header("make", "identifier"),
       P1MetaData("40", LocalDateTime.now(), "4B384547303034303436333935353037"),
-      P1Data(LOW_TARIFF, randomBigDecimal(), randomBigDecimal(), totalConsumption, totalProduction, None),
+      P1Data(LOW_TARIFF, randomBigDecimal(), randomBigDecimal(), totalConsumption, totalProduction, extraDevices),
       P1Checksum("checksum")
     )
   }

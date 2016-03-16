@@ -1,5 +1,6 @@
 package hyperion
 
+import java.io.Serializable
 import java.time.format.DateTimeFormatter
 import java.time.LocalDateTime
 
@@ -83,9 +84,16 @@ object P1TelegramParser extends RegexParsers {
 
   private val parser: Parser[P1Telegram] = header ~ (records ^^ { _.flatten}) ~ checksum ^^ {
     case parsedHeader ~ parsedRecords ~ parsedChecksum =>
-      def findRecord(recordType: P1RecordType) = {
+      def findRecord(recordType: P1RecordType): Option[_] = {
         parsedRecords.find(_.recordType == recordType).map(_.value)
       }
+      def findRecords(recordType: P1RecordType): immutable.Seq[Product] = {
+        parsedRecords.filter(_.recordType == recordType).map(_.value).map(_.asInstanceOf[Product])
+      }
+
+      val deviceIds: immutable.Seq[Int] = findRecords(EXTERNAL_DEVICE_TYPE)
+        .map(_.asInstanceOf[(Int, Int)]._1)
+      val devices: immutable.Seq[P1ExtraDevice] = deviceIds.map(P1ExtraDevice)
 
       (for {
         versionInfo <- findRecord(VERSION_INFORMATION).map(_.asInstanceOf[String])
@@ -105,7 +113,7 @@ object P1TelegramParser extends RegexParsers {
         productionMeter2 <- findRecord(ELECTRICITY_PRODUCED_TARIFF_2).map(_.asInstanceOf[BigDecimal])
         totalProduction = immutable.Map(LOW_TARIFF -> productionMeter1, NORMAL_TARIFF -> productionMeter2)
 
-        data = P1Data(currentTariff, currentConsumption, currentProduction, totalConsumption, totalProduction, None)
+        data = P1Data(currentTariff, currentConsumption, currentProduction, totalConsumption, totalProduction, devices)
 
       } yield P1Telegram(parsedHeader, metadata, data, parsedChecksum)).get
     } | failure("Not all required data objects are found")

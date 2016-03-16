@@ -60,9 +60,13 @@ case class P1Data(currentTariff: String,
                   currentProduction: BigDecimal,
                   totalConsumption: immutable.Map[String, BigDecimal],
                   totalProduction: immutable.Map[String, BigDecimal],
-                  devices: Option[immutable.Seq[P1ExtraDevice]])
+                  devices: immutable.Seq[P1ExtraDevice])
 
-case class P1ExtraDevice()
+/**
+  * Represents data about additional devices.
+  * @param id The identifier of the external device.
+  */
+case class P1ExtraDevice(id: Int)
 
 case class P1Checksum(checksum: String)
 

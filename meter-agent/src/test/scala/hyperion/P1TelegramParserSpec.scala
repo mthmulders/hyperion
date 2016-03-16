@@ -41,7 +41,7 @@ class P1TelegramParserSpec extends BaseSpec with Inside {
             totalProduction should contain(LOW_TARIFF -> 123456.789)
             totalProduction should contain(NORMAL_TARIFF -> 123456.789)
 
-            devices should be ('empty)
+            devices should not be empty
           }
           inside(checksum) { case P1Checksum(value) =>
             value shouldBe "522B"
