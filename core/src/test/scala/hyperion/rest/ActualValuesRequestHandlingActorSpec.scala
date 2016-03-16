@@ -14,11 +14,13 @@ import spray.http.{HttpHeader, StatusCodes}
 import spray.json._
 import HyperionJsonProtocol._
 
+import scala.collection.immutable
+
 class ActualValuesRequestHandlingActorSpec extends BaseAkkaSpec with OptionValues {
   val telegram = P1Telegram(
     P1Header("", ""),
     P1MetaData("", LocalDateTime.now(), ""),
-    P1Data(P1Constants.LOW_TARIFF, BigDecimal(0L), BigDecimal(0L), Map.empty, Map.empty, None),
+    P1Data(P1Constants.LOW_TARIFF, BigDecimal(0L), BigDecimal(0L), Map.empty, Map.empty, immutable.Seq.empty[P1ExtraDevice]),
     P1Checksum("")
   )
 
