@@ -65,8 +65,10 @@ case class P1Data(currentTariff: String,
 /**
   * Represents data about additional devices.
   * @param id The identifier of the external device.
+  * @param deviceType Type of device (no code table known yet).
   */
-case class P1ExtraDevice(id: Int)
+case class P1ExtraDevice(id: Int,
+                         deviceType: String)
 
 case class P1Checksum(checksum: String)
 

@@ -90,10 +90,17 @@ object P1TelegramParser extends RegexParsers {
       def findRecords(recordType: P1RecordType): immutable.Seq[Product] = {
         parsedRecords.filter(_.recordType == recordType).map(_.value).map(_.asInstanceOf[Product])
       }
+      def findExtraDeviceRecord(recordType: P1RecordType, deviceId: Int): Option[_] = {
+        findRecord(recordType).find(_.asInstanceOf[Product].productElement(0) == deviceId)
+      }
 
       val deviceIds: immutable.Seq[Int] = findRecords(EXTERNAL_DEVICE_TYPE)
         .map(_.asInstanceOf[(Int, Int)]._1)
-      val devices: immutable.Seq[P1ExtraDevice] = deviceIds.map(P1ExtraDevice)
+      val devices: immutable.Seq[P1ExtraDevice] = deviceIds.map(deviceId => {
+        val deviceTypeRecord = findExtraDeviceRecord(EXTERNAL_DEVICE_TYPE, deviceId)
+        val deviceType = deviceTypeRecord.map(_.asInstanceOf[(Int, String)]._2)
+        P1ExtraDevice(deviceId, deviceType.getOrElse("unknown"))
+      })
 
       (for {
         versionInfo <- findRecord(VERSION_INFORMATION).map(_.asInstanceOf[String])
