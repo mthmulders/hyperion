@@ -49,10 +49,10 @@ case class P1MetaData(versionInfo: String,
 /**
   * Actual measurement data.
   * @param currentTariff Indicates what the current tariff is
-  * @param currentConsumption Indicates what the actual consumption is
-  * @param currentProduction Indicates what the actual production is
-  * @param totalConsumption Indicates what the total consumption is
-  * @param totalProduction Indicates what the total production is
+  * @param currentConsumption Indicates what the actual consumption is (kW).
+  * @param currentProduction Indicates what the actual production is (kW).
+  * @param totalConsumption Indicates what the total consumption is per tariff (kWh).
+  * @param totalProduction Indicates what the total production is per tariff (kWh).
   * @param devices (when present) contains information about devices that are connected to the smart meter
   */
 case class P1Data(currentTariff: String,
@@ -84,10 +84,12 @@ case class P1UnknownDevice(id: Int, deviceType: String) extends P1ExtraDevice
   * @param id The identifier of the external device.
   * @param deviceType Type of device (no code table known yet).
   * @param lastCapture Last moment data was captured from the gas meter.
+  * @param gasDelivered Amount of gas delivered
   */
 case class P1GasMeter(id: Int,
                       deviceType: String,
-                      lastCapture: LocalDateTime) extends P1ExtraDevice
+                      lastCapture: LocalDateTime,
+                      gasDelivered: BigDecimal) extends P1ExtraDevice
 
 case class P1Checksum(checksum: String)
 

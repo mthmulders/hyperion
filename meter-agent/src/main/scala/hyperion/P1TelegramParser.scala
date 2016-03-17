@@ -1,6 +1,5 @@
 package hyperion
 
-import java.io.Serializable
 import java.time.format.DateTimeFormatter
 import java.time.LocalDateTime
 
@@ -106,7 +105,7 @@ object P1TelegramParser extends RegexParsers {
 
             lastCaptureRecord match {
               case Some((_, captureTime, reading)) =>
-                P1GasMeter(deviceId, "03", captureTime)
+                P1GasMeter(deviceId, "03", captureTime, reading)
               case None =>
                 logger.warn("External device of type 03 (Gas Meter), but no 0-n:24.2.1.255 line found")
                 P1UnknownDevice(deviceId, "03")
