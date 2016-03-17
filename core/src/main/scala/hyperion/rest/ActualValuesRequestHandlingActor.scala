@@ -2,7 +2,7 @@ package hyperion.rest
 
 import akka.actor._
 import hyperion.MessageDistributor.RegisterReceiver
-import hyperion.TelegramReceived
+import hyperion.{P1GasMeter, TelegramReceived}
 import spray.can.websocket
 import spray.can.websocket.frame.TextFrame
 import spray.routing.HttpServiceActor
@@ -17,6 +17,7 @@ object ActualValuesRequestHandlingActor {
 /**
   * Actor that upgrades an HTTP connection to a WebSocket connection and then updates the client
   * when new meter readings come in.
+  *
   * @param httpClient Ref to the Actor that does the communication with the client.
   */
 class ActualValuesRequestHandlingActor(val httpClient: ActorRef) extends HttpServiceActor
@@ -30,11 +31,15 @@ class ActualValuesRequestHandlingActor(val httpClient: ActorRef) extends HttpSer
 
   def businessLogic: Receive = {
     case TelegramReceived(telegram) =>
+      val gasConsumption = telegram.data.devices
+        .find(_.isInstanceOf[P1GasMeter])
+        .map(_.asInstanceOf[P1GasMeter].gasDelivered)
       val msg = MeterReading(
         telegram.metadata.timestamp,
         telegram.data.currentTariff,
         telegram.data.currentConsumption,
-        telegram.data.currentProduction)
+        telegram.data.currentProduction,
+        gasConsumption)
       send(TextFrame(msg.toJson.toString))
   }
 

@@ -26,5 +26,5 @@ object HyperionJsonProtocol extends DefaultJsonProtocol {
     override def write(input: LocalDateTime): JsValue = JsString(input.atOffset(ZoneOffset.UTC).format(format))
   }
 
-  implicit val meterReadingFormat = jsonFormat4(MeterReading)
+  implicit val meterReadingFormat = jsonFormat5(MeterReading)
 }
