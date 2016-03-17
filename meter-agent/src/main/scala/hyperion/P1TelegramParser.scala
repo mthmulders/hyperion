@@ -98,8 +98,28 @@ object P1TelegramParser extends RegexParsers {
         .map(_.asInstanceOf[(Int, Int)]._1)
       val devices: immutable.Seq[P1ExtraDevice] = deviceIds.map(deviceId => {
         val deviceTypeRecord = findExtraDeviceRecord(EXTERNAL_DEVICE_TYPE, deviceId)
-        val deviceType = deviceTypeRecord.map(_.asInstanceOf[(Int, String)]._2)
-        P1ExtraDevice(deviceId, deviceType.getOrElse("unknown"))
+
+        deviceTypeRecord.map(_.asInstanceOf[(Int, String)]._2) match {
+          case Some("03") =>
+            val lastCaptureRecord = findExtraDeviceRecord(EXTERNAL_DEVICE_GAS_READING, deviceId)
+                .map(_.asInstanceOf[(Int, LocalDateTime, BigDecimal)])
+
+            lastCaptureRecord match {
+              case Some((_, captureTime, reading)) =>
+                P1GasMeter(deviceId, "03", captureTime)
+              case None =>
+                logger.warn("External device of type 03 (Gas Meter), but no 0-n:24.2.1.255 line found")
+                P1UnknownDevice(deviceId, "03")
+            }
+
+          case Some(deviceType) =>
+            logger.warn("External device of unsupported type {} found", deviceType)
+            P1UnknownDevice(deviceId, deviceType)
+
+          case None =>
+            logger.warn("External device found but it did not tell its type")
+            P1UnknownDevice(deviceId, "unknown")
+        }
       })
 
       (for {

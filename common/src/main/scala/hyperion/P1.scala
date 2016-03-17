@@ -63,12 +63,31 @@ case class P1Data(currentTariff: String,
                   devices: immutable.Seq[P1ExtraDevice])
 
 /**
-  * Represents data about additional devices.
+  * Base class for records that represent data about additional devices.
+  */
+abstract class P1ExtraDevice {
+  /* The identifier of the external device. */
+  def id: Int
+  /* Type of device (no code table known yet). */
+  def deviceType: String
+}
+
+/**
+  * Represents data about an unsupported external device.
   * @param id The identifier of the external device.
   * @param deviceType Type of device (no code table known yet).
   */
-case class P1ExtraDevice(id: Int,
-                         deviceType: String)
+case class P1UnknownDevice(id: Int, deviceType: String) extends P1ExtraDevice
+
+/**
+  * Represents data about an external gas meter.
+  * @param id The identifier of the external device.
+  * @param deviceType Type of device (no code table known yet).
+  * @param lastCapture Last moment data was captured from the gas meter.
+  */
+case class P1GasMeter(id: Int,
+                      deviceType: String,
+                      lastCapture: LocalDateTime) extends P1ExtraDevice
 
 case class P1Checksum(checksum: String)
 

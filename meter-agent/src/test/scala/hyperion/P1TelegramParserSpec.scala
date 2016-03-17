@@ -1,5 +1,7 @@
 package hyperion
 
+import java.time.LocalDateTime
+
 import org.scalatest.Inside
 
 import scala.io.Source
@@ -41,7 +43,7 @@ class P1TelegramParserSpec extends BaseSpec with Inside {
             totalProduction should contain(LOW_TARIFF -> 123456.789)
             totalProduction should contain(NORMAL_TARIFF -> 123456.789)
 
-            devices should contain (P1ExtraDevice(1, "03"))
+            devices should contain (P1GasMeter(1, "03", LocalDateTime.parse("2010-12-09T11:00")))
           }
           inside(checksum) { case P1Checksum(value) =>
             value shouldBe "522B"
