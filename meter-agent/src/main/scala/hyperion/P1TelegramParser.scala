@@ -99,16 +99,16 @@ object P1TelegramParser extends RegexParsers {
         val deviceTypeRecord = findExtraDeviceRecord(EXTERNAL_DEVICE_TYPE, deviceId)
 
         deviceTypeRecord.map(_.asInstanceOf[(Int, String)]._2) match {
-          case Some("03") =>
+          case Some("003") =>
             val lastCaptureRecord = findExtraDeviceRecord(EXTERNAL_DEVICE_GAS_READING, deviceId)
                 .map(_.asInstanceOf[(Int, LocalDateTime, BigDecimal)])
 
             lastCaptureRecord match {
               case Some((_, captureTime, reading)) =>
-                P1GasMeter(deviceId, "03", captureTime, reading)
+                P1GasMeter(deviceId, "003", captureTime, reading)
               case None =>
-                logger.warn("External device of type 03 (Gas Meter), but no 0-n:24.2.1.255 line found")
-                P1UnknownDevice(deviceId, "03")
+                logger.warn("External device of type 003 (Gas Meter), but no 0-n:24.2.1.255 line found")
+                P1UnknownDevice(deviceId, "003")
             }
 
           case Some(deviceType) =>
