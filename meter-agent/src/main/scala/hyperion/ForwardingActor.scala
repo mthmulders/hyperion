@@ -32,7 +32,7 @@ class ForwardingActor(selection: ActorSelection) extends FSM[State, Data] with A
 
   when(Waiting) {
     case Event(ActorIdentity(`messageId`, Some(ref)), Queue(q, _)) =>
-      log.info("Received identity for remote target: {}", ref)
+      log.info("Connected to {}", ref)
       context.watch(ref)
       q.foreach(ref ! _)
       unstashAll()
