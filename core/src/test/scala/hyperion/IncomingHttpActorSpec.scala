@@ -5,7 +5,6 @@ import akka.actor.ActorRef
 import akka.testkit.TestProbe
 import org.scalatest.OptionValues
 import spray.http.{HttpEntity, HttpRequest, HttpResponse, StatusCodes, Uri}
-import spray.http.ContentTypes.`application/json`
 import spray.http.HttpMethods.{GET, POST, PUT}
 import spray.http.HttpProtocols.`HTTP/1.1`
 
@@ -17,7 +16,7 @@ class IncomingHttpActorSpec extends BaseAkkaSpec with OptionValues {
       val request = new HttpRequest(GET, Uri("/wrong"), Nil, HttpEntity.Empty, `HTTP/1.1`)
 
       // Act
-      val sut = actor("wrong-path")(new IncomingHttpActor())
+      val sut = actor("wrong-path")(new IncomingHttpActor(TestProbe().ref))
       client.send(sut, request)
 
       // Assert
@@ -32,7 +31,7 @@ class IncomingHttpActorSpec extends BaseAkkaSpec with OptionValues {
       val request = new HttpRequest(PUT, Uri("/"), Nil, HttpEntity.Empty, `HTTP/1.1`)
 
       // Act
-      val sut = actor("wrong-method")(new IncomingHttpActor())
+      val sut = actor("wrong-method")(new IncomingHttpActor(TestProbe().ref))
       client.send(sut, request)
 
       // Assert
@@ -48,8 +47,8 @@ class IncomingHttpActorSpec extends BaseAkkaSpec with OptionValues {
       val request = new HttpRequest(GET, Uri("/actual"), Nil, HttpEntity.Empty, `HTTP/1.1`)
 
       // Act
-      val sut = actor("actual-values")(new IncomingHttpActor() {
-        override def createActualValuesRequestHandlingActor(client: ActorRef) = rha.ref
+      val sut = actor("actual-values")(new IncomingHttpActor(TestProbe().ref) {
+        override def createActualValuesRequestHandlingActor(client: ActorRef, messageDistributor: ActorRef) = rha.ref
       })
       client.send(sut, request)
 
