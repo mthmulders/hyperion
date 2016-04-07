@@ -19,12 +19,16 @@ object LauncherActor {
   * @param port Desired port number.
   */
 class LauncherActor(port: Int) extends Actor with ActorLogging {
-  override def preStart = {
+  protected def http() = {
     implicit val system = context.system
-    val messageDistributor = system.actorOf(MessageDistributor.props(), "receiver")
-    val httpRequestActor = system.actorOf(IncomingHttpActor.props(messageDistributor), "incoming-http-actor")
+    IO(UHttp)
+  }
 
-    IO(UHttp) ! Http.Bind(httpRequestActor, interface = "0.0.0.0", port = port)
+  override def preStart = {
+    val messageDistributor = context.system.actorOf(MessageDistributor.props(), "receiver")
+    val httpRequestActor = context.system.actorOf(IncomingHttpActor.props(messageDistributor), "incoming-http-actor")
+
+    http ! Http.Bind(httpRequestActor, interface = "0.0.0.0", port = port)
   }
 
   override def receive: Receive = {
@@ -33,5 +37,9 @@ class LauncherActor(port: Int) extends Actor with ActorLogging {
     case c: CommandFailed =>
       log.error("Could not bind to requested address due to {}", c)
       context.system.terminate()
+  }
+
+  override def postStop = {
+    http ! Http.Unbind
   }
 }
