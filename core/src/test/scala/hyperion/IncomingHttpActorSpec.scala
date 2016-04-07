@@ -40,7 +40,7 @@ class IncomingHttpActorSpec extends BaseAkkaSpec with OptionValues {
       response.value.entity.asString should include("Not found")
     }
 
-    "forward requests with for the last reading to a new Actor" in {
+    "forward requests for the last reading to a new Actor" in {
       // Arrange
       val client = TestProbe()
       val rha = TestProbe()

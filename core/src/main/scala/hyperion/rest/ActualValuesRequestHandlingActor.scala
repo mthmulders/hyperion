@@ -1,6 +1,6 @@
 package hyperion.rest
 
-import akka.actor._
+import akka.actor.{ActorLogging, ActorRef, Props}
 import hyperion.MessageDistributor.RegisterReceiver
 import hyperion.{P1GasMeter, TelegramReceived}
 import spray.can.websocket
