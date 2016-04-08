@@ -1,5 +1,6 @@
 package hyperion
 
+import akka.actor.ActorDSL.actor
 import akka.testkit.TestProbe
 import scala.concurrent.duration.DurationInt
 
@@ -9,12 +10,14 @@ class LauncherActorSpec extends BaseAkkaSpec {
       // Arrange
 
       // Act
-      val launcher = system.actorOf(LauncherActor.props(8080))
+      val launcher = actor("create-children")(new LauncherActor(8080) {
+        override protected def http() = TestProbe().ref
+      })
 
       // Assert
       TestProbe().expectActor("/user/incoming-http-actor", 500 millis)
       TestProbe().expectActor("/user/receiver", 500 millis)
-      system.stop(launcher)
+      TestProbe().expectActor("/user/recent-history", 500 millis)
     }
   }
 }
