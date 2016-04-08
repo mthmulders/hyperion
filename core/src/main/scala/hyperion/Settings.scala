@@ -1,6 +1,7 @@
 package hyperion
 
 import akka.actor.{Actor, ExtendedActorSystem, Extension, ExtensionKey}
+import scala.concurrent.duration._
 
 /**
   * Provides convenient access to the settings in application.conf.
@@ -12,6 +13,11 @@ class Settings(system: ExtendedActorSystem) extends Extension {
 
   object api {
     val port = hyperion getInt "api.port"
+  }
+
+  object history {
+    val resolution = hyperion getDuration("history.resolution", MILLISECONDS) millis
+    val limit = hyperion getDuration("history.limit", HOURS) hours
   }
 
 }
