@@ -69,5 +69,14 @@ class RingBufferSpec extends BaseSpec {
       // Assert
       buffer should contain inOrderOnly ("foo", "2")
     }
+
+    "should throw a NoSuchElementException when a non-existing element is accessed" in {
+      // Arrange
+      val buffer = RingBuffer[String](2)
+      buffer += "1"
+
+      // Act and Assert
+      an [NoSuchElementException] should be thrownBy buffer(2)
+    }
   }
 }

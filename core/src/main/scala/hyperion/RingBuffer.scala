@@ -16,7 +16,7 @@ import scala.reflect.ClassTag
   * @param limit Maximum number of elements in this collection.
   */
 class RingBuffer[T](limit: Int)(implicit m: ClassTag[T]) extends mutable.AbstractBuffer[T] with GenTraversable[T] {
-  private[this] val items = new Array[T](limit)
+  private[this] val items = Array.fill[Option[T]](limit)(None)
   private[this] var cursor = 0
   private[this] val monitor = new ReentrantReadWriteLock()
 
@@ -27,7 +27,7 @@ class RingBuffer[T](limit: Int)(implicit m: ClassTag[T]) extends mutable.Abstrac
   override def apply(n: Int): T = {
     monitor.readLock().lock()
     try {
-      items(positionInArray(n))
+      items(positionInArray(n)).get
     } finally {
       monitor.readLock().unlock()
     }
@@ -36,7 +36,7 @@ class RingBuffer[T](limit: Int)(implicit m: ClassTag[T]) extends mutable.Abstrac
   override def update(n: Int, newelem: T): Unit = {
     monitor.writeLock().lock()
     try {
-      items.update(positionInArray(n), newelem)
+      items.update(positionInArray(n), Some(newelem))
     } finally {
       monitor.writeLock().unlock()
     }
@@ -44,7 +44,7 @@ class RingBuffer[T](limit: Int)(implicit m: ClassTag[T]) extends mutable.Abstrac
 
   override def clear(): Unit = {}
 
-  override def length: Int = items.count(_ != null)
+  override def length: Int = items.count(_.isDefined)
 
   /**
     * Removes the element at a given index from this buffer.
@@ -62,7 +62,7 @@ class RingBuffer[T](limit: Int)(implicit m: ClassTag[T]) extends mutable.Abstrac
   override def +=(elem: T): RingBuffer.this.type = {
     monitor.writeLock().lock()
     try {
-      items.update(cursor, elem)
+      items.update(cursor, Some(elem))
       cursor += 1
       if (cursor >= limit) cursor = 0
       this
