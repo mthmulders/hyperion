@@ -19,7 +19,7 @@ abstract class BaseAkkaSpec extends BaseSpec with Matchers with BeforeAndAfterAl
     def expectActor(path: String, max: FiniteDuration = maxWaitForActor): immutable.Seq[ActorRef] = {
       val actors = mutable.ArrayBuffer.empty[ActorRef]
       (probe.system actorSelection path).tell(Identify(path), probe.ref)
-      probe.expectMsgPF(max) {
+      probe.receiveWhile(max) {
         case ActorIdentity(`path`, Some(ref)) => actors += ref
         case ActorIdentity(`path`, None) => fail(s"Expected Some(ActorRef) for path $path but got None")
       }
