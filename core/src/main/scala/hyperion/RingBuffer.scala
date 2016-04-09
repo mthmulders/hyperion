@@ -21,7 +21,7 @@ class RingBuffer[T](limit: Int)(implicit m: ClassTag[T]) extends mutable.Abstrac
   private[this] val monitor = new ReentrantReadWriteLock()
 
   private[this] def positionInArray(desiredPosition: Int): Int = {
-    (cursor + desiredPosition) % limit
+    if (length >= limit) (cursor + desiredPosition) % limit else desiredPosition
   }
 
   override def apply(n: Int): T = {

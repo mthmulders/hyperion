@@ -42,6 +42,18 @@ class RingBufferSpec extends BaseSpec {
       buffer.length should be (2)
     }
 
+    "correctly loop over the buffer if its limit was not reached" in {
+      // Arrange
+      val buffer = RingBuffer[String](3)
+
+      // Act
+      buffer += "1"
+      buffer += "2"
+
+      // Assert
+      buffer should contain inOrderOnly ("1", "2")
+    }
+
     "correctly loop over the buffer if its limit was exceeded" in {
       // Arrange
       val buffer = RingBuffer[String](3)
@@ -70,13 +82,13 @@ class RingBufferSpec extends BaseSpec {
       buffer should contain inOrderOnly ("foo", "2")
     }
 
-    "should throw a NoSuchElementException when a non-existing element is accessed" in {
+    "should throw a NoSuchElementException when an element is accessed that is not yet initialised" in {
       // Arrange
       val buffer = RingBuffer[String](2)
       buffer += "1"
 
       // Act and Assert
-      an [NoSuchElementException] should be thrownBy buffer(2)
+      an [NoSuchElementException] should be thrownBy buffer(1)
     }
   }
 }
