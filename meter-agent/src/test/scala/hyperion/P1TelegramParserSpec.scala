@@ -37,11 +37,11 @@ class P1TelegramParserSpec extends BaseSpec with Inside {
             currentConsumption shouldBe 1.193
             currentProduction shouldBe 0
 
-            totalConsumption should contain(LOW_TARIFF -> 123456.789)
-            totalConsumption should contain(NORMAL_TARIFF -> 123456.789)
+            totalConsumption should contain(lowTariff -> 123456.789)
+            totalConsumption should contain(normalTariff -> 123456.789)
 
-            totalProduction should contain(LOW_TARIFF -> 123456.789)
-            totalProduction should contain(NORMAL_TARIFF -> 123456.789)
+            totalProduction should contain(lowTariff -> 123456.789)
+            totalProduction should contain(normalTariff -> 123456.789)
 
             devices should contain (P1GasMeter(1, "003", LocalDateTime.parse("2010-12-09T11:00"), BigDecimal(12785.123)))
           }

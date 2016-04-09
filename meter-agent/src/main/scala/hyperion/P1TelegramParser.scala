@@ -133,11 +133,11 @@ object P1TelegramParser extends RegexParsers {
 
         consumptionMeter1 <- findRecord(ELECTRICITY_CONSUMED_TARIFF_1).map(_.asInstanceOf[BigDecimal])
         consumptionMeter2 <- findRecord(ELECTRICITY_CONSUMED_TARIFF_2).map(_.asInstanceOf[BigDecimal])
-        totalConsumption = immutable.Map(LOW_TARIFF -> consumptionMeter1, NORMAL_TARIFF -> consumptionMeter2)
+        totalConsumption = immutable.Map(lowTariff -> consumptionMeter1, normalTariff -> consumptionMeter2)
 
         productionMeter1 <- findRecord(ELECTRICITY_PRODUCED_TARIFF_1).map(_.asInstanceOf[BigDecimal])
         productionMeter2 <- findRecord(ELECTRICITY_PRODUCED_TARIFF_2).map(_.asInstanceOf[BigDecimal])
-        totalProduction = immutable.Map(LOW_TARIFF -> productionMeter1, NORMAL_TARIFF -> productionMeter2)
+        totalProduction = immutable.Map(lowTariff -> productionMeter1, normalTariff -> productionMeter2)
 
         data = P1Data(currentTariff, currentConsumption, currentProduction, totalConsumption, totalProduction, devices)
 

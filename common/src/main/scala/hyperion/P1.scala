@@ -6,8 +6,8 @@ import java.util.Date
 import scala.collection.immutable
 
 object P1Constants {
-  val LOW_TARIFF = "0001"
-  val NORMAL_TARIFF = "0002"
+  val lowTariff = "0001"
+  val normalTariff = "0002"
 }
 
 /**
