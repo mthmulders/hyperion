@@ -15,7 +15,7 @@ class LauncherActorSpec extends BaseAkkaSpec {
       })
 
       // Assert
-      val createdActors = TestProbe().expectActor("/user/*", 750 millis).filterNot(_ == launcher)
+      val createdActors = TestProbe().expectActor("/user/*", 1 second).filterNot(_ == launcher)
       createdActors should have size 3
       val createdPaths = createdActors.map(_.path.toString).map(_.replace("akka://default/user/", ""))
       createdPaths should contain allOf ("receiver", "incoming-http-actor", "recent-history")
