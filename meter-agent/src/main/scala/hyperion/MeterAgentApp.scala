@@ -46,7 +46,7 @@ class MeterAgentApp(system: ActorSystem) {
 
   protected def findTelegramReceiver(): ActorRef = {
     val path = RootActorPath(Address("akka.tcp", system.name, settings.receiver.host, 2552)) / "user" / "receiver"
-    system.actorOf(ForwardingActor.props(system.actorSelection(path)))
+    system.actorOf(ForwardingActor.props(system.actorSelection(path)), "forwarding-actor")
   }
 
   protected def createMeterAgent(): ActorRef = {

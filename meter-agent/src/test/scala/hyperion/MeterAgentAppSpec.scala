@@ -8,8 +8,11 @@ class MeterAgentAppSpec extends BaseAkkaSpec {
   "Creating the MeterAgentApp" should {
     "result in creating the necessary top-level actors" in {
       new MeterAgentApp(system)
-      TestProbe().expectActor("/user/meter-agent", 250 milliseconds) should not be empty
-      TestProbe().expectActor("/user/collecting-actor", 250 milliseconds) should not be empty
+
+      val createdActors = TestProbe().expectActor("/user/*", 1 second)
+      createdActors should have size 3
+      val createdPaths = createdActors.map(_.path.toString).map(_.replace("akka://default/user/", ""))
+      createdPaths should contain allOf ("meter-agent", "collecting-actor", "forwarding-actor")
     }
   }
 }
