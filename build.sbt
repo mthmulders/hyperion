@@ -6,7 +6,7 @@ lazy val flowVer = "2.4.1"
 lazy val logbackVer = "1.1.3"
 lazy val mockitoVer = "1.10.19"
 lazy val parserCombVer = "1.0.4"
-lazy val scalaTestVer = "2.2.4"
+lazy val scalaTestVer = "2.2.6"
 lazy val sprayVer = "1.3.2"
 lazy val sprayWsVer = "0.1.4"
 
