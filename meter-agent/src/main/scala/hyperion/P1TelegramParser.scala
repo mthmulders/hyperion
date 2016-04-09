@@ -94,11 +94,11 @@ object P1TelegramParser extends RegexParsers {
       }
 
       val deviceIds: immutable.Seq[Int] = findRecords(EXTERNAL_DEVICE_TYPE)
-        .map(_.asInstanceOf[(Int, Int)]._1)
+        .map({ case (deviceId: Int, _: String) => deviceId })
       val devices: immutable.Seq[P1ExtraDevice] = deviceIds.map(deviceId => {
         val deviceTypeRecord = findExtraDeviceRecord(EXTERNAL_DEVICE_TYPE, deviceId)
 
-        deviceTypeRecord.map(_.asInstanceOf[(Int, String)]._2) match {
+        deviceTypeRecord.map({ case (_: Int, deviceType: String) => deviceType }) match {
           case Some("003") =>
             val lastCaptureRecord = findExtraDeviceRecord(EXTERNAL_DEVICE_GAS_READING, deviceId)
                 .map(_.asInstanceOf[(Int, LocalDateTime, BigDecimal)])
