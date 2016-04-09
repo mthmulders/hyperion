@@ -21,7 +21,7 @@ abstract class BaseAkkaSpec extends BaseSpec with Matchers with BeforeAndAfterAl
       (probe.system actorSelection path).tell(Identify(path), probe.ref)
       probe.expectMsgPF(max) {
         case ActorIdentity(`path`, Some(ref)) => actors += ref
-        case ActorIdentity(`path`, None) => log.warn("Expected Some(ActorRef) for path {} but got None", path)
+        case ActorIdentity(`path`, None) => fail(s"Expected Some(ActorRef) for path $path but got None")
       }
       immutable.Seq(actors:_*)
     }
