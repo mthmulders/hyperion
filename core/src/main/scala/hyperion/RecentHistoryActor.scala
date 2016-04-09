@@ -4,6 +4,8 @@ import akka.actor.{ActorLogging, ActorRef, FSM, Props}
 import hyperion.MessageDistributor.RegisterReceiver
 import hyperion.RecentHistoryActor._
 
+import scala.collection.immutable
+
 object RecentHistoryActor {
   def props(messageDistributor: ActorRef) = {
     Props(new RecentHistoryActor(messageDistributor))
@@ -16,7 +18,7 @@ object RecentHistoryActor {
   case class History(telegrams: RingBuffer[P1Telegram]) extends Data
 
   case object GetRecentHistory
-  case class RecentReadings()
+  case class RecentReadings(telegrams: immutable.Vector[P1Telegram])
 }
 
 /**
@@ -30,25 +32,27 @@ class RecentHistoryActor(messageDistributor: ActorRef) extends FSM[State, Data] 
   }
 
   private[this] val historyLimit = (settings.history.limit / settings.history.resolution).toInt
-  log.debug(s"Allocating buffer for $historyLimit entries")
+  log.info(s"Allocating buffer for $historyLimit entries")
   startWith(Receiving, History(RingBuffer[P1Telegram](historyLimit)))
 
   when(Receiving) {
     case Event(TelegramReceived(telegram), History(history)) =>
-      log.info(s"Received telegram issued @ ${telegram.metadata.timestamp}")
-      log.debug(s"Will now sleep for ${settings.history.resolution}")
       goto(Sleeping) using History(history += telegram)
+    case Event(GetRecentHistory, History(history)) =>
+      sender() ! RecentReadings(history.toVector)
+      stay()
   }
 
   when(Sleeping) {
     case Event(_: TelegramReceived, _) =>
-      log.debug("Not storing this telegram")
+      stay()
+    case Event(GetRecentHistory, History(history)) =>
+      sender() ! RecentReadings(history.toVector)
       stay()
   }
 
   when(Sleeping, settings.history.resolution) {
     case Event(StateTimeout, history) =>
-      log.debug("Waiting for next telegram to come in")
       goto(Receiving) using history
   }
 
