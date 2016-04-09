@@ -22,6 +22,8 @@ abstract class BaseAkkaSpec extends BaseSpec with Matchers with BeforeAndAfterAl
       probe.receiveWhile(max) {
         case ActorIdentity(`path`, Some(ref)) => actors += ref
         case ActorIdentity(`path`, None) => fail(s"Expected Some(ActorRef) for path $path but got None")
+        case ActorIdentity(otherPath, _) => log.warn(s"Expected Some(ActorRef) for path $path but got one for path $otherPath")
+        case msg: Any => log.warn(s"Expected Some(ActorRef) for path $path but got $msg")
       }
       immutable.Seq(actors:_*)
     }
