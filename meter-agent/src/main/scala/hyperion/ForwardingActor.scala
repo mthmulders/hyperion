@@ -40,9 +40,6 @@ class ForwardingActor(selection: ActorSelection) extends FSM[State, Data] with A
     case Event(ActorIdentity(`messageId`, None), Queue(q, retries)) if retries > 0 =>
       log.warning("Got not found when asking for {}, backing off", selection.toString())
       stay()
-    case Event(msg, Queue(q, retries)) =>
-      log.debug("Enqueuing message {}", msg)
-      stay() using Queue(q :+ msg, retries)
     case Event(StateTimeout, Queue(q, retries)) if retries > 0 =>
       log.warning("Could not find requested target {}, retrying ({} attempts left)", selection.toString(), retries)
       askSelectionForIdentification()
@@ -50,6 +47,9 @@ class ForwardingActor(selection: ActorSelection) extends FSM[State, Data] with A
     case Event(StateTimeout, Queue(q, retries)) if retries == 0 =>
       log.error("Could not find requested target {}, giving up", selection.toString())
       stop()
+    case Event(msg, Queue(q, retries)) =>
+      log.debug("Enqueuing message {}", msg)
+      stay() using Queue(q :+ msg, retries)
   }
 
   when(Forwarding) {
