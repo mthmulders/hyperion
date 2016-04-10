@@ -13,14 +13,14 @@ import spray.http.{HttpHeader, StatusCodes}
 import spray.json._
 import HyperionJsonProtocol._
 
-class ActualValuesRequestHandlingActorSpec extends BaseAkkaSpec with OptionValues {
+class ActualValuesHandlerActorSpec extends BaseAkkaSpec with OptionValues {
   "Initially" should {
     "register itself with the Message Distributor" in {
       // Arrange
       val messageDistributor = TestProbe("receiver")
 
       // Act
-      system.actorOf(ActualValuesRequestHandlingActor.props(TestProbe().ref, messageDistributor.ref), "register")
+      system.actorOf(ActualValuesHandlerActor.props(TestProbe().ref, messageDistributor.ref), "register")
 
       // Assert
       messageDistributor.expectMsg(RegisterReceiver)
@@ -31,7 +31,7 @@ class ActualValuesRequestHandlingActorSpec extends BaseAkkaSpec with OptionValue
       val client = TestProbe()
 
       // Act
-      val sut = actor("upgrade-connection")(new ActualValuesRequestHandlingActor(client.ref, TestProbe().ref))
+      val sut = actor("upgrade-connection")(new ActualValuesHandlerActor(client.ref, TestProbe().ref))
       client.send(sut, websocket.basicHandshakeRepuset("/actual"))
 
       // Assert
@@ -51,7 +51,7 @@ class ActualValuesRequestHandlingActorSpec extends BaseAkkaSpec with OptionValue
       val telegram = TestSupport.randomTelegram()
 
       // Act
-      val sut = actor("send-new-reading")(new ActualValuesRequestHandlingActor(client.ref, TestProbe().ref))
+      val sut = actor("send-new-reading")(new ActualValuesHandlerActor(client.ref, TestProbe().ref))
       client.send(sut, websocket.basicHandshakeRepuset("/actual"))
       sut ! TelegramReceived(telegram)
 

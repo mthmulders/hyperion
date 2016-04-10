@@ -48,7 +48,7 @@ class IncomingHttpActorSpec extends BaseAkkaSpec with OptionValues {
 
       // Act
       val sut = actor("actual-values")(new IncomingHttpActor(TestProbe().ref) {
-        override def createActualValuesRequestHandlingActor(client: ActorRef, messageDistributor: ActorRef) = rha.ref
+        override def createActualValuesHandlerActor(client: ActorRef, messageDistributor: ActorRef) = rha.ref
       })
       client.send(sut, request)
 
@@ -64,7 +64,7 @@ class IncomingHttpActorSpec extends BaseAkkaSpec with OptionValues {
 
       // Act
       val sut = actor("recent-values")(new IncomingHttpActor(TestProbe().ref) {
-        override def createRecentReadingsRequestHandler(messageDistributor: ActorRef) = rha.ref
+        override def createRecentReadingsHandlerActor(messageDistributor: ActorRef) = rha.ref
       })
       client.send(sut, request)
 

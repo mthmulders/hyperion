@@ -9,9 +9,9 @@ import spray.can.websocket.frame.TextFrame
 import spray.routing.HttpServiceActor
 import spray.json._
 
-object ActualValuesRequestHandlingActor {
+object ActualValuesHandlerActor {
   def props(httpClient: ActorRef, messageDistributor: ActorRef) = {
-    Props(new ActualValuesRequestHandlingActor(httpClient, messageDistributor))
+    Props(new ActualValuesHandlerActor(httpClient, messageDistributor))
   }
 }
 
@@ -22,7 +22,7 @@ object ActualValuesRequestHandlingActor {
   * @param httpClient Ref to the Actor that does the communication with the client.
   * @param messageDistributor Ref to the Actor that distributes messages.
   */
-class ActualValuesRequestHandlingActor(val httpClient: ActorRef, val messageDistributor: ActorRef) extends HttpServiceActor
+class ActualValuesHandlerActor(val httpClient: ActorRef, val messageDistributor: ActorRef) extends HttpServiceActor
   with ActorLogging with websocket.WebSocketServerWorker with HyperionJsonProtocol {
 
   override def receive = handshaking orElse businessLogic orElse closeLogic

@@ -1,7 +1,7 @@
 package hyperion
 
 import akka.actor.{ActorRef, ActorLogging, Actor, Props}
-import hyperion.rest.{ActualValuesRequestHandlingActor, RecentReadingsRequestHandlingActor}
+import hyperion.rest.{ActualValuesHandlerActor, RecentReadingsHandlerActor}
 import spray.can.Http
 import spray.http.HttpMethods.GET
 import spray.http.{HttpRequest, HttpResponse, StatusCodes, Uri}
@@ -17,7 +17,7 @@ object IncomingHttpActor {
   * Acts as a router for incoming HTTP calls.
   */
 class IncomingHttpActor(val messageDistributor: ActorRef) extends Actor with ActorLogging {
-  val recentReadingsRequestHandler = createRecentReadingsRequestHandler(messageDistributor)
+  val recentReadingsRequestHandler = createRecentReadingsHandlerActor(messageDistributor)
 
   override def receive: Receive = {
     // When a new TCP connection comes in, we register ourselves as the Actor who will handle it.
@@ -25,7 +25,7 @@ class IncomingHttpActor(val messageDistributor: ActorRef) extends Actor with Act
       sender ! Http.Register(self)
 
     case req @ HttpRequest(GET, Uri.Path("/actual"), _, _, _) =>
-      createActualValuesRequestHandlingActor(sender(), messageDistributor) forward req
+      createActualValuesHandlerActor(sender(), messageDistributor) forward req
 
     case req @ HttpRequest(GET, Uri.Path("/recent"), _, _, _) =>
       recentReadingsRequestHandler forward req
@@ -36,11 +36,11 @@ class IncomingHttpActor(val messageDistributor: ActorRef) extends Actor with Act
       sender() ! HttpResponse(status = StatusCodes.NotFound, entity = "Not found")
   }
 
-  protected def createRecentReadingsRequestHandler(messageDistributor: ActorRef) = {
-    context.actorOf(RecentReadingsRequestHandlingActor.props(messageDistributor))
+  protected def createRecentReadingsHandlerActor(messageDistributor: ActorRef) = {
+    context.actorOf(RecentReadingsHandlerActor.props(messageDistributor))
   }
 
-  protected def createActualValuesRequestHandlingActor(client: ActorRef, messageDistributor: ActorRef) = {
-    context.actorOf(ActualValuesRequestHandlingActor.props(client, messageDistributor))
+  protected def createActualValuesHandlerActor(client: ActorRef, messageDistributor: ActorRef) = {
+    context.actorOf(ActualValuesHandlerActor.props(client, messageDistributor))
   }
 }

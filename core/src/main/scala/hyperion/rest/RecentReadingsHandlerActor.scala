@@ -14,13 +14,13 @@ import spray.http.{HttpEntity, HttpRequest, HttpResponse, StatusCodes, Uri}
 import spray.json._
 import spray.json.DefaultJsonProtocol._
 
-object RecentReadingsRequestHandlingActor {
+object RecentReadingsHandlerActor {
   def props(recentHistoryActor: ActorRef): Props = {
-    Props(new RecentReadingsRequestHandlingActor(recentHistoryActor))
+    Props(new RecentReadingsHandlerActor(recentHistoryActor))
   }
 }
 
-class RecentReadingsRequestHandlingActor(recentHistoryActor: ActorRef) extends Actor
+class RecentReadingsHandlerActor(recentHistoryActor: ActorRef) extends Actor
   with ActorLogging with HyperionJsonProtocol {
 
   implicit val timeout = Timeout(500 millis)

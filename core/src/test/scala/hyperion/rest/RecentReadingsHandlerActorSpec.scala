@@ -9,13 +9,13 @@ import spray.http.HttpProtocols._
 import spray.http.{HttpEntity, HttpRequest, HttpResponse, StatusCodes, Uri}
 import scala.collection.immutable
 
-class RecentReadingsRequestHandlingActorSpec extends BaseAkkaSpec {
+class RecentReadingsHandlerActorSpec extends BaseAkkaSpec {
   "The RecentReadingsRequestHandling Actor" should {
     "Supply the recent meter readings in JSON" in {
       // Arrange
       val client = TestProbe()
       val recentHistoryActor = TestProbe()
-      val sut = actor("recent-readings")(new RecentReadingsRequestHandlingActor(recentHistoryActor.ref))
+      val sut = actor("recent-readings")(new RecentReadingsHandlerActor(recentHistoryActor.ref))
       val telegram = TestSupport.randomTelegram()
       val history = immutable.Vector(telegram)
 
