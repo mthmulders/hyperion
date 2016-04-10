@@ -18,13 +18,13 @@ object HyperionJsonProtocol extends DefaultJsonProtocol {
     override def read(json: JsValue): LocalDateTime = json match {
       case JsString(value) => Try(LocalDateTime.parse(value, format)) match {
         case Success(result) => result
-        case Failure(cause) => throw new DeserializationException(s"Cannot convert $value to a LocalDateTime", cause)
+        case Failure(cause) => deserializationError(s"Cannot convert $value to a LocalDateTime", cause)
       }
-      case thing: JsValue => throw new DeserializationException(s"Cannot convert $thing to a LocalDateTime")
+      case thing: JsValue => deserializationError(s"Cannot convert $thing to a LocalDateTime")
     }
 
     override def write(input: LocalDateTime): JsValue = JsString(input.atOffset(ZoneOffset.UTC).format(format))
   }
 
-  implicit val meterReadingFormat = jsonFormat5(MeterReading)
+  implicit val meterReadingFormat = jsonFormat9(MeterReading)
 }

@@ -7,12 +7,20 @@ import java.time.LocalDateTime
   *
   * @param ts The timestamp at which the meter was read
   * @param tariff The current tariff.
-  * @param consumption Current electricity consumption in kW.
-  * @param production Current electricity production in kW.
-  * @param gas Gas consumption (last measurement) in m3.
+  * @param elecCon Current electricity consumption in kW.
+  * @param elecProd Current electricity production in kW.
+  * @param gas Gas meter reading in m3.
+  * @param elecConsLow Low tariff electricity consumption meter reading in kWh.
+  * @param elecConsNormal Normal tariff electricity consumption meter reading in kWh.
+  * @param elecProdLow Low tariff electricity production meter reading in kWh.
+  * @param elecProdNormal Normal tariff electricity production meter reading in kWh.
   */
 case class MeterReading(ts: LocalDateTime,
                         tariff: String,
-                        consumption: BigDecimal,
-                        production: BigDecimal,
-                        gas: Option[BigDecimal])
+                        elecCon: BigDecimal,
+                        elecProd: BigDecimal,
+                        gas: Option[BigDecimal],
+                        elecConsLow: Option[BigDecimal],
+                        elecConsNormal: BigDecimal,
+                        elecProdLow: Option[BigDecimal],
+                        elecProdNormal: BigDecimal)

@@ -5,7 +5,7 @@ import akka.actor.ActorRef
 import akka.testkit.TestProbe
 import org.scalatest.OptionValues
 import spray.http.{HttpEntity, HttpRequest, HttpResponse, StatusCodes, Uri}
-import spray.http.HttpMethods.{GET, POST, PUT}
+import spray.http.HttpMethods.{GET, PUT}
 import spray.http.HttpProtocols.`HTTP/1.1`
 
 class IncomingHttpActorSpec extends BaseAkkaSpec with OptionValues {
@@ -49,6 +49,22 @@ class IncomingHttpActorSpec extends BaseAkkaSpec with OptionValues {
       // Act
       val sut = actor("actual-values")(new IncomingHttpActor(TestProbe().ref) {
         override def createActualValuesRequestHandlingActor(client: ActorRef, messageDistributor: ActorRef) = rha.ref
+      })
+      client.send(sut, request)
+
+      // Assert
+      rha.expectMsg(request)
+    }
+
+    "forward requests for recent reading to a new Actor" in {
+      // Arrange
+      val client = TestProbe()
+      val rha = TestProbe()
+      val request = new HttpRequest(GET, Uri("/recent"), Nil, HttpEntity.Empty, `HTTP/1.1`)
+
+      // Act
+      val sut = actor("recent-values")(new IncomingHttpActor(TestProbe().ref) {
+        override def createRecentReadingsRequestHandler(messageDistributor: ActorRef) = rha.ref
       })
       client.send(sut, request)
 
