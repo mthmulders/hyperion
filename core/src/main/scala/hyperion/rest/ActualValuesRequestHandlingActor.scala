@@ -1,8 +1,9 @@
 package hyperion.rest
 
 import akka.actor.{ActorLogging, ActorRef, Props}
+import hyperion.TelegramReceived
 import hyperion.MessageDistributor.RegisterReceiver
-import hyperion.{P1GasMeter, TelegramReceived}
+import hyperion.rest.HyperionConversions.telegramWrapper
 import spray.can.websocket
 import spray.can.websocket.frame.TextFrame
 import spray.routing.HttpServiceActor
@@ -30,16 +31,8 @@ class ActualValuesRequestHandlingActor(val httpClient: ActorRef, val messageDist
 
   def businessLogic: Receive = {
     case TelegramReceived(telegram) =>
-      val gasConsumption = telegram.data.devices
-        .find(_.isInstanceOf[P1GasMeter])
-        .map(_.asInstanceOf[P1GasMeter].gasDelivered)
-      val msg = MeterReading(
-        telegram.metadata.timestamp,
-        telegram.data.currentTariff,
-        telegram.data.currentConsumption,
-        telegram.data.currentProduction,
-        gasConsumption)
-      send(TextFrame(msg.toJson.toString))
+      val reading: MeterReading = telegram
+      send(TextFrame(reading.toJson.toString))
   }
 
   override def serverConnection: ActorRef = {

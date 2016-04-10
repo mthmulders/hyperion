@@ -1,7 +1,5 @@
 package hyperion.rest
 
-import java.time.LocalDateTime
-
 import akka.actor.ActorDSL.actor
 import akka.testkit.TestProbe
 import hyperion.MessageDistributor.RegisterReceiver
@@ -15,16 +13,7 @@ import spray.http.{HttpHeader, StatusCodes}
 import spray.json._
 import HyperionJsonProtocol._
 
-import scala.collection.immutable
-
 class ActualValuesRequestHandlingActorSpec extends BaseAkkaSpec with OptionValues {
-  val telegram = P1Telegram(
-    P1Header("", ""),
-    P1MetaData("", LocalDateTime.now(), ""),
-    P1Data(P1Constants.lowTariff, BigDecimal(0L), BigDecimal(0L), Map.empty, Map.empty, immutable.Seq.empty[P1ExtraDevice]),
-    P1Checksum("")
-  )
-
   "Initially" should {
     "register itself with the Message Distributor" in {
       // Arrange
@@ -59,6 +48,7 @@ class ActualValuesRequestHandlingActorSpec extends BaseAkkaSpec with OptionValue
     "send update to client when new telegram comes in" in {
       // Arrange
       val client = TestProbe()
+      val telegram = TestSupport.randomTelegram()
 
       // Act
       val sut = actor("send-new-reading")(new ActualValuesRequestHandlingActor(client.ref, TestProbe().ref))
