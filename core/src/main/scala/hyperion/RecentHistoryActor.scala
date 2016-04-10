@@ -37,22 +37,21 @@ class RecentHistoryActor(messageDistributor: ActorRef) extends FSM[State, Data] 
 
   when(Receiving) {
     case Event(TelegramReceived(telegram), History(history)) =>
+      log.debug("Sleeping for {}", settings.history.resolution)
       goto(Sleeping) using History(history += telegram)
     case Event(GetRecentHistory, History(history)) =>
       sender() ! RecentReadings(history.toVector)
       stay()
   }
 
-  when(Sleeping) {
+  when(Sleeping, settings.history.resolution) {
     case Event(_: TelegramReceived, _) =>
       stay()
     case Event(GetRecentHistory, History(history)) =>
       sender() ! RecentReadings(history.toVector)
       stay()
-  }
-
-  when(Sleeping, settings.history.resolution) {
     case Event(StateTimeout, history) =>
+      log.debug("Awaking to receive new meter reading")
       goto(Receiving) using history
   }
 

@@ -25,7 +25,7 @@ class MessageDistributor extends Actor with ActorLogging {
       log.debug("Removing {} from list of recipients", ref)
       recipients -= ref
     case msg =>
-      log.debug("Forwarding message {}", msg)
+      log.debug("Forwarding message {} to {} recipients", msg, recipients.length)
       recipients.foreach(_ forward msg)
   }
 }

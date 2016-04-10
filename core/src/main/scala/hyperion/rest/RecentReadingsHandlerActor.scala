@@ -32,13 +32,13 @@ class RecentReadingsHandlerActor(recentHistoryActor: ActorRef) extends Actor
       val future = recentHistoryActor ? GetRecentHistory
       future map {
         case RecentReadings(history) =>
-          log.debug(s"Got a RecentReadings message with ${history.length} readings")
+          log.debug("Got a RecentReadings message with {} readings", history.length)
           val json = history.map(telegramWrapper).toJson
           val entity = HttpEntity(`application/json`, json.toString())
-          log.debug(s"Sending back response to $client")
+          log.debug("Sending back response to {}", client)
           client ! HttpResponse(OK, entity, Nil, `HTTP/1.1`)
         case msg: Any =>
-          log.warning(s"Expected a RecentReadings but got a $msg")
+          log.warning("Expected a RecentReadings but got [{}]", msg)
           client ! HttpResponse(status = StatusCodes.InternalServerError)
       }
 
@@ -47,7 +47,7 @@ class RecentReadingsHandlerActor(recentHistoryActor: ActorRef) extends Actor
       sender() ! HttpResponse(status = StatusCodes.BadRequest)
 
     case msg: Any =>
-      log.warning("Should not receive {} message", msg)
+      log.warning("Should not receive message [{}]", msg)
       sender() ! HttpResponse(status = StatusCodes.BadRequest)
 
   }
