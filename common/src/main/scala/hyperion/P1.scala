@@ -1,6 +1,6 @@
 package hyperion
 
-import java.time.LocalDateTime
+import java.time.OffsetDateTime
 import java.util.Date
 
 import scala.collection.immutable
@@ -43,7 +43,7 @@ case class P1Header(make: String,
   * @param equipmentIdentifier Equipment identifier
   */
 case class P1MetaData(versionInfo: String,
-                      timestamp: LocalDateTime,
+                      timestamp: OffsetDateTime,
                       equipmentIdentifier: String)
 
 /**
@@ -88,7 +88,7 @@ case class P1UnknownDevice(id: Int, deviceType: String) extends P1ExtraDevice
   */
 case class P1GasMeter(id: Int,
                       deviceType: String,
-                      lastCapture: LocalDateTime,
+                      lastCapture: OffsetDateTime,
                       gasDelivered: BigDecimal) extends P1ExtraDevice
 
 case class P1Checksum(checksum: String)

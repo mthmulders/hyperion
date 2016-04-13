@@ -1,7 +1,7 @@
 package hyperion
 
 import java.time.format.DateTimeFormatter
-import java.time.LocalDateTime
+import java.time.{OffsetDateTime, LocalDateTime, ZoneId}
 
 import org.slf4j.LoggerFactory
 
@@ -25,6 +25,7 @@ object P1TelegramParser extends RegexParsers {
   private val checksum = checksumPattern ^^ { case checksumPattern(value) => P1Checksum(value) }
 
   private val dateFormat = DateTimeFormatter.ofPattern("yyMMddHHmmss")
+  private val currentTimeZone = ZoneId.systemDefault()
   private class ParseAs(val s: String, recordType: P1RecordType) {
     def using[T: ClassTag](extractor: String => T): Parser[Option[P1Record[T]]] = {
       val compiledPattern = s.r
@@ -50,9 +51,14 @@ object P1TelegramParser extends RegexParsers {
 
   private def extract[T:ClassTag](s: String)(recordType: P1RecordType) = new ParseAs(s, recordType)
 
+  private def parseTimestamp(input: String): OffsetDateTime = {
+    val localDateTime = LocalDateTime.parse(input, dateFormat)
+    localDateTime.atOffset(currentTimeZone.getRules.getOffset(localDateTime))
+  }
+
   // Patterns and parsers for various P1 Records
   private val versionInfo       = extract("""1-3:0\.2\.8\((\d*)\)""")              (VERSION_INFORMATION)            using (s => s)
-  private val dateTimeStamp     = extract("""0-0:1\.0\.0\((\d{12})[SW]\)""")       (DATE_TIME_STAMP)                using (s => LocalDateTime.parse(s, dateFormat))
+  private val dateTimeStamp     = extract("""0-0:1\.0\.0\((\d{12})[SW]\)""")       (DATE_TIME_STAMP)                using (s => parseTimestamp(s))
   private val equipmentId       = extract("""0-0:96\.1\.1\((\w*)\)""")             (EQUIPMENT_IDENTIFIER)           using (s => s)
   private val elecConsTariff1   = extract("""1-0:1\.8\.1\((\d*\.?\d*)\*kWh\)""")   (ELECTRICITY_CONSUMED_TARIFF_1)  using (s => BigDecimal(s))
   private val elecConsTariff2   = extract("""1-0:1\.8\.2\((\d*\.?\d*)\*kWh\)""")   (ELECTRICITY_CONSUMED_TARIFF_2)  using (s => BigDecimal(s))
@@ -65,7 +71,7 @@ object P1TelegramParser extends RegexParsers {
   private val deviceType        = extract("""0-(\d):24\.1\.0\((\w{2,3})\)""")      (EXTERNAL_DEVICE_TYPE)           using ((s1, s2) => (s1.toInt, s2))
   private val deviceEquipmentId = extract("""0-(\d):96\.1\.0\((\w{34})\)""")       (EXTERNAL_DEVICE_EQUIPMENT_ID)   using ((s1, s2) => (s1.toInt, s2))
   private val deviceGasReading  = extract("""0-(\d):24\.2\.1\((\d{12})[SW]\)""" +
-                                          """\((\d*\.?\d*)\*m3\)""")               (EXTERNAL_DEVICE_GAS_READING)    using ((s1, s2, s3) => (s1.toInt, LocalDateTime.parse(s2, dateFormat), BigDecimal(s3)))
+                                          """\((\d*\.?\d*)\*m3\)""")               (EXTERNAL_DEVICE_GAS_READING)    using ((s1, s2, s3) => (s1.toInt, parseTimestamp(s2), BigDecimal(s3)))
 
   private val ignored           = """\d\-\d:\d+[\.:]\d+\.\d+\(.*\)""".r ^^ { case _ => None }
 
@@ -101,7 +107,7 @@ object P1TelegramParser extends RegexParsers {
         deviceTypeRecord.map({ case (_: Int, deviceType: String) => deviceType }) match {
           case Some("003") =>
             val lastCaptureRecord = findExtraDeviceRecord(EXTERNAL_DEVICE_GAS_READING, deviceId)
-                .map(_.asInstanceOf[(Int, LocalDateTime, BigDecimal)])
+                .map(_.asInstanceOf[(Int, OffsetDateTime, BigDecimal)])
 
             lastCaptureRecord match {
               case Some((_, captureTime, reading)) =>
@@ -123,7 +129,7 @@ object P1TelegramParser extends RegexParsers {
 
       (for {
         versionInfo <- findRecord(VERSION_INFORMATION).map(_.asInstanceOf[String])
-        dateTimeStamp <- findRecord(DATE_TIME_STAMP).map(_.asInstanceOf[LocalDateTime])
+        dateTimeStamp <- findRecord(DATE_TIME_STAMP).map(_.asInstanceOf[OffsetDateTime])
         equipmentIdentifier <- findRecord(EQUIPMENT_IDENTIFIER).map(_.asInstanceOf[String])
         metadata = P1MetaData(versionInfo, dateTimeStamp, equipmentIdentifier)
 

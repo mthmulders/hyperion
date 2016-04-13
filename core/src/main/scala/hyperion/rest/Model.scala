@@ -1,6 +1,6 @@
 package hyperion.rest
 
-import java.time.LocalDateTime
+import java.time.OffsetDateTime
 
 /**
   * Represents one instant that the meter was read.
@@ -15,7 +15,7 @@ import java.time.LocalDateTime
   * @param elecProdLow Low tariff electricity production meter reading in kWh.
   * @param elecProdNormal Normal tariff electricity production meter reading in kWh.
   */
-case class MeterReading(ts: LocalDateTime,
+case class MeterReading(ts: OffsetDateTime,
                         tariff: String,
                         elecCon: BigDecimal,
                         elecProd: BigDecimal,

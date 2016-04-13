@@ -1,7 +1,7 @@
 package hyperion.rest
 
-import java.time.{ZoneOffset, LocalDateTime}
-import java.time.format.DateTimeFormatter
+import java.time.OffsetDateTime
+import java.time.format.DateTimeFormatter.ISO_OFFSET_DATE_TIME
 import spray.json._
 import scala.util.{Try, Failure, Success}
 
@@ -12,18 +12,18 @@ trait HyperionJsonProtocol {
 
 /** Converts the model of Hyperions REST API into JSON and back */
 object HyperionJsonProtocol extends DefaultJsonProtocol {
-  implicit object LocalDateDimeFormat extends JsonFormat[LocalDateTime] {
-    private[this] val format = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSX")
-
-    override def read(json: JsValue): LocalDateTime = json match {
-      case JsString(value) => Try(LocalDateTime.parse(value, format)) match {
+  implicit object OffsetDateTimeFormat extends JsonFormat[OffsetDateTime] {
+    override def read(json: JsValue): OffsetDateTime = json match {
+      case JsString(value) => Try(OffsetDateTime.parse(value, ISO_OFFSET_DATE_TIME)) match {
         case Success(result) => result
-        case Failure(cause) => deserializationError(s"Cannot convert $value to a LocalDateTime", cause)
+        case Failure(cause) => deserializationError(s"Cannot convert $value to a ZonedDateTime", cause)
       }
-      case thing: JsValue => deserializationError(s"Cannot convert $thing to a LocalDateTime")
+      case thing: JsValue => deserializationError(s"Cannot convert $thing to a ZonedDateTime")
     }
 
-    override def write(input: LocalDateTime): JsValue = JsString(input.atOffset(ZoneOffset.UTC).format(format))
+    override def write(input: OffsetDateTime): JsValue = JsString(
+      input.format(ISO_OFFSET_DATE_TIME)
+    )
   }
 
   implicit val meterReadingFormat = jsonFormat9(MeterReading)

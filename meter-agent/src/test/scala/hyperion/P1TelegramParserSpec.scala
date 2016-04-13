@@ -1,6 +1,6 @@
 package hyperion
 
-import java.time.LocalDateTime
+import java.time.{LocalDateTime, OffsetDateTime, ZoneId}
 
 import org.scalatest.Inside
 
@@ -13,6 +13,10 @@ class P1TelegramParserSpec extends BaseSpec with Inside {
 
   val CRLF = "\r\n"
 
+  private def localDateTimeAtCurrentOffset(ts: LocalDateTime): OffsetDateTime = {
+    ts.atOffset(ZoneId.systemDefault().getRules.getOffset(ts))
+  }
+
   "P1TelegramParser" should {
     "parse a complete telegram" in {
       val source = Source.fromInputStream(getClass.getResourceAsStream("/valid-telegram.txt"))
@@ -21,6 +25,9 @@ class P1TelegramParserSpec extends BaseSpec with Inside {
       val result: Option[P1Telegram] = parse(text)
 
       result shouldBe defined
+
+      val gasTs = localDateTimeAtCurrentOffset(LocalDateTime.parse("2010-12-09T11:00:00"))
+      val ts = localDateTimeAtCurrentOffset(LocalDateTime.parse("2010-12-09T11:30:20"))
 
       inside(result.get) {
         case P1Telegram(header, metadata, data, checksum) =>
@@ -31,6 +38,7 @@ class P1TelegramParserSpec extends BaseSpec with Inside {
           inside(metadata) { case P1MetaData(versionInfo, timestamp, equipmentIdentifier) =>
             versionInfo shouldBe "40"
             equipmentIdentifier shouldBe "4B384547303034303436333935353037"
+            timestamp shouldBe ts
           }
           inside(data) { case P1Data(currentTariff, currentConsumption, currentProduction, totalConsumption, totalProduction, devices) =>
             currentTariff shouldBe "0002"
@@ -43,7 +51,7 @@ class P1TelegramParserSpec extends BaseSpec with Inside {
             totalProduction should contain(lowTariff -> 123456.789)
             totalProduction should contain(normalTariff -> 123456.789)
 
-            devices should contain (P1GasMeter(1, "003", LocalDateTime.parse("2010-12-09T11:00"), BigDecimal(12785.123)))
+            devices should contain (P1GasMeter(1, "003", gasTs, BigDecimal(12785.123)))
           }
           inside(checksum) { case P1Checksum(value) =>
             value shouldBe "522B"

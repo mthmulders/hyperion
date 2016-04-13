@@ -1,23 +1,23 @@
 package hyperion.rest
 
-import java.time.LocalDateTime
+import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
 
 import hyperion.BaseSpec
-import hyperion.rest.HyperionJsonProtocol.LocalDateDimeFormat
+import hyperion.rest.HyperionJsonProtocol.OffsetDateTimeFormat
 import spray.json.{JsNumber, DeserializationException, JsString}
 
-class LocalDateDimeFormatSpec extends BaseSpec {
+class OffsetDateTimeFormatSpec extends BaseSpec {
   val format = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSX")
 
   "Converting a LocalDateTime" should {
-    "write the value following ISO 8601" in {
+    "write the value following ISO 8601 converted to local time zone" in {
       // Arrange
       val str = "2012-04-23T18:25:43.511Z"
-      val input = LocalDateTime.parse(str, format)
+      val input = OffsetDateTime.parse(str, format)
 
       // Act
-      val result = LocalDateDimeFormat.write(input)
+      val result = OffsetDateTimeFormat.write(input)
 
       // Assert
       result.toString() should be(s""""$str"""") // wrapped in double quotes to make it valid JSON
@@ -28,26 +28,26 @@ class LocalDateDimeFormatSpec extends BaseSpec {
       val input = "2012-04-23T18:25:43.511Z"
 
       // Act
-      val result = LocalDateDimeFormat.read(JsString(input))
+      val result = OffsetDateTimeFormat.read(JsString(input))
 
       // Assert
-      result should be(LocalDateTime.parse(input, format))
+      result should be(OffsetDateTime.parse(input, format))
     }
 
     "not parse things that are not in ISO 8601 format" in {
       // Act
       the[DeserializationException] thrownBy {
-        LocalDateDimeFormat.read(JsString("bogus"))
+        OffsetDateTimeFormat.read(JsString("bogus"))
         // Assert
-      } should have message "Cannot convert bogus to a LocalDateTime"
+      } should have message "Cannot convert bogus to a ZonedDateTime"
     }
 
     "not parse things that are not a string" in {
       // Act
       the[DeserializationException] thrownBy {
-        LocalDateDimeFormat.read(JsNumber(3))
+        OffsetDateTimeFormat.read(JsNumber(3))
         // Assert
-      } should have message "Cannot convert 3 to a LocalDateTime"
+      } should have message "Cannot convert 3 to a ZonedDateTime"
     }
   }
 }
