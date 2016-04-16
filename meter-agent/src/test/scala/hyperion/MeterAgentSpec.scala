@@ -14,7 +14,7 @@ class MeterAgentSpec extends BaseAkkaSpec with MockitoSugar {
   "Creating the Meter Agent" should {
     "result in creating a IO-SERIAL system actor" in {
       system.actorOf(MeterAgent.props(dummy), "create-system-actor")
-      TestProbe().expectActor("/system/IO-SERIAL", 1 second) should not be empty
+      TestProbe().expectActor("/system/IO-SERIAL", 2 seconds) should not be empty
     }
   }
 

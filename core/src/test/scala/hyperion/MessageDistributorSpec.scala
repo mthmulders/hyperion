@@ -33,7 +33,7 @@ class MessageDistributorSpec extends BaseAkkaSpec {
       receiver ! msg
 
       // Assert
-      probe.expectNoMsg(250 millis)
+      probe.expectNoMsg(500 millis)
     }
   }
 }

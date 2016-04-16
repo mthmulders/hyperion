@@ -12,7 +12,7 @@ class CoreAppSpec extends BaseAkkaSpec {
       new CoreApp(system)
 
       // Assert
-      TestProbe().expectActor("/user/launcher-actor", 2 seconds) should have size 1
+      TestProbe().expectActor("/user/launcher-actor", 4 seconds) should have size 1
     }
   }
 }
