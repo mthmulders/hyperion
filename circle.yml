@@ -15,6 +15,7 @@ dependencies:
 
 test:
   override:
+    - sbt test:compile
     - sbt coverage test -Dakka.test.timefactor=5
   post:
     - mkdir -p $CIRCLE_TEST_REPORTS/{junit,deb}/
