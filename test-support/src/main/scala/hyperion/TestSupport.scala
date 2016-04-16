@@ -15,12 +15,12 @@ object TestSupport {
   def randomTelegram(): P1Telegram = {
     val totalConsumption = immutable.Map(lowTariff -> randomBigDecimal(), normalTariff -> randomBigDecimal())
     val totalProduction = immutable.Map(lowTariff -> randomBigDecimal(), normalTariff -> randomBigDecimal())
-    val extraDevices = immutable.Seq(P1GasMeter(1, "03", OffsetDateTime.now(), randomBigDecimal()))
+    val extraDevices = immutable.Seq(P1GasMeter(1, "3232323241424344313233343536373839", OffsetDateTime.now(), randomBigDecimal()))
     P1Telegram(
       P1Header("make", "identifier"),
       P1MetaData("40", OffsetDateTime.now(), "4B384547303034303436333935353037"),
       P1Data(lowTariff, randomBigDecimal(), randomBigDecimal(), totalConsumption, totalProduction, extraDevices),
-      P1Checksum("checksum")
+      "checksum"
     )
   }
 }

@@ -2,14 +2,14 @@ package hyperion
 
 import java.time.{LocalDateTime, OffsetDateTime, ZoneId}
 
-import org.scalatest.Inside
+import org.scalatest.{OptionValues, Inside}
 
 import scala.io.Source
 
 import P1TelegramParser._
 import P1Constants._
 
-class P1TelegramParserSpec extends BaseSpec with Inside {
+class P1TelegramParserSpec extends BaseSpec with Inside with OptionValues {
 
   val CRLF = "\r\n"
 
@@ -18,11 +18,35 @@ class P1TelegramParserSpec extends BaseSpec with Inside {
   }
 
   "P1TelegramParser" should {
+    "parse timestamps" in {
+      asTimestamp("101209113020") shouldBe localDateTimeAtCurrentOffset(LocalDateTime.parse("2010-12-09T11:30:20"))
+    }
+
+    "parse decimals without decimal positions" in {
+      asBigDecimal("3") shouldBe BigDecimal(3)
+    }
+
+    "parse decimals with decimal positions" in {
+      asBigDecimal("3.14") shouldBe BigDecimal(3.14)
+    }
+
+    "parse integers" in {
+      asInt("5") shouldBe 5
+    }
+
+    "parse strings" in {
+      asString("Hello") shouldBe "Hello"
+    }
+
+    "parse voids" in {
+      asNone("Hello") shouldBe None
+    }
+
     "parse a complete telegram" in {
       val source = Source.fromInputStream(getClass.getResourceAsStream("/valid-telegram.txt"))
       val text = try source.mkString finally source.close()
 
-      val result: Option[P1Telegram] = parse(text)
+      val result: Option[P1Telegram] = parseTelegram(text)
 
       result shouldBe defined
 
@@ -51,16 +75,14 @@ class P1TelegramParserSpec extends BaseSpec with Inside {
             totalProduction should contain(lowTariff -> 123456.789)
             totalProduction should contain(normalTariff -> 123456.789)
 
-            devices should contain (P1GasMeter(1, "003", gasTs, BigDecimal(12785.123)))
+            devices should contain (P1GasMeter(1, "3232323241424344313233343536373839", gasTs, BigDecimal(12785.123)))
           }
-          inside(checksum) { case P1Checksum(value) =>
-            value shouldBe "522B"
-          }
+          checksum shouldBe "522B"
       }
     }
 
     "not parse a malformed telegram" in {
-      parse("foo") should not be defined
+      parseTelegram("foo") should not be defined
     }
   }
 

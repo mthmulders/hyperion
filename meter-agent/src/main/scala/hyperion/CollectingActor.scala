@@ -4,8 +4,6 @@ import akka.actor.{ActorRef, ActorLogging, Actor, Props}
 
 import scala.collection.mutable
 
-import CollectingActor._
-
 object CollectingActor {
   case object ProcessBuffer
 
@@ -52,7 +50,7 @@ class CollectingActor(receiver: ActorRef) extends Actor with ActorLogging {
 
         val telegramText = telegramLines.mkString("")
 
-        P1TelegramParser.parse(telegramText) match {
+        P1TelegramParser.parseTelegram(telegramText) match {
           case Some(telegram) => receiver ! TelegramReceived(telegram)
           case None           => log.info("Failed to parse telegram")
         }

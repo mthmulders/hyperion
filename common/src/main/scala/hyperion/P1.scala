@@ -26,7 +26,7 @@ case class TelegramReceived(telegram: P1Telegram)
 case class P1Telegram(header: P1Header,
                       metadata: P1MetaData,
                       data: P1Data,
-                      checksum: P1Checksum)
+                      checksum: String)
 
 /**
   * Information about the smart meter.
@@ -68,8 +68,6 @@ case class P1Data(currentTariff: String,
 abstract class P1ExtraDevice {
   /* The identifier of the external device. */
   def id: Int
-  /* Type of device (no code table known yet). */
-  def deviceType: String
 }
 
 /**
@@ -82,15 +80,11 @@ case class P1UnknownDevice(id: Int, deviceType: String) extends P1ExtraDevice
 /**
   * Represents data about an external gas meter.
   * @param id The identifier of the external device.
-  * @param deviceType Type of device (no code table known yet).
+  * @param equipmentIdentifier Equipment identifier for the external gas meter.
   * @param lastCapture Last moment data was captured from the gas meter.
   * @param gasDelivered Amount of gas delivered
   */
 case class P1GasMeter(id: Int,
-                      deviceType: String,
+                      equipmentIdentifier: String,
                       lastCapture: OffsetDateTime,
                       gasDelivered: BigDecimal) extends P1ExtraDevice
-
-case class P1Checksum(checksum: String)
-
-case class P1GasMeterReading(timestamp: Date, gasDelivered: Double)
