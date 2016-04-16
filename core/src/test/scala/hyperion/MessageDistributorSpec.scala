@@ -29,11 +29,11 @@ class MessageDistributorSpec extends BaseAkkaSpec {
       // Act
       probe.send(receiver, RegisterReceiver)
       system.stop(probe.ref)
-      Thread.sleep(100)
+      Thread.sleep(500)
       receiver ! msg
 
       // Assert
-      probe.expectNoMsg(500 millis)
+      probe.expectNoMsg(1 second)
     }
   }
 }
