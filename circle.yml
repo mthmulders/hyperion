@@ -18,7 +18,7 @@ test:
     - mkdir -p $CIRCLE_TEST_REPORTS/{junit,deb}/
   override:
     - sbt test:compile
-    - sbt coverage test -Dakka.test.timefactor=10
+    - sbt coverage test -Dakka.test.timefactor=10 -Dakka.loglevel=info
     - sbt debian:packageBin
   post:
     - sbt coverageAggregate
