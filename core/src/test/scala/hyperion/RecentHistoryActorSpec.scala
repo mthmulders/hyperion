@@ -41,7 +41,7 @@ class RecentHistoryActorSpec extends BaseAkkaSpec {
       // Act
       val fsm = TestFSMRef(new RecentHistoryActor(messageDispatcher.ref), "wake-up")
       fsm.setState(Sleeping, History(history))
-      Thread.sleep(200)
+      Thread.sleep(1000)
       messageDispatcher.send(fsm, TelegramReceived(telegram))
 
       // Assert
