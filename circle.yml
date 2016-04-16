@@ -14,13 +14,14 @@ dependencies:
     - "project/target/streams"
 
 test:
+  pre:
+    - mkdir -p $CIRCLE_TEST_REPORTS/{junit,deb}/
   override:
     - sbt test:compile
     - sbt coverage test -Dakka.test.timefactor=5
+    - sbt debian:packageBin
   post:
-    - mkdir -p $CIRCLE_TEST_REPORTS/{junit,deb}/
-    - find . -type f -regex ".*/target/test-reports/.*xml" -exec cp {} $CIRCLE_TEST_REPORTS/junit/ \;
     - sbt coverageAggregate
     - sbt codacyCoverage
-    - sbt debian:packageBin
+    - find . -type f -regex ".*/target/test-reports/.*xml" -exec cp {} $CIRCLE_TEST_REPORTS/junit/ \;
     - find . -type f -regex ".*deb" -exec cp {} $CIRCLE_TEST_REPORTS/deb/ \;
