@@ -43,7 +43,7 @@ class P1TelegramParserSpec extends BaseSpec with Inside with OptionValues {
     }
 
     "parse a complete telegram" in {
-      val source = Source.fromInputStream(getClass.getResourceAsStream("/valid-telegram.txt"))
+      val source = Source.fromInputStream(getClass.getResourceAsStream("/valid-telegram1.txt"))
       val text = try source.mkString finally source.close()
 
       val result: Option[P1Telegram] = parseTelegram(text)
@@ -79,6 +79,15 @@ class P1TelegramParserSpec extends BaseSpec with Inside with OptionValues {
           }
           checksum shouldBe "522B"
       }
+    }
+
+    "parse another complete telegram" in {
+      val source = Source.fromInputStream(getClass.getResourceAsStream("/valid-telegram2.txt"))
+      val text = try source.mkString finally source.close()
+
+      val result: Option[P1Telegram] = parseTelegram(text)
+
+      result shouldBe defined
     }
 
     "not parse a malformed telegram" in {

@@ -23,7 +23,7 @@ class CollectingActorSpec extends BaseAkkaSpec {
       val receiver = TestProbe()
       val actor = system.actorOf(CollectingActor.props(receiver.ref), "emit-telegrams")
 
-      val source = Source.fromInputStream(getClass.getResourceAsStream("/valid-telegram.txt"))
+      val source = Source.fromInputStream(getClass.getResourceAsStream("/valid-telegram1.txt"))
       val text = try source.mkString finally source.close()
 
       val data = text.grouped(15).toIndexedSeq

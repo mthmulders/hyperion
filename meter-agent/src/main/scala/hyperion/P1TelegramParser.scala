@@ -54,7 +54,7 @@ object P1TelegramParser extends RegexParsers {
   private def externalDeviceGasReadingValue     = "("                      ~> """\d*\.?\d*""".r <~ "*m3)"                     ^^ { asBigDecimal }
   private def externalDeviceGasValvePosition    = """0-[1-4]:24.4.0\(""".r ~> """\d{1}""".r     <~ ")"                   ^^ { asInt }
   private def gasMeter = externalDeviceId ~ externalDeviceEquipmentId ~ externalDeviceGasReadingTimestamp ~
-    externalDeviceGasReadingValue ~ externalDeviceGasValvePosition ^^ {
+    externalDeviceGasReadingValue ~ externalDeviceGasValvePosition.? ^^ {
     case deviceId ~ equipmentId ~ timestamp ~ reading ~ _ => P1GasMeter(deviceId, equipmentId, timestamp, reading)
   }
 
@@ -70,20 +70,28 @@ object P1TelegramParser extends RegexParsers {
 
   private def checksum = "!" ~> """[A-Za-z0-9]{4}""".r ^^ { asString }
   private def ignored =
-    """0-0:17.0.0\(\d*\.?\d\*kW\)""".r                                         ~ // The actual thresh- old Electricity in kW
-    """0-0:96.3.10\(\d\)""".r                                                  ~ // Switch position Electricity (in/out/enabled)
-    """0-0:96.7.21\(\d{5}\)""".r                                               ~ // Number of power failures in any phase
-    """0-0:96.7.9\(\d{5}\)""".r                                                ~ // Number of long power failures in any phase
-    """1-0:99.97.0\(\d\)\(0-0:96.7.19\)(?:\(\d{12}[SW]\)\(\d{10}\*s\))+""".r   ~ // Power Failure Event Log (long power failures)
-                                                                                 // First param is number of repetitions of second & third param
-    """1-0:32.32.0\(\d{5}\)""".r                                               ~ // Number of voltage sags in phase L1
-    """1-0:52.32.0\(\d{5}\)""".r.?                                             ~ // Number of voltage sags in phase L2 (polyphase meters only)
-    """1-0:72:32.0\(\d{5}\)""".r.?                                             ~ // Number of voltage sags in phase L3 (polyphase meters only)
-    """1-0:32.36.0\(\d{5}\)""".r                                               ~ // Number of voltage swells in phase L1
-    """1-0:52.36.0\(\d{5}\)""".r.?                                             ~ // Number of voltage swells in phase L2 (polyphase meters only)
-    """1-0:72.36.0\(\d{5}\)""".r.?                                             ~ // Number of voltage swells in phase L3 (polyphase meters only)
-    """0-0:96.13.1\([0-9a-fA-F]{0,16}\)""".r                                   ~ // Text message codes: numeric 8 digits, hex encoded
-    """0-0:96.13.0\([0-9a-fA-F]{0,2048}\)""".r                                   // Text message max 1024 characters, hex encoded
+    """0-0:17.0.0\(\d*\.?\d*\*kW\)""".r.?                                       ~ // The actual thresh- old Electricity in kW
+    """0-0:96.3.10\(\d\)""".r.?                                                 ~ // Switch position Electricity (in/out/enabled)
+    """0-0:96.7.21\(\d{5}\)""".r                                                ~ // Number of power failures in any phase
+    """0-0:96.7.9\(\d{5}\)""".r                                                 ~ // Number of long power failures in any phase
+    """1-0:99.97.0\(\d\)\(0-0:96.7.19\)(?:\(\d{12}[SW]\)\(\d{10,11}\*s\))+""".r ~ // Power Failure Event Log (long power failures)
+                                                                                  // First param is number of repetitions of second & third param
+    """1-0:32.32.0\(\d{5}\)""".r                                                ~ // Number of voltage sags in phase L1
+    """1-0:52.32.0\(\d{5}\)""".r.?                                              ~ // Number of voltage sags in phase L2 (polyphase meters only)
+    """1-0:72:32.0\(\d{5}\)""".r.?                                              ~ // Number of voltage sags in phase L3 (polyphase meters only)
+    """1-0:32.36.0\(\d{5}\)""".r                                                ~ // Number of voltage swells in phase L1
+    """1-0:52.36.0\(\d{5}\)""".r.?                                              ~ // Number of voltage swells in phase L2 (polyphase meters only)
+    """1-0:72.36.0\(\d{5}\)""".r.?                                              ~ // Number of voltage swells in phase L3 (polyphase meters only)
+    """0-0:96.13.1\([0-9a-fA-F]{0,16}\)""".r                                    ~ // Text message codes: numeric 8 digits, hex encoded
+    """0-0:96.13.0\([0-9a-fA-F]{0,2048}\)""".r                                  ~ // Text message max 1024 characters, hex encoded
+    // Below OBIS references are not present in version 4.0, but they are present in 4.2
+    """1-0:31.7.0\(\d{3}\*A\)""".r.?                                            ~ // Instantaneous current L1 in A resolution
+    """1-0:51.7.0\(\d{3}\*A\)""".r.?                                            ~ // Instantaneous current L2 in A resolution
+    """1-0:71.7.0\(\d{3}\*A\)""".r.?                                            ~ // Instantaneous current L3 in A resolution
+    """1-0:21.7.0\(\d*\.?\d*\*kW\)""".r.?                                       ~ // Instantaneous active power L1 (+P) in W resolution
+    """1-0:41.7.0\(\d*\.?\d*\*kW\)""".r.?                                       ~ // Instantaneous active power L2 (+P) in W resolution
+    """1-0:61.7.0\(\d*\.?\d*\*kW\)""".r.?                                       ~ // Instantaneous active power L3 (+P) in W resolution
+    """1-0:22.7.0\(\d*\.?\d*\*kW\)""".r.?                                         // Instantaneous active power L1 (-P) in W resolution
 
   private def telegram = header ~ metadata ~ data ~ checksum
   private def parser: Parser[P1Telegram] = telegram ^^ {
