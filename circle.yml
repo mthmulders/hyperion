@@ -19,7 +19,7 @@ test:
   override:
     - sbt test:compile
     - sbt coverage test -Dakka.test.timefactor=10 -Dakka.loglevel=info
-    - sbt debian:packageBin
+    - sbt clean debian:packageBin
   post:
     - sbt coverageAggregate
     - sbt codacyCoverage
