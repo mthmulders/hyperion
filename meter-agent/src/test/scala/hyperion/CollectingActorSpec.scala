@@ -35,7 +35,7 @@ class CollectingActorSpec extends BaseAkkaSpec {
       }
 
       // Assert
-      val telegram = receiver.expectMsgPF(1000 milliseconds) {
+      val telegram = receiver.expectMsgPF(2 seconds) {
         case TelegramReceived(content) => content
       }
       telegram.checksum shouldBe "522B" // other parsing is tested in P1TelegramParserSpec
