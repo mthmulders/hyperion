@@ -19,9 +19,9 @@ test:
   override:
     - sbt test:compile
     - sbt coverage test -Dakka.test.timefactor=10 -Dakka.loglevel=info
-    - sbt clean debian:packageBin
   post:
+    - find . -type f -regex ".*/target/test-reports/.*xml" -exec cp {} $CIRCLE_TEST_REPORTS/junit/ \;
     - sbt coverageAggregate
     - sbt codacyCoverage
-    - find . -type f -regex ".*/target/test-reports/.*xml" -exec cp {} $CIRCLE_TEST_REPORTS/junit/ \;
+    - sbt debian:packageBin
     - find . -type f -regex ".*deb" -exec cp {} $CIRCLE_TEST_REPORTS/deb/ \;

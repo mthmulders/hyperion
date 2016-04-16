@@ -36,7 +36,6 @@ lazy val commonSettings = Seq(
   organization := "hyperion",
   version := "1.0.0-SNAPSHOT",
   description := "",
-  coverageEnabled := true,
   scalaVersion := "2.11.7",
   scalacOptions ++= Seq(
     "-unchecked",
