@@ -31,12 +31,12 @@ class CollectingActorSpec extends BaseAkkaSpec {
       // Act
       actor ! MeterAgent.IncomingData("!XXXX" + CRLF) // simulate end of previous message
       for (chunk <- data) {
-        Thread.sleep(100)
+        Thread.sleep(500)
         actor ! MeterAgent.IncomingData(chunk)
       }
 
       // Assert
-      val telegram = receiver.expectMsgPF(5 seconds) {
+      val telegram = receiver.expectMsgPF(10 seconds) {
         case TelegramReceived(content) => content
       }
       telegram.checksum shouldBe "522B" // other parsing is tested in P1TelegramParserSpec
