@@ -15,7 +15,7 @@ dependencies:
 
 test:
   override:
-    - sbt coverage test -Dakka.test.timefactor=3
+    - sbt coverage test -Dakka.test.timefactor=4
   post:
     - mkdir -p $CIRCLE_TEST_REPORTS/{junit,deb}/
     - find . -type f -regex ".*/target/test-reports/.*xml" -exec cp {} $CIRCLE_TEST_REPORTS/junit/ \;
