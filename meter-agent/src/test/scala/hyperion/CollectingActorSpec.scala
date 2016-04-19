@@ -30,7 +30,9 @@ class CollectingActorSpec extends BaseAkkaSpec {
 
       // Act
       actor ! MeterAgent.IncomingData("!XXXX" + CRLF) // simulate end of previous message
+      Thread.sleep(50)
       for (chunk <- data) {
+        Thread.sleep(25)
         actor ! MeterAgent.IncomingData(chunk)
       }
 
