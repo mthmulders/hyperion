@@ -1,7 +1,7 @@
 //
 // Define dependency versions
 //
-lazy val akkaVer = "2.4.0"
+lazy val akkaVer = "2.4.4"
 lazy val flowVer = "2.4.1"
 lazy val logbackVer = "1.1.3"
 lazy val mockitoVer = "1.10.19"
