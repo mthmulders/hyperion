@@ -26,7 +26,7 @@ class CollectingActorSpec extends BaseAkkaSpec {
       val source = Source.fromInputStream(getClass.getResourceAsStream("/valid-telegram1.txt"))
       val text = try source.mkString finally source.close()
 
-      val data = text.grouped(15).toIndexedSeq
+      val data = text.grouped(100).toIndexedSeq
 
       // Act
       actor ! MeterAgent.IncomingData("!XXXX" + CRLF) // simulate end of previous message
