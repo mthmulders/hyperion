@@ -1,5 +1,0 @@
-language: scala
-jdk:
-  - oraclejdk8
-script:
-  - sbt coverage test -Dakka.test.timefactor=10 -Dakka.loglevel=info
