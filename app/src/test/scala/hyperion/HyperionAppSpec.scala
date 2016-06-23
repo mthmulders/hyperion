@@ -4,12 +4,12 @@ import akka.testkit.TestProbe
 
 import scala.concurrent.duration.DurationInt
 
-class CoreAppSpec extends BaseAkkaSpec {
+class HyperionAppSpec extends BaseAkkaSpec {
 
-  "Creating the CoreApp" should {
+  "Creating the HyperionApp" should {
     "result in creating the necessary top-level actors" in {
       // Act
-      new CoreApp(system)
+      new HyperionApp(system)
 
       // Assert
       TestProbe().expectActor("/user/launcher-actor", 4 seconds) should have size 1

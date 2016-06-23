@@ -26,7 +26,11 @@ object RecentHistoryActor {
   *
   * @param messageDistributor The Actor that distributes incoming telegrams.
   */
-class RecentHistoryActor(messageDistributor: ActorRef) extends FSM[State, Data] with ActorLogging with SettingsActor {
+class RecentHistoryActor(messageDistributor: ActorRef)
+  extends FSM[RecentHistoryActor.State, RecentHistoryActor.Data]
+  with ActorLogging
+  with SettingsActor {
+  
   override def preStart = {
     messageDistributor ! RegisterReceiver
   }

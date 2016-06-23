@@ -15,7 +15,6 @@ lazy val sprayWsVer = "0.1.4"
 //
 lazy val akkaActor   = "com.typesafe.akka"        %% "akka-actor"                    % akkaVer
 lazy val akkaSlf4j   = "com.typesafe.akka"        %% "akka-slf4j"                    % akkaVer
-lazy val akkaRemote  = "com.typesafe.akka"        %% "akka-remote"                   % akkaVer
 lazy val akkaTestKit = "com.typesafe.akka"        %% "akka-testkit"                  % akkaVer
 lazy val flow        = "com.github.jodersky"      %% "flow"                          % flowVer
 lazy val flowNative  = "com.github.jodersky"      %  "flow-native"                   % flowVer
@@ -34,8 +33,8 @@ lazy val sprayWS     = "com.wandoulabs.akka"      %% "spray-websocket"          
 //
 lazy val commonSettings = Seq(
   organization := "hyperion",
-  version := "1.0.0-SNAPSHOT",
-  description := "",
+  version := "2.0.0-SNAPSHOT",
+  description := "Hyperion",
   scalaVersion := "2.11.7",
   scalacOptions ++= Seq(
     "-unchecked",
@@ -74,7 +73,6 @@ lazy val testSupport = (project in file("test-support"))
     libraryDependencies ++= Seq(
       akkaActor,
       akkaSlf4j,
-      akkaRemote,
       akkaTestKit % "test",
       logback,
       mockito % "test",
@@ -83,28 +81,31 @@ lazy val testSupport = (project in file("test-support"))
   )
 ).dependsOn(common)
 
-lazy val meterAgent = (project in file("meter-agent"))
+lazy val app = (project in file("app"))
   .enablePlugins(JavaServerAppPackaging)
   .settings(commonSettings: _*)
   .settings(Seq(
-    name := "hyperion-meter-agent",
+    name := "hyperion",
     resolvers += Resolver.bintrayRepo("jodersky", "maven"),
     libraryDependencies ++= Seq(
       akkaActor,
       akkaSlf4j,
-      akkaRemote,
       akkaTestKit % "test",
       flow,
       flowNative,
       logback,
       mockito % "test",
       parserComb,
-      scalaTest % "test"
+      scalaTest % "test",
+      sprayCan,
+      sprayHttpx,
+      sprayJson,
+      sprayWS
     ),
-    packageName in Linux := "hyperion-meter-agent",
+    packageName in Linux := "hyperion",
     maintainer in Linux := "Maarten Mulders",
-    packageSummary in Linux := "Hyperion meter agent",
-    packageDescription in Linux := "The Hyperion meter agent that connects the Smart Meter to Hyperion",
+    packageSummary in Linux := "Hyperion",
+    packageDescription in Linux := "The Hyperion system that shows realtime data from a Smart Meter",
     mappings in Universal += {
       sourceDirectory.value / "main" / "deb" / "application.conf" -> "conf/meter-agent.conf"
     },
@@ -119,37 +120,6 @@ lazy val meterAgent = (project in file("meter-agent"))
   )
 ).dependsOn(common, testSupport % "test->test")
 
-lazy val core = (project in file("core"))
-  .enablePlugins(JavaServerAppPackaging)
-  .settings(commonSettings: _*)
-  .settings(Seq(
-    name := "hyperion-core",
-    libraryDependencies ++= Seq(
-      akkaActor,
-      akkaSlf4j,
-      akkaRemote,
-      akkaTestKit % "test",
-      logback,
-      sprayCan,
-      sprayHttpx,
-      sprayJson,
-      sprayWS
-    ),
-    packageName in Linux := "hyperion-core",
-    maintainer in Linux := "Maarten Mulders",
-    packageSummary in Linux := "Hyperion core",
-    packageDescription in Linux := "The Hyperion core that collects and stores data",
-    mappings in Universal += {
-      sourceDirectory.value / "main" / "deb" / "application.conf" -> "conf/core.conf"
-    },
-    daemonUser in Linux := "hyperion",
-    daemonGroup in Linux := "hyperion",
-    serverLoading in Debian := com.typesafe.sbt.packager.archetypes.ServerLoader.SystemV,
-    debianPackageDependencies in Debian ++= Seq("oracle-java8-jdk"),
-    bashScriptExtraDefines += """addJava "-Dconfig.file=${app_home}/../conf/core.conf""""
-  )
-).dependsOn(common, testSupport % "test->test")
-
 lazy val root = (project in file("."))
   .settings(commonSettings: _*)
-  .aggregate(core, meterAgent)
+  .aggregate(app)

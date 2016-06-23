@@ -8,8 +8,8 @@ import spray.can.server.UHttp
 
 /** Companion object voor the [[LauncherActor]] class */
 object LauncherActor {
-  def props(port: Int): Props = {
-    Props(new LauncherActor(port))
+  def props(): Props = {
+    Props(new LauncherActor())
   }
 }
 
@@ -18,18 +18,25 @@ object LauncherActor {
   *
   * @param port Desired port number.
   */
-class LauncherActor(port: Int) extends Actor with ActorLogging {
+class LauncherActor() extends Actor with ActorLogging with SettingsActor {
   protected def http() = {
     implicit val system = context.system
     IO(UHttp)
   }
 
   override def preStart = {
-    val messageDistributor = context.system.actorOf(MessageDistributor.props(), "receiver")
+    val system = context.system;
+    val messageDistributor = system.actorOf(MessageDistributor.props(), "receiver")
+
+    val collectingActor = system.actorOf(CollectingActor.props(messageDistributor), "collecting-actor")
+
+    val meterAgent = system.actorOf(MeterAgent.props(collectingActor), "meter-agent")
+
     context.system.actorOf(RecentHistoryActor.props(messageDistributor), "recent-history")
+
     val httpRequestActor = context.system.actorOf(IncomingHttpActor.props(messageDistributor), "incoming-http-actor")
 
-    http ! Http.Bind(httpRequestActor, interface = "0.0.0.0", port = port)
+    http ! Http.Bind(httpRequestActor, interface = "0.0.0.0", port = settings.api.port)
   }
 
   override def receive: Receive = {
