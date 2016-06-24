@@ -122,4 +122,4 @@ lazy val app = (project in file("app"))
 
 lazy val root = (project in file("."))
   .settings(commonSettings: _*)
-  .aggregate(app)
+  .aggregate(app, common)
