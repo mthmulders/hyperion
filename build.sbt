@@ -107,13 +107,13 @@ lazy val app = (project in file("app"))
     packageSummary in Linux := "Hyperion",
     packageDescription in Linux := "The Hyperion system that shows realtime data from a Smart Meter",
     mappings in Universal += {
-      sourceDirectory.value / "main" / "deb" / "application.conf" -> "conf/meter-agent.conf"
+      sourceDirectory.value / "main" / "deb" / "application.conf" -> "conf/hyperion.conf"
     },
     daemonUser in Linux := "hyperion",
     daemonGroup in Linux := "hyperion",
     serverLoading in Debian := com.typesafe.sbt.packager.archetypes.ServerLoader.SystemV,
     debianPackageDependencies in Debian ++= Seq("oracle-java8-jdk"),
-    bashScriptExtraDefines += """addJava "-Dconfig.file=${app_home}/../conf/meter-agent.conf"""",
+    bashScriptExtraDefines += """addJava "-Dconfig.file=${app_home}/../conf/hyperion.conf"""",
     maintainerScripts in Debian := maintainerScriptsAppend((maintainerScripts in Debian).value)(
       DebianConstants.Postinst -> "usermod -a -G dialout hyperion"
     )
