@@ -10,14 +10,20 @@ class SettingsSpec extends BaseSpec {
 
   "Inspecting 'api'" should {
     "return correct values for the 'receiver' configuration section" in {
-      settings.api.port       shouldBe 8080
+      settings.api.port            shouldBe 8080
     }
   }
 
   "Inspecting 'history'" should {
     "return correct values" in {
-      settings.history.resolution shouldBe (100 millis)
-      settings.history.limit shouldBe (24 hours)
+      settings.history.resolution  shouldBe (100 millis)
+      settings.history.limit       shouldBe (24 hours)
+    }
+  }
+
+  "Inspecting 'daily'" should {
+    "return correct values" in {
+      settings.daily.resolution    shouldBe (1 day)
     }
   }
 

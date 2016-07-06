@@ -22,6 +22,10 @@ class Settings(system: ExtendedActorSystem) extends Extension {
     val limit             = hyperion getDuration("history.limit", HOURS) hours
   }
 
+  object daily {
+    val resolution        = hyperion getDuration("daily.resolution", MILLISECONDS) millis
+  }
+
   object meter {
     val serialPort: String = hyperion getString "meter.serial-port"
     val baudRate: Int      = hyperion getInt    "meter.baud-rate"
