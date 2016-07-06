@@ -1,2 +1,2 @@
-meter-agent/src/test/resources/valid-telegram1.txt eol=crlf
-meter-agent/src/test/resources/valid-telegram2.txt eol=crlf
+app/src/test/resources/valid-telegram1.txt eol=crlf
+app/src/test/resources/valid-telegram2.txt eol=crlf
