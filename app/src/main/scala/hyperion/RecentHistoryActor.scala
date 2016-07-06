@@ -22,7 +22,7 @@ object RecentHistoryActor {
 }
 
 /**
-  * Actor that returns the most recent meter readings.
+  * Actor that keeps the most recent meter readings in memory.
   *
   * @param messageDistributor The Actor that distributes incoming telegrams.
   */
@@ -37,6 +37,7 @@ class RecentHistoryActor(messageDistributor: ActorRef)
 
   private[this] val historyLimit = (settings.history.limit / settings.history.resolution).toInt
   log.info(s"Allocating buffer for $historyLimit entries")
+
   startWith(Receiving, History(RingBuffer[P1Telegram](historyLimit)))
 
   when(Receiving) {

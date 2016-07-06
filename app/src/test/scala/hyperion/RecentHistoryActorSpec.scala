@@ -9,10 +9,10 @@ class RecentHistoryActorSpec extends BaseAkkaSpec {
   "The Recent History Actor" should {
     "register itself with the Message Distributor" in {
       // Arrange
-      val messageDistributor = TestProbe("message-distributor")
+      val messageDistributor = TestProbe("recemessage-distributor")
 
       // Act
-      system.actorOf(RecentHistoryActor.props(messageDistributor.ref), "register")
+      system.actorOf(RecentHistoryActor.props(messageDistributor.ref), "recent-register")
 
       // Assert
       messageDistributor.expectMsg(RegisterReceiver)
@@ -24,7 +24,7 @@ class RecentHistoryActorSpec extends BaseAkkaSpec {
       val telegram = TestSupport.randomTelegram()
 
       // Act
-      val fsm = TestFSMRef(new RecentHistoryActor(messageDispatcher.ref), "go-to-sleep")
+      val fsm = TestFSMRef(new RecentHistoryActor(messageDispatcher.ref), "recent-go-to-sleep")
       messageDispatcher.send(fsm, TelegramReceived(telegram))
 
       // Assert
@@ -39,7 +39,7 @@ class RecentHistoryActorSpec extends BaseAkkaSpec {
       val history = RingBuffer[P1Telegram](2)
 
       // Act
-      val fsm = TestFSMRef(new RecentHistoryActor(messageDispatcher.ref), "wake-up")
+      val fsm = TestFSMRef(new RecentHistoryActor(messageDispatcher.ref), "recent-wake-up")
       fsm.setState(Sleeping, History(history))
       Thread.sleep(1000)
       messageDispatcher.send(fsm, TelegramReceived(telegram))
@@ -57,7 +57,7 @@ class RecentHistoryActorSpec extends BaseAkkaSpec {
       val telegram = TestSupport.randomTelegram()
 
       // Act
-      val sut = actor("retrieve-history")(new RecentHistoryActor(messageDispatcher.ref))
+      val sut = actor("recent-retrieve-history")(new RecentHistoryActor(messageDispatcher.ref))
       messageDispatcher.send(sut, TelegramReceived(telegram))
       client.send(sut, GetRecentHistory)
 
