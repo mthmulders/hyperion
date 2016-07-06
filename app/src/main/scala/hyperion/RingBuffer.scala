@@ -1,12 +1,9 @@
 package hyperion
 
+import java.util.concurrent.atomic.AtomicInteger
 import java.util.concurrent.locks.ReentrantReadWriteLock
 
-import scala.annotation.migration
-import scala.collection.generic.CanBuildFrom
-import scala.collection.immutable.IndexedSeq
 import scala.collection._
-import scala.collection.parallel.{ParSeq, Combiner}
 import scala.reflect.ClassTag
 
 /**
@@ -17,15 +14,16 @@ import scala.reflect.ClassTag
   */
 class RingBuffer[T](limit: Int)(implicit m: ClassTag[T]) extends mutable.AbstractBuffer[T] with GenTraversable[T] {
   private[this] val items = Array.fill[Option[T]](limit)(None)
-  private[this] var cursor = 0
+  private[this] val cursor = new AtomicInteger(0)
   private[this] val monitor = new ReentrantReadWriteLock()
 
   private[this] def positionInArray(desiredPosition: Int): Int = {
-    if (length >= limit) (cursor + desiredPosition) % limit else desiredPosition
+    if (length >= limit) (cursor.get() + desiredPosition) % limit else desiredPosition
   }
 
   override def apply(n: Int): T = {
     monitor.readLock().lock()
+    util.Try()
     try {
       items(positionInArray(n)).get
     } finally {
@@ -62,9 +60,8 @@ class RingBuffer[T](limit: Int)(implicit m: ClassTag[T]) extends mutable.Abstrac
   override def +=(elem: T): RingBuffer.this.type = {
     monitor.writeLock().lock()
     try {
-      items.update(cursor, Some(elem))
-      cursor += 1
-      if (cursor >= limit) cursor = 0
+      items.update(cursor.get(), Some(elem))
+      if (cursor.incrementAndGet() >= limit) cursor.set(0)
       this
     } finally {
       monitor.writeLock().unlock()
@@ -75,7 +72,7 @@ class RingBuffer[T](limit: Int)(implicit m: ClassTag[T]) extends mutable.Abstrac
 
   /** @inheritdoc */
   override def iterator: scala.Iterator[T] = {
-    new RingBufferIterator[T](this, cursor, monitor)
+    new RingBufferIterator[T](this, cursor.get(), monitor)
   }
 }
 
@@ -86,16 +83,14 @@ object RingBuffer {
 }
 
 class RingBufferIterator[T](src: RingBuffer[T], startPos: Int, monitor: ReentrantReadWriteLock) extends Iterator[T] {
-  private[this] var cursor = 0
+  private[this] val cursor = new AtomicInteger(0)
 
-  override def hasNext: Boolean = cursor < src.length
+  override def hasNext: Boolean = cursor.get() < src.length
 
   override def next(): T = {
     monitor.readLock().lock()
     try {
-      val r = src(cursor)
-      cursor += 1
-      r
+      src(cursor.getAndIncrement())
     } finally {
       monitor.readLock().unlock()
     }
