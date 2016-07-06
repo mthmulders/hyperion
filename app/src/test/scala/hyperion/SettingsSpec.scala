@@ -9,7 +9,7 @@ class SettingsSpec extends BaseSpec {
   val settings = Settings(system)
 
   "Inspecting 'api'" should {
-    "return correct values for the 'receiver' configuration section" in {
+    "return correct values" in {
       settings.api.port            shouldBe 8080
     }
   }
@@ -27,8 +27,17 @@ class SettingsSpec extends BaseSpec {
     }
   }
 
+  "Inspecting 'database'" should {
+    "return correct values" in {
+      settings.database.driver     shouldBe "com.mysql.jdbc.Driver"
+      settings.database.user       shouldBe "admin"
+      settings.database.password   shouldBe "welcome123"
+      settings.database.url        shouldBe "jdbc:mysql://localhost/test"
+    }
+  }
+
   "Inspecting 'meter'" should {
-    "return correct values for the 'meter' configuration section" in {
+    "return correct values" in {
       settings.meter.serialPort    shouldBe "/dev/ttyUSB0"
       settings.meter.baudRate      shouldBe 115200
       settings.meter.characterSize shouldBe 8

@@ -26,6 +26,13 @@ class Settings(system: ExtendedActorSystem) extends Extension {
     val resolution        = hyperion getDuration("daily.resolution", MILLISECONDS) millis
   }
 
+  object database {
+    val driver            = hyperion getString "database.driver"
+    val user              = hyperion getString "database.user"
+    val password          = hyperion getString "database.password"
+    val url               = hyperion getString "database.url"
+  }
+
   object meter {
     val serialPort: String = hyperion getString "meter.serial-port"
     val baudRate: Int      = hyperion getInt    "meter.baud-rate"

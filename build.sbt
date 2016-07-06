@@ -5,8 +5,10 @@ lazy val akkaVer = "2.4.4"
 lazy val flowVer = "2.4.1"
 lazy val logbackVer = "1.1.3"
 lazy val mockitoVer = "1.10.19"
+lazy val mysqlVer = "5.1.39"
 lazy val parserCombVer = "1.0.4"
 lazy val scalaTestVer = "2.2.6"
+lazy val slickVer = "3.1.1"
 lazy val sprayVer = "1.3.2"
 lazy val sprayWsVer = "0.1.4"
 
@@ -20,8 +22,10 @@ lazy val flow        = "com.github.jodersky"      %% "flow"                     
 lazy val flowNative  = "com.github.jodersky"      %  "flow-native"                   % flowVer
 lazy val logback     = "ch.qos.logback"           %  "logback-classic"               % logbackVer
 lazy val mockito     = "org.mockito"              %  "mockito-core"                  % mockitoVer
+lazy val mysql       = "mysql"                    %  "mysql-connector-java"          % mysqlVer
 lazy val parserComb  = "org.scala-lang.modules"   %% "scala-parser-combinators"      % parserCombVer
 lazy val scalaTest   = "org.scalatest"            %% "scalatest"                     % scalaTestVer
+lazy val slick       = "com.typesafe.slick"       %% "slick"                         % slickVer
 lazy val sprayCan    = "io.spray"                 %% "spray-can"                     % sprayVer
 lazy val sprayHttpx  = "io.spray"                 %% "spray-httpx"                   % sprayVer
 lazy val sprayJson   = "io.spray"                 %% "spray-json"                    % sprayVer
@@ -95,8 +99,10 @@ lazy val app = (project in file("app"))
       flowNative,
       logback,
       mockito % "test",
+      mysql,
       parserComb,
       scalaTest % "test",
+      slick,
       sprayCan,
       sprayHttpx,
       sprayJson,
