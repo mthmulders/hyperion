@@ -11,7 +11,7 @@ import P1Constants._
 
 class P1TelegramParserSpec extends BaseSpec with Inside with OptionValues {
 
-  val CRLF = "\r\n"
+  val newline = "\r\n"
 
   private def localDateTimeAtCurrentOffset(ts: LocalDateTime): OffsetDateTime = {
     ts.atOffset(ZoneId.systemDefault().getRules.getOffset(ts))

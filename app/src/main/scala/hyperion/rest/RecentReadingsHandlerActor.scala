@@ -24,7 +24,7 @@ class RecentReadingsHandlerActor(recentHistoryActor: ActorRef) extends Actor
   with ActorLogging with HyperionJsonProtocol {
 
   implicit val timeout = Timeout(500 millis)
-  import context.dispatcher
+  implicit val executor = context.dispatcher
 
   override def receive: Receive = {
     case HttpRequest(GET, Uri.Path("/recent"), _, _, _) =>

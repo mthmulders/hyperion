@@ -6,7 +6,7 @@ import scala.concurrent.duration._
 import scala.io.Source
 
 class CollectingActorSpec extends BaseAkkaSpec {
-  val CRLF = "\r\n"
+  val newline = "\r\n"
 
   "Receiving the \"IncomingData\"" should {
     "skip data until the first complete Telegram comes in" in {
@@ -29,7 +29,7 @@ class CollectingActorSpec extends BaseAkkaSpec {
       val data = text.grouped(100).toIndexedSeq
 
       // Act
-      actor ! MeterAgent.IncomingData("!XXXX" + CRLF) // simulate end of previous message
+      actor ! MeterAgent.IncomingData("!XXXX" + newline) // simulate end of previous message
       for (chunk <- data) {
         actor ! MeterAgent.IncomingData(chunk)
       }
