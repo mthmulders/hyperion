@@ -14,7 +14,7 @@ class Settings(system: ExtendedActorSystem) extends Extension {
   private val hyperion = system.settings.config getConfig "hyperion"
 
   object api {
-    val port               = hyperion getInt    "api.port"
+    val port              = hyperion getInt    "api.port"
   }
 
   object history {

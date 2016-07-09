@@ -6,7 +6,7 @@ import akka.io.Tcp.{CommandFailed, Bound}
 import spray.can.Http
 import spray.can.server.UHttp
 
-/** Companion object voor the [[LauncherActor]] class */
+/** Companion object for the [[LauncherActor]] class */
 object LauncherActor {
   def props(): Props = {
     Props(new LauncherActor())
@@ -14,25 +14,23 @@ object LauncherActor {
 }
 
 /**
-  * Actor that tries to allocate the configured TCP-poort for listening. If this fails, close the Actor system.
-  *
-  * @param port Desired port number.
+  * Actor that tries to allocate the configured TCP-port for listening. If this fails, close the Actor system.
   */
 class LauncherActor() extends Actor with ActorLogging with SettingsActor {
   protected def http() = {
-    implicit val system = context.system
-    IO(UHttp)
+    IO(UHttp)(context.system)
   }
 
   override def preStart = {
-    val system = context.system;
+    val system = context.system
+
     val messageDistributor = system.actorOf(MessageDistributor.props(), "receiver")
 
     val collectingActor = system.actorOf(CollectingActor.props(messageDistributor), "collecting-actor")
 
-    val meterAgent = system.actorOf(MeterAgent.props(collectingActor), "meter-agent")
+    system.actorOf(MeterAgent.props(collectingActor), "meter-agent")
 
-    context.system.actorOf(RecentHistoryActor.props(messageDistributor), "recent-history")
+    system.actorOf(RecentHistoryActor.props(messageDistributor), "recent-history")
 
     val httpRequestActor = context.system.actorOf(IncomingHttpActor.props(messageDistributor), "incoming-http-actor")
 
