@@ -70,21 +70,6 @@ lazy val common = (project in file("common"))
   )
 )
 
-lazy val testSupport = (project in file("test-support"))
-  .settings(commonSettings: _*)
-  .settings(Seq(
-    name := "hyperion-test-support",
-    libraryDependencies ++= Seq(
-      akkaActor,
-      akkaSlf4j,
-      akkaTestKit % "test",
-      logback,
-      mockito % "test",
-      scalaTest % "test"
-    )
-  )
-).dependsOn(common)
-
 lazy val app = (project in file("app"))
   .enablePlugins(JavaServerAppPackaging)
   .settings(commonSettings: _*)
@@ -124,7 +109,22 @@ lazy val app = (project in file("app"))
       DebianConstants.Postinst -> "usermod -a -G dialout hyperion"
     )
   )
-).dependsOn(common, testSupport % "test->test")
+).dependsOn(common)
+
+lazy val testSupport = (project in file("test-support"))
+  .settings(commonSettings: _*)
+  .settings(Seq(
+    name := "hyperion-test-support",
+    libraryDependencies ++= Seq(
+      akkaActor,
+      akkaSlf4j,
+      akkaTestKit % "test",
+      logback,
+      mockito % "test",
+      scalaTest % "test"
+    )
+  )
+).dependsOn(app % "test->main")
 
 lazy val root = (project in file("."))
   .settings(commonSettings: _*)

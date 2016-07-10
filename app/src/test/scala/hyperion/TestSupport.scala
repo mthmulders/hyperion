@@ -2,9 +2,9 @@ package hyperion
 
 import java.time.OffsetDateTime
 
-import scala.collection.immutable
-import P1Constants._
+import hyperion.P1Constants._
 
+import scala.collection.immutable
 import scala.util.Random
 
 object TestSupport {
