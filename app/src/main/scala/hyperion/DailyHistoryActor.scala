@@ -3,6 +3,7 @@ package hyperion
 import akka.actor.{ActorLogging, ActorRef, FSM, Props}
 import hyperion.MessageDistributor.RegisterReceiver
 import hyperion.DailyHistoryActor._
+import hyperion.database.DatabaseSupport
 
 object DailyHistoryActor {
   def props(messageDistributor: ActorRef) = {
@@ -25,7 +26,8 @@ object DailyHistoryActor {
 class DailyHistoryActor(messageDistributor: ActorRef)
     extends FSM[DailyHistoryActor.State, DailyHistoryActor.Data]
     with ActorLogging
-    with SettingsActor{
+    with SettingsActor
+    with DatabaseSupport {
 
   override def preStart = {
     messageDistributor ! RegisterReceiver
@@ -45,7 +47,12 @@ class DailyHistoryActor(messageDistributor: ActorRef)
   when(Sleeping) {
     case Event(_: TelegramReceived, _) =>
       stay()
+    case Event(StateTimeout, _) =>
+      log.debug("Awaking to receive new meter reading")
+      goto(Receiving) using Empty
   }
+
+  setTimer("awake", StateTimeout, settings.daily.resolution, repeat = true)
 
   initialize()
 }

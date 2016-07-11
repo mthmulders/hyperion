@@ -2,7 +2,7 @@ package hyperion
 
 import akka.testkit.{TestFSMRef, TestProbe}
 import hyperion.MessageDistributor.RegisterReceiver
-import hyperion.DailyHistoryActor.Sleeping
+import hyperion.DailyHistoryActor.{Empty, Receiving, Sleeping}
 
 class DailyHistoryActorSpec extends BaseAkkaSpec {
   "The Daily History Actor" should {
@@ -28,6 +28,21 @@ class DailyHistoryActorSpec extends BaseAkkaSpec {
 
       // Assert
       fsm.stateName shouldBe Sleeping
+    }
+
+    "wake up after resolution time" in {
+      // Arrange
+      // Sleep time is set in src/test/resources/application.conf: 100 millis
+      val messageDispatcher = TestProbe("message-distributor")
+      val telegram = TestSupport.randomTelegram()
+
+      // Act
+      val fsm = TestFSMRef(new DailyHistoryActor(messageDispatcher.ref), "daily-wake-up")
+      fsm.setState(Sleeping, Empty)
+      Thread.sleep(1000)
+
+      // Assert
+      fsm.stateName shouldBe Receiving
     }
   }
 }
