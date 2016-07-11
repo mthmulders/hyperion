@@ -41,11 +41,9 @@ class MeterAgent(collectingActor: ActorRef) extends Actor with ActorLogging with
       val reasonName = reason.getClass.getSimpleName
       log.error(reason, s"Could not $commandName serial port due to $reasonName")
     case Serial.Opened(openedPort) =>
-      val message = s"Opened serial port $openedPort"
-      log.info(message)
+      log.info(s"Opened serial port $openedPort")
     case Serial.Received(bytes) =>
-      val data = bytes.utf8String
-      collectingActor ! IncomingData(data)
+      collectingActor ! IncomingData(bytes.utf8String)
     case Serial.Closed =>
       log.info("Serial port operator closed normally")
     case Terminated(_) =>
