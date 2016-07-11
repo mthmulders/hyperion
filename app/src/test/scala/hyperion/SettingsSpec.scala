@@ -23,14 +23,14 @@ class SettingsSpec extends BaseSpec {
 
   "Inspecting 'daily'" should {
     "return correct values" in {
-      settings.daily.resolution    shouldBe (1 day)
+      settings.daily.resolution    shouldBe (100 millis)
     }
   }
 
   "Inspecting 'database'" should {
     "return correct values" in {
       settings.database.driver     shouldBe "com.mysql.jdbc.Driver"
-      settings.database.user       shouldBe "admin"
+      settings.database.user       shouldBe "ubuntu"
       settings.database.password   shouldBe "welcome123"
       settings.database.url        shouldBe "jdbc:mysql://localhost/test"
     }
