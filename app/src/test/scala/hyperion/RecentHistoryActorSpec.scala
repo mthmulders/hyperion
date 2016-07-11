@@ -3,7 +3,7 @@ package hyperion
 import akka.actor.ActorDSL.actor
 import akka.testkit.{TestFSMRef, TestProbe}
 import hyperion.MessageDistributor.RegisterReceiver
-import hyperion.RecentHistoryActor.{GetRecentHistory, History, RecentReadings, Sleeping}
+import hyperion.RecentHistoryActor.{GetRecentHistory, History, Receiving, RecentReadings, Sleeping}
 
 class RecentHistoryActorSpec extends BaseAkkaSpec {
   "The Recent History Actor" should {
@@ -42,10 +42,23 @@ class RecentHistoryActorSpec extends BaseAkkaSpec {
       val fsm = TestFSMRef(new RecentHistoryActor(messageDispatcher.ref), "recent-wake-up")
       fsm.setState(Sleeping, History(history))
       Thread.sleep(1000)
+
+      // Assert
+      fsm.stateName shouldBe Receiving
+    }
+
+    "store telegrams in memory" in {
+      // Arrange
+      // Sleep time is set in src/test/resources/application.conf: 100 millis
+      val messageDispatcher = TestProbe("message-distributor")
+      val telegram = TestSupport.randomTelegram()
+      val history = RingBuffer[P1Telegram](2)
+
+      // Act
+      val fsm = TestFSMRef(new RecentHistoryActor(messageDispatcher.ref), "recent-store")
       messageDispatcher.send(fsm, TelegramReceived(telegram))
 
       // Assert
-      fsm.stateName shouldBe Sleeping
       fsm.stateData shouldBe an[History]
       fsm.stateData.asInstanceOf[History].telegrams.length shouldBe 1
     }
