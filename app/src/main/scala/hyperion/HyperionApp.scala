@@ -22,13 +22,11 @@ class HyperionApp(system: ActorSystem) {
   private[this] val log = Logging(system, getClass.getName)
 
   sys.addShutdownHook({
-    val logging = Logging(system, getClass.getName)
-
-    logging.info("Shutting down the Hyperion Core")
+    log.info("Shutting down the Hyperion Core")
     val termination: Future[Terminated] = system.terminate()
     termination onComplete {
-      case Success(_)     => logging.info("Clean shut down complete")
-      case Failure(cause) => logging.info(s"Shut down with problems: ${cause.getMessage}", cause)
+      case Success(_)     => log.info("Clean shut down complete")
+      case Failure(cause) => log.info(s"Shut down with problems: ${cause.getMessage}", cause)
     }
     Await.result(termination, Duration.Inf)
   })

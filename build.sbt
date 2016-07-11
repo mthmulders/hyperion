@@ -118,14 +118,11 @@ lazy val testSupport = (project in file("test-support"))
     libraryDependencies ++= Seq(
       akkaActor,
       akkaSlf4j,
-      akkaTestKit % "test",
-      logback,
-      mockito % "test",
-      scalaTest % "test"
+      logback
     )
   )
-).dependsOn(app % "test->main")
+).dependsOn(app % "test->test")
 
 lazy val root = (project in file("."))
   .settings(commonSettings: _*)
-  .aggregate(app, common)
+  .aggregate(app, common, testSupport)
