@@ -14,6 +14,13 @@ import scala.util.{Failure, Success}
 object HyperionApp extends App {
   val system = ActorSystem("hyperion-system")
 
+  new HyperionApp(system)
+  Await.result(system.whenTerminated, Duration.Inf)
+}
+
+class HyperionApp(system: ActorSystem) {
+  private[this] val log = Logging(system, getClass.getName)
+
   sys.addShutdownHook({
     val logging = Logging(system, getClass.getName)
 
@@ -26,19 +33,9 @@ object HyperionApp extends App {
     Await.result(termination, Duration.Inf)
   })
 
-  new HyperionApp(system).run()
-}
-
-class HyperionApp(system: ActorSystem) {
-  private[this] val log = Logging(system, getClass.getName)
-
   log.info("Reading settings")
   Settings(system)
 
   log.info("Starting Hyperion")
   system.actorOf(LauncherActor.props(), "launcher-actor")
-
-  def run(): Unit = {
-    Await.result(system.whenTerminated, Duration.Inf)
-  }
 }
