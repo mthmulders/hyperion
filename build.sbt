@@ -7,6 +7,7 @@ lazy val logbackVer = "1.1.3"
 lazy val mockitoVer = "1.10.19"
 lazy val mysqlVer = "5.1.39"
 lazy val parserCombVer = "1.0.4"
+lazy val scalaMockVer = "3.2.2"
 lazy val scalaTestVer = "2.2.6"
 lazy val slickVer = "3.1.1"
 lazy val sprayVer = "1.3.2"
@@ -24,6 +25,7 @@ lazy val logback     = "ch.qos.logback"           %  "logback-classic"          
 lazy val mockito     = "org.mockito"              %  "mockito-core"                  % mockitoVer
 lazy val mysql       = "mysql"                    %  "mysql-connector-java"          % mysqlVer
 lazy val parserComb  = "org.scala-lang.modules"   %% "scala-parser-combinators"      % parserCombVer
+lazy val scalaMock   = "org.scalamock"            %% "scalamock-scalatest-support"   % scalaMockVer
 lazy val scalaTest   = "org.scalatest"            %% "scalatest"                     % scalaTestVer
 lazy val slick       = "com.typesafe.slick"       %% "slick"                         % slickVer
 lazy val sprayCan    = "io.spray"                 %% "spray-can"                     % sprayVer
@@ -86,6 +88,7 @@ lazy val app = (project in file("app"))
       mockito % "test",
       mysql,
       parserComb,
+      scalaMock % "test",
       scalaTest % "test",
       slick,
       sprayCan,
