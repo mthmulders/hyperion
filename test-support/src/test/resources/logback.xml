@@ -1,7 +1,7 @@
 <configuration>
     <appender name="stdout" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
-            <pattern>[%date] %level [%50.50X{akkaSource}] %logger{10} - %msg%n</pattern>
+            <pattern>[%date] %-5level [%50.50X{akkaSource}] %logger{10} - %msg%n</pattern>
         </encoder>
     </appender>
 
