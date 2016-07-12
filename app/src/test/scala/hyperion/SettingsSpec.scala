@@ -31,7 +31,6 @@ class SettingsSpec extends BaseSpec {
     "return correct values" in {
       settings.database.driver     shouldBe "com.mysql.jdbc.Driver"
       settings.database.user       shouldBe "ubuntu"
-      settings.database.url        shouldBe "jdbc:mysql://localhost/test"
     }
   }
 
