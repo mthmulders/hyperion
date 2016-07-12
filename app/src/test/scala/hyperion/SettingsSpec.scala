@@ -30,7 +30,7 @@ class SettingsSpec extends BaseSpec {
   "Inspecting 'database'" should {
     "return correct values" in {
       settings.database.driver     shouldBe "com.mysql.jdbc.Driver"
-      settings.database.user       shouldBe "ubuntu"
+      // others vary with environment, so are not tested here
     }
   }
 
