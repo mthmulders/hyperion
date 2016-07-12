@@ -44,5 +44,18 @@ class DailyHistoryActorSpec extends BaseAkkaSpec {
       // Assert
       fsm.stateName shouldBe Receiving
     }
+
+    "store telegrams in database" in {
+      val messageDispatcher = TestProbe("message-distributor")
+      val telegram = TestSupport.randomTelegram()
+      val history = RingBuffer[P1Telegram](2)
+
+      // Act
+      val fsm = TestFSMRef(new RecentHistoryActor(messageDispatcher.ref), "recent-store")
+      messageDispatcher.send(fsm, TelegramReceived(telegram))
+
+      // Assert
+
+    }
   }
 }

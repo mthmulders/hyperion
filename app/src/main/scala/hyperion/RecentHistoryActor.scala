@@ -63,7 +63,7 @@ class RecentHistoryActor(messageDistributor: ActorRef)
       goto(Receiving) using history
   }
 
-  setTimer("awake", StateTimeout, settings.history.resolution, repeat = true)
+  setTimer("recent-awake", StateTimeout, settings.history.resolution, repeat = true)
 
   initialize()
 }

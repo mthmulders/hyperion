@@ -49,7 +49,6 @@ class RecentHistoryActorSpec extends BaseAkkaSpec {
 
     "store telegrams in memory" in {
       // Arrange
-      // Sleep time is set in src/test/resources/application.conf: 100 millis
       val messageDispatcher = TestProbe("message-distributor")
       val telegram = TestSupport.randomTelegram()
       val history = RingBuffer[P1Telegram](2)

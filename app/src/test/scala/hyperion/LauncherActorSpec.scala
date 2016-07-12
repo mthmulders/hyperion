@@ -13,12 +13,13 @@ class LauncherActorSpec extends BaseAkkaSpec {
       val launcher = actor("create-children")(new LauncherActor() {
         override protected def http() = TestProbe().ref
       })
+      val createdActors = TestProbe().expectActor("/user/*", 4 seconds).filterNot(_ == launcher)
+      val createdPaths = createdActors.map(_.path.toString).map(_.replace("akka://default/user/", ""))
 
       // Assert
-      val createdActors = TestProbe().expectActor("/user/*", 4 seconds).filterNot(_ == launcher)
-      createdActors should have size 5
-      val createdPaths = createdActors.map(_.path.toString).map(_.replace("akka://default/user/", ""))
-      createdPaths should contain allOf ("receiver", "incoming-http-actor", "recent-history", "collecting-actor", "meter-agent")
+      createdActors should have size 6
+      createdPaths should contain allOf ("receiver", "incoming-http-actor", "recent-history", "collecting-actor",
+        "meter-agent", "daily-history")
     }
   }
 }
