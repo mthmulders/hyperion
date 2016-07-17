@@ -1,7 +1,7 @@
-CREATE TABLE `METER_READINGS` (
-  `RECORD_DATE` date NOT NULL,
-  `GAS` decimal(21,2) NOT NULL,
-  `ELECTRICITY_NORMAL` decimal(21,2) NOT NULL,
-  `ELECTRICITY_LOW` decimal(21,2) NOT NULL,
-  PRIMARY KEY (`RECORD_DATE`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+CREATE TABLE public.meter_readings (
+  record_date date NOT NULL,
+  gas decimal(21,2) NOT NULL,
+  electricity_normal decimal(21,2) NOT NULL,
+  electricity_low decimal(21,2) NOT NULL,
+  PRIMARY KEY (record_date)
+);

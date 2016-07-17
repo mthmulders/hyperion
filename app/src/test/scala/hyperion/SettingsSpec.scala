@@ -29,7 +29,7 @@ class SettingsSpec extends BaseSpec {
 
   "Inspecting 'database'" should {
     "return correct values" in {
-      settings.database.driver     shouldBe "com.mysql.jdbc.Driver"
+      settings.database.driver     shouldBe "org.postgresql.Driver"
       // others vary with environment, so are not tested here
     }
   }

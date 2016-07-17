@@ -4,6 +4,10 @@ machine:
   environment:
     SBT_VERSION: 0.13.9
 
+database:
+  override:
+    - echo "Here we can load the initial database schema if we want"
+
 dependencies:
   # Cache the resolution-cache and build streams to speed things up
   cache_directories:
@@ -17,7 +21,7 @@ test:
   pre:
     - mkdir -p $CIRCLE_TEST_REPORTS/{junit,deb}/
   override:
-    - sbt coverage test -Dakka.test.timefactor=5 -Dakka.loglevel=info -Dhyperion.database.url="jdbc:mysql://localhost/circle_test" -Dhyperion.database.user="ubuntu" -Dhyperion.database.password=""
+    - sbt coverage test -Dakka.test.timefactor=5 -Dakka.loglevel=info -Dhyperion.database.url="jdbc:postgresql:circle_test" -Dhyperion.database.user="ubuntu" -Dhyperion.database.password=""
   post:
     - find . -type f -regex ".*/target/test-reports/.*xml" -exec cp {} $CIRCLE_TEST_REPORTS/junit/ \;
     - sbt coverageAggregate

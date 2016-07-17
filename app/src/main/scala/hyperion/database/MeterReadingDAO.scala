@@ -3,7 +3,7 @@ package hyperion.database
 import java.time.LocalDate
 
 import org.slf4j.LoggerFactory
-import slick.driver.MySQLDriver.api._
+import slick.driver.PostgresDriver.api._
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.util.{Failure, Success}
@@ -11,11 +11,11 @@ import scala.util.{Failure, Success}
 object MeterReadingDAO extends DatabaseSupport with DateTimeColumns {
   private[this] val log = LoggerFactory.getLogger(getClass)
 
-  class MeterReadings(tag: Tag) extends Table[(LocalDate, BigDecimal, BigDecimal, BigDecimal)](tag, "METER_READINGS") {
-    def recordDate = column[LocalDate]("RECORD_DATE", O.PrimaryKey)
-    def gas = column[BigDecimal]("GAS")
-    def electricityNormal = column[BigDecimal]("ELECTRICITY_NORMAL")
-    def electricityLow = column[BigDecimal]("ELECTRICITY_LOW")
+  class MeterReadings(tag: Tag) extends Table[(LocalDate, BigDecimal, BigDecimal, BigDecimal)](tag, "meter_readings") {
+    def recordDate = column[LocalDate]("record_date", O.PrimaryKey)
+    def gas = column[BigDecimal]("gas")
+    def electricityNormal = column[BigDecimal]("electricity_normal")
+    def electricityLow = column[BigDecimal]("electricity_low")
 
     def * = (recordDate, gas, electricityNormal, electricityLow)
   }
