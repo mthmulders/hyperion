@@ -13,10 +13,10 @@ class IncomingHttpActorSpec extends BaseAkkaSpec with OptionValues {
     "reject requests to the wrong path" in {
       // Arrange
       val client = TestProbe()
-      val request = new HttpRequest(GET, Uri("/wrong"), Nil, HttpEntity.Empty, `HTTP/1.1`)
+      val request = HttpRequest(GET, Uri("/wrong"), Nil, HttpEntity.Empty, `HTTP/1.1`)
 
       // Act
-      val sut = actor("wrong-path")(new IncomingHttpActor(TestProbe().ref))
+      val sut = actor("wrong-path")(new IncomingHttpActor(TestProbe().ref, TestProbe().ref))
       client.send(sut, request)
 
       // Assert
@@ -28,10 +28,10 @@ class IncomingHttpActorSpec extends BaseAkkaSpec with OptionValues {
     "reject requests with the wrong HTTP method" in {
       // Arrange
       val client = TestProbe()
-      val request = new HttpRequest(PUT, Uri("/"), Nil, HttpEntity.Empty, `HTTP/1.1`)
+      val request = HttpRequest(PUT, Uri("/"), Nil, HttpEntity.Empty, `HTTP/1.1`)
 
       // Act
-      val sut = actor("wrong-method")(new IncomingHttpActor(TestProbe().ref))
+      val sut = actor("wrong-method")(new IncomingHttpActor(TestProbe().ref, TestProbe().ref))
       client.send(sut, request)
 
       // Assert
@@ -44,10 +44,10 @@ class IncomingHttpActorSpec extends BaseAkkaSpec with OptionValues {
       // Arrange
       val client = TestProbe()
       val rha = TestProbe()
-      val request = new HttpRequest(GET, Uri("/actual"), Nil, HttpEntity.Empty, `HTTP/1.1`)
+      val request = HttpRequest(GET, Uri("/actual"), Nil, HttpEntity.Empty, `HTTP/1.1`)
 
       // Act
-      val sut = actor("actual-values")(new IncomingHttpActor(TestProbe().ref) {
+      val sut = actor("actual-values")(new IncomingHttpActor(TestProbe().ref, TestProbe().ref) {
         override def createActualValuesHandlerActor(client: ActorRef, messageDistributor: ActorRef) = rha.ref
       })
       client.send(sut, request)
@@ -63,8 +63,8 @@ class IncomingHttpActorSpec extends BaseAkkaSpec with OptionValues {
       val request = new HttpRequest(GET, Uri("/recent"), Nil, HttpEntity.Empty, `HTTP/1.1`)
 
       // Act
-      val sut = actor("recent-values")(new IncomingHttpActor(TestProbe().ref) {
-        override def createRecentReadingsHandlerActor(messageDistributor: ActorRef) = rha.ref
+      val sut = actor("recent-values")(new IncomingHttpActor(TestProbe().ref, TestProbe().ref) {
+        override def createRecentReadingsHandlerActor() = rha.ref
       })
       client.send(sut, request)
 

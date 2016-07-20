@@ -30,10 +30,12 @@ class LauncherActor() extends Actor with ActorLogging with SettingsActor {
 
     system.actorOf(MeterAgent.props(collectingActor), "meter-agent")
 
-    system.actorOf(RecentHistoryActor.props(messageDistributor), "recent-history")
+    val recentHistoryActor = system.actorOf(RecentHistoryActor.props(messageDistributor), "recent-history")
     system.actorOf(DailyHistoryActor.props(messageDistributor), "daily-history")
 
-    val httpRequestActor = context.system.actorOf(IncomingHttpActor.props(messageDistributor), "incoming-http-actor")
+    val httpRequestActor = context.system.actorOf(
+      IncomingHttpActor.props(messageDistributor, recentHistoryActor),
+      "incoming-http-actor")
 
     http ! Http.Bind(httpRequestActor, interface = "0.0.0.0", port = settings.api.port)
   }
