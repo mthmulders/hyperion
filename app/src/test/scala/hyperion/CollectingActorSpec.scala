@@ -5,7 +5,7 @@ import akka.testkit.TestProbe
 import scala.concurrent.duration._
 import scala.io.Source
 
-class CollectingActorSpec extends BaseAkkaSpec {
+class CollectingActorSpec extends BaseAkkaSpec with HyperionActors {
   val newline = "\r\n"
 
   "Receiving the \"IncomingData\"" should {
@@ -13,7 +13,7 @@ class CollectingActorSpec extends BaseAkkaSpec {
       val receiver = TestProbe()
       val actor = system.actorOf(CollectingActor.props(receiver.ref), "skip-data")
 
-      actor ! MeterAgent.IncomingData("1-3:0.2.8(42)\r\n!522B\r\n/TEST")
+      collectingActor ! MeterAgent.IncomingData("1-3:0.2.8(42)\r\n!522B\r\n/TEST")
 
       receiver.expectNoMsg(500 milliseconds)
     }

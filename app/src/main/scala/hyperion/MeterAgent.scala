@@ -1,6 +1,6 @@
 package hyperion
 
-import akka.actor.{Actor, ActorLogging, ActorRef, Props, Terminated}
+import akka.actor.{Actor, ActorLogging, ActorRef, Terminated}
 import akka.io.IO
 import com.github.jodersky.flow.{Serial, SerialSettings}
 
@@ -9,17 +9,14 @@ import MeterAgent._
 
 object MeterAgent {
   case class IncomingData(data: String)
-
-  def props(collectingActor: ActorRef): Props = {
-    Props(new MeterAgent(collectingActor))
-  }
 }
 
 /**
   * This actor is an intermediary between Flow (for reading the serial port) and the Hyperion Meter Agent. It receives data from Flow and forwards it for processing to the Collecting Actor.
   * @param collectingActor The Collecting Actor that collects data from the serial line.
+  * @param settings Application settings.
   */
-class MeterAgent(collectingActor: ActorRef) extends Actor with ActorLogging with SettingsActor {
+class MeterAgent(collectingActor: ActorRef, settings: AppSettings) extends Actor with ActorLogging {
   private val operator = IO(Serial)(context.system)
 
   override def preStart = {

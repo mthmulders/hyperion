@@ -1,6 +1,6 @@
 package hyperion.rest
 
-import hyperion.{P1GasMeter, P1Constants, TestSupport, BaseSpec}
+import hyperion.{BaseSpec, P1Constants, P1GasMeter, TestSupport}
 import hyperion.rest.HyperionConversions.telegramWrapper
 import org.scalatest.OptionValues
 

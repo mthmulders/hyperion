@@ -4,9 +4,9 @@ import akka.actor.ActorSystem
 import com.github.jodersky.flow.Parity
 import scala.concurrent.duration.DurationInt
 
-class SettingsSpec extends BaseSpec {
+class AppSettingsSpec extends BaseSpec {
   implicit val system = ActorSystem()
-  val settings = Settings(system)
+  val settings = AppSettings(system)
 
   "Inspecting 'api'" should {
     "return correct values" in {

@@ -2,10 +2,10 @@ package hyperion
 
 import java.time.OffsetDateTime
 
-import hyperion.P1Constants._
-
 import scala.collection.immutable
 import scala.util.Random
+
+import hyperion.P1Constants._
 
 object TestSupport {
   private def randomBigDecimal(): BigDecimal = {

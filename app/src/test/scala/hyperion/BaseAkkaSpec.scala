@@ -1,16 +1,20 @@
 package hyperion
 
 import akka.actor.{ActorIdentity, ActorRef, ActorSystem, Identify}
-import akka.testkit.{EventFilter, TestEvent, TestProbe}
+import akka.testkit.{EventFilter, ImplicitSender, TestEvent, TestKit, TestProbe}
 import org.scalactic.TypeCheckedTripleEquals
-import org.scalatest.{BeforeAndAfterAll, Matchers}
+import org.scalatest.{BeforeAndAfterAll, Matchers, WordSpecLike}
 import org.slf4j.LoggerFactory
 
 import scala.collection.{immutable, mutable}
 import scala.concurrent.Await
 import scala.concurrent.duration.{Duration, DurationInt, FiniteDuration}
 
-abstract class BaseAkkaSpec extends BaseSpec with Matchers with BeforeAndAfterAll with TypeCheckedTripleEquals {
+abstract class BaseAkkaSpec extends TestKit(ActorSystem())
+  with Core
+  with ImplicitSender
+  with WordSpecLike with Matchers with BeforeAndAfterAll with TypeCheckedTripleEquals {
+
   protected[this] val log = LoggerFactory.getLogger(getClass)
 
   implicit class TestProbeOps(probe: TestProbe) {
@@ -29,7 +33,6 @@ abstract class BaseAkkaSpec extends BaseSpec with Matchers with BeforeAndAfterAl
     }
   }
 
-  implicit val system = ActorSystem()
   system.eventStream.publish(TestEvent.Mute(EventFilter.debug()))
   system.eventStream.publish(TestEvent.Mute(EventFilter.info()))
   system.eventStream.publish(TestEvent.Mute(EventFilter.warning()))

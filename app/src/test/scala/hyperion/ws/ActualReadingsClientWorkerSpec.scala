@@ -1,26 +1,27 @@
-package hyperion.rest
+package hyperion.ws
 
 import akka.actor.ActorDSL.actor
+import akka.actor.Props
 import akka.testkit.TestProbe
 import hyperion.MessageDistributor.RegisterReceiver
 import hyperion._
+import hyperion.rest.{ActualValuesHandlerActor, HyperionJsonProtocol, MeterReading}
 import org.scalatest.OptionValues
 import spray.can.server.UHttp.UpgradeServer
 import spray.can.websocket
-import spray.can.websocket.frame.TextFrame
 import spray.can.websocket.FrameCommand
+import spray.can.websocket.frame.TextFrame
 import spray.http.{HttpHeader, StatusCodes}
 import spray.json._
-import HyperionJsonProtocol._
 
-class ActualValuesHandlerActorSpec extends BaseAkkaSpec with OptionValues {
+class ActualReadingsClientWorkerSpec extends BaseAkkaSpec with OptionValues with HyperionJsonProtocol {
   "Initially" should {
     "register itself with the Message Distributor" in {
       // Arrange
       val messageDistributor = TestProbe("receiver")
 
       // Act
-      system.actorOf(ActualValuesHandlerActor.props(TestProbe().ref, messageDistributor.ref), "register")
+      system.actorOf(Props(new ActualReadingsClientWorker(messageDistributor.ref, TestProbe().ref)), "register")
 
       // Assert
       messageDistributor.expectMsg(RegisterReceiver)

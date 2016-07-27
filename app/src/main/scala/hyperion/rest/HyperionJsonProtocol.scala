@@ -2,16 +2,19 @@ package hyperion.rest
 
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter.ISO_OFFSET_DATE_TIME
+
+import spray.httpx.SprayJsonSupport
 import spray.json._
-import scala.util.{Try, Failure, Success}
+
+import scala.util.{Failure, Success, Try}
 
 /** Allows easy mix-in of [[HyperionJsonProtocol]] */
 trait HyperionJsonProtocol {
-  implicit val meterReadingFormat = HyperionJsonProtocol.meterReadingFormat
+  implicit def meterReadingFormat: RootJsonFormat[MeterReading] = HyperionJsonProtocol.meterReadingFormat
 }
 
 /** Converts the model of Hyperions REST API into JSON and back */
-object HyperionJsonProtocol extends DefaultJsonProtocol {
+object HyperionJsonProtocol extends DefaultJsonProtocol with SprayJsonSupport {
   implicit object OffsetDateTimeFormat extends JsonFormat[OffsetDateTime] {
     override def read(json: JsValue): OffsetDateTime = json match {
       case JsString(value) => Try(OffsetDateTime.parse(value, ISO_OFFSET_DATE_TIME)) match {

@@ -1,6 +1,7 @@
 package hyperion
 
 import akka.actor.ActorDSL.actor
+import akka.actor.Props
 import akka.testkit.{TestFSMRef, TestProbe}
 import hyperion.MessageDistributor.RegisterReceiver
 import hyperion.RecentHistoryActor.{GetRecentHistory, History, Receiving, RecentReadings, Sleeping}
@@ -12,7 +13,7 @@ class RecentHistoryActorSpec extends BaseAkkaSpec {
       val messageDistributor = TestProbe("recemessage-distributor")
 
       // Act
-      system.actorOf(RecentHistoryActor.props(messageDistributor.ref), "recent-register")
+      system.actorOf(Props(new RecentHistoryActor(messageDistributor.ref, settings)), "recent-register")
 
       // Assert
       messageDistributor.expectMsg(RegisterReceiver)
@@ -24,7 +25,7 @@ class RecentHistoryActorSpec extends BaseAkkaSpec {
       val telegram = TestSupport.randomTelegram()
 
       // Act
-      val fsm = TestFSMRef(new RecentHistoryActor(messageDispatcher.ref), "recent-go-to-sleep")
+      val fsm = TestFSMRef(new RecentHistoryActor(messageDispatcher.ref, settings), "recent-go-to-sleep")
       messageDispatcher.send(fsm, TelegramReceived(telegram))
 
       // Assert
@@ -39,7 +40,7 @@ class RecentHistoryActorSpec extends BaseAkkaSpec {
       val history = RingBuffer[P1Telegram](2)
 
       // Act
-      val fsm = TestFSMRef(new RecentHistoryActor(messageDispatcher.ref), "recent-wake-up")
+      val fsm = TestFSMRef(new RecentHistoryActor(messageDispatcher.ref, settings), "recent-wake-up")
       fsm.setState(Sleeping, History(history))
       Thread.sleep(1000)
 
@@ -54,7 +55,7 @@ class RecentHistoryActorSpec extends BaseAkkaSpec {
       val history = RingBuffer[P1Telegram](2)
 
       // Act
-      val fsm = TestFSMRef(new RecentHistoryActor(messageDispatcher.ref), "recent-store")
+      val fsm = TestFSMRef(new RecentHistoryActor(messageDispatcher.ref, settings), "recent-store")
       messageDispatcher.send(fsm, TelegramReceived(telegram))
 
       // Assert
@@ -69,7 +70,7 @@ class RecentHistoryActorSpec extends BaseAkkaSpec {
       val telegram = TestSupport.randomTelegram()
 
       // Act
-      val sut = actor("recent-retrieve-history")(new RecentHistoryActor(messageDispatcher.ref))
+      val sut = actor("recent-retrieve-history")(new RecentHistoryActor(messageDispatcher.ref, settings))
       messageDispatcher.send(sut, TelegramReceived(telegram))
       client.send(sut, GetRecentHistory)
 

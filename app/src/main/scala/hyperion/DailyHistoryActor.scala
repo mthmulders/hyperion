@@ -10,10 +10,6 @@ import hyperion.DailyHistoryActor._
 import hyperion.database.{DatabaseSupport, MeterReadingDAO}
 
 object DailyHistoryActor {
-  def props(messageDistributor: ActorRef) = {
-    Props(new DailyHistoryActor(messageDistributor))
-  }
-
   sealed trait State
   case object Sleeping extends State
   case object Receiving extends State
@@ -27,10 +23,9 @@ object DailyHistoryActor {
   *
   * @param messageDistributor The Actor that distributes incoming telegrams.
   */
-class DailyHistoryActor(messageDistributor: ActorRef)
+class DailyHistoryActor(messageDistributor: ActorRef, settings: AppSettings)
     extends FSM[DailyHistoryActor.State, DailyHistoryActor.Data]
     with ActorLogging
-    with SettingsActor
     with DatabaseSupport {
 
   override def preStart = {

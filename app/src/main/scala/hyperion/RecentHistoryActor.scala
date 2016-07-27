@@ -7,10 +7,6 @@ import hyperion.RecentHistoryActor._
 import scala.collection.immutable
 
 object RecentHistoryActor {
-  def props(messageDistributor: ActorRef) = {
-    Props(new RecentHistoryActor(messageDistributor))
-  }
-
   sealed trait State
   case object Sleeping extends State
   case object Receiving extends State
@@ -26,10 +22,10 @@ object RecentHistoryActor {
   *
   * @param messageDistributor The Actor that distributes incoming telegrams.
   */
-class RecentHistoryActor(messageDistributor: ActorRef)
+class RecentHistoryActor(messageDistributor: ActorRef, settings: AppSettings)
   extends FSM[RecentHistoryActor.State, RecentHistoryActor.Data]
-  with ActorLogging
-  with SettingsActor {
+  with ActorLogging {
+
   
   override def preStart = {
     messageDistributor ! RegisterReceiver
