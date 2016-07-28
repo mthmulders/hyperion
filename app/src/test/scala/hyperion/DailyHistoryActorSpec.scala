@@ -25,13 +25,12 @@ class DailyHistoryActorSpec extends BaseAkkaSpec {
 
       // Act
       val fsm = TestFSMRef(new DailyHistoryActor(messageDispatcher.ref, settings), "daily-go-to-sleep")
-      log.info("FSM is in state {}", fsm.stateName)
+      log.info("FSM {} is in state {}", fsm.path, fsm.stateName)
       messageDispatcher.send(fsm, TelegramReceived(telegram))
 
       // Assert
-      log.info("FSM is in state {}", fsm.stateName)
+      log.info("FSM {} is in state {}", fsm.path, fsm.stateName)
       fsm.stateName shouldBe Sleeping
-      log.info("FSM is in state {}", fsm.stateName)
     }
 
     "wake up after resolution time" in {
