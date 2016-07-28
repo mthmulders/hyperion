@@ -6,7 +6,7 @@ machine:
 
 database:
   override:
-    - echo "Here we can load the initial database schema if we want"
+    - psql -f scripts/database/schema.sql circle_test
 
 dependencies:
   # Cache the resolution-cache and build streams to speed things up
