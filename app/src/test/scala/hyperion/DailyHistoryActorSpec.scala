@@ -32,7 +32,7 @@ class DailyHistoryActorSpec extends BaseAkkaSpec {
       messageDispatcher.send(fsm, TelegramReceived(telegram))
 
       // Assert
-      within(100.millis.dilated) {
+      within(1.second.dilated) {
         log.info("FSM {} is in state {}", Array(fsm.path, fsm.stateName))
         fsm.stateName shouldBe Sleeping
       }
