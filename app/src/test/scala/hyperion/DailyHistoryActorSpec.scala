@@ -1,9 +1,11 @@
 package hyperion
 
+import java.time.LocalDate
+
 import akka.actor.Props
 import akka.testkit.{TestFSMRef, TestProbe}
 import hyperion.MessageDistributor.RegisterReceiver
-import hyperion.DailyHistoryActor.{Empty, Receiving, Sleeping}
+import hyperion.DailyHistoryActor.{Empty, Receiving, Sleeping, StoreMeterReading}
 
 class DailyHistoryActorSpec extends BaseAkkaSpec {
   "The Daily History Actor" should {
@@ -31,6 +33,20 @@ class DailyHistoryActorSpec extends BaseAkkaSpec {
       // Assert
       log.info("FSM {} is in state {}", Array(fsm.path, fsm.stateName))
       fsm.stateName shouldBe Sleeping
+    }
+
+    "schedule perform database insert" in {
+      // Arrange
+      val messageDispatcher = TestProbe("message-distributor")
+      val telegram = TestSupport.randomTelegram()
+
+      // Act
+      val fsm = TestFSMRef(new DailyHistoryActor(messageDispatcher.ref, settings), "schedule-database-insert")
+      val currentState = fsm.stateName
+      messageDispatcher.send(fsm, StoreMeterReading((LocalDate.now(), BigDecimal(3), BigDecimal(42), BigDecimal(16))))
+
+      // Assert
+      fsm.stateName shouldBe currentState
     }
 
     "wake up after resolution time" in {

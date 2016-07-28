@@ -16,6 +16,8 @@ object DailyHistoryActor {
 
   sealed trait Data
   case object Empty extends Data
+
+  case class StoreMeterReading(reading: MeterReadingDAO.MeterReading)
 }
 
 /**
@@ -46,16 +48,13 @@ class DailyHistoryActor(messageDistributor: ActorRef, settings: AppSettings)
       val gas = telegram.data.devices.find(_.isInstanceOf[P1GasMeter]).map(_.asInstanceOf[P1GasMeter].gasDelivered).orNull
       val electricityNormal = telegram.data.totalConsumption(P1Constants.normalTariff)
       val electricityLow = telegram.data.totalConsumption(P1Constants.lowTariff)
-
-      log.info("Storing one record in database:")
-      log.info("  Date               : {}", today)
-      log.info("  Gas                : {}", gas)
-      log.info("  Electricity normal : {}", electricityNormal)
-      log.info("  Electricity low    : {}", electricityLow)
-      MeterReadingDAO.recordMeterReading((today, gas, electricityNormal, electricityLow))
-
+      log.info("Scheduling database I/O")
+      self ! StoreMeterReading((today, gas, electricityNormal, electricityLow))
       log.debug("Sleeping for {}", settings.daily.resolution)
       goto(Sleeping) using Empty
+
+    case Event(e @ StoreMeterReading(reading), _) =>
+      storeMeterReading(e)
     case Event(StateTimeout, _) =>
       // Ignored
       stay()
@@ -64,9 +63,23 @@ class DailyHistoryActor(messageDistributor: ActorRef, settings: AppSettings)
   when(Sleeping) {
     case Event(_: TelegramReceived, _) =>
       stay()
+    case Event(e @ StoreMeterReading(reading), _) =>
+      storeMeterReading(e)
     case Event(StateTimeout, _) =>
       log.debug("Awaking to receive new meter reading")
       goto(Receiving) using Empty
+  }
+
+  private def storeMeterReading(event: StoreMeterReading) = {
+    val reading = event.reading
+    log.info("Storing one record in database:")
+    log.info("  Date               : {}", reading._1)
+    log.info("  Gas                : {}", reading._2)
+    log.info("  Electricity normal : {}", reading._3)
+    log.info("  Electricity low    : {}", reading._4)
+    MeterReadingDAO.recordMeterReading(reading)
+
+    stay()
   }
 
   def scheduleAwakenings() = {

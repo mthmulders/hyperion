@@ -11,7 +11,9 @@ import scala.util.{Failure, Success}
 object MeterReadingDAO extends DatabaseSupport with DateTimeColumns {
   private[this] val log = LoggerFactory.getLogger(getClass)
 
-  class MeterReadings(tag: Tag) extends Table[(LocalDate, BigDecimal, BigDecimal, BigDecimal)](tag, "meter_readings") {
+  type MeterReading = (LocalDate, BigDecimal, BigDecimal, BigDecimal)
+
+  class MeterReadings(tag: Tag) extends Table[MeterReading](tag, "meter_readings") {
     def recordDate = column[LocalDate]("record_date", O.PrimaryKey)
     def gas = column[BigDecimal]("gas")
     def electricityNormal = column[BigDecimal]("electricity_normal")
@@ -22,7 +24,7 @@ object MeterReadingDAO extends DatabaseSupport with DateTimeColumns {
 
   private[this] val meterReadings = TableQuery[MeterReadings]
 
-  def recordMeterReading(value: (LocalDate, BigDecimal, BigDecimal, BigDecimal)) = {
+  def recordMeterReading(value: MeterReading) = {
     val insert = DBIO.seq(meterReadings += value)
     db.run(insert) andThen {
       case Failure(t) =>
