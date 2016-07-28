@@ -31,6 +31,7 @@ class DailyHistoryActorSpec extends BaseAkkaSpec {
       // Assert
       log.info("FSM is in state {}", fsm.stateName)
       fsm.stateName shouldBe Sleeping
+      log.info("FSM is in state {}", fsm.stateName)
     }
 
     "wake up after resolution time" in {
