@@ -23,7 +23,7 @@ class AppSettingsSpec extends BaseSpec {
 
   "Inspecting 'daily'" should {
     "return correct values" in {
-      settings.daily.resolution    shouldBe (100 millis)
+      settings.daily.resolution    shouldBe (1 day)
     }
   }
 

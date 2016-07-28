@@ -2,9 +2,10 @@ package hyperion
 
 import java.time.LocalDate
 
+import akka.actor.FSM.StateTimeout
 import akka.actor.Props
-import akka.testkit.{TestDuration, TestFSMRef, TestProbe}
-import scala.concurrent.duration.DurationInt
+import akka.testkit.{TestFSMRef, TestProbe}
+
 import hyperion.MessageDistributor.RegisterReceiver
 import hyperion.DailyHistoryActor.{Empty, Receiving, Sleeping, StoreMeterReading}
 
@@ -28,14 +29,10 @@ class DailyHistoryActorSpec extends BaseAkkaSpec {
 
       // Act
       val fsm = TestFSMRef(new DailyHistoryActor(messageDispatcher.ref, settings), "daily-go-to-sleep")
-      log.info("FSM {} is in state {}", Array(fsm.path, fsm.stateName))
       messageDispatcher.send(fsm, TelegramReceived(telegram))
 
       // Assert
-      within(1.second.dilated) {
-        log.info("FSM {} is in state {}", Array(fsm.path, fsm.stateName))
-        fsm.stateName shouldBe Sleeping
-      }
+      fsm.stateName shouldBe Sleeping
     }
 
     "schedule perform database insert" in {
@@ -54,14 +51,12 @@ class DailyHistoryActorSpec extends BaseAkkaSpec {
 
     "wake up after resolution time" in {
       // Arrange
-      // Sleep time is set in src/test/resources/application.conf: 100 millis
       val messageDispatcher = TestProbe("message-distributor")
-      val telegram = TestSupport.randomTelegram()
 
       // Act
       val fsm = TestFSMRef(new DailyHistoryActor(messageDispatcher.ref, settings), "daily-wake-up")
       fsm.setState(Sleeping, Empty)
-      Thread.sleep(1000)
+      fsm ! StateTimeout // Since sleep time is 1 day, we need to simulate it's time to wake up
 
       // Assert
       fsm.stateName shouldBe Receiving

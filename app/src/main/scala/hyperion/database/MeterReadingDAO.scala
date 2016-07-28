@@ -28,7 +28,7 @@ object MeterReadingDAO extends DatabaseSupport with DateTimeColumns {
     val insert = DBIO.seq(meterReadings += value)
     db.run(insert) andThen {
       case Failure(t) =>
-        log.error("Error while storing meter reading into database: {}", t)
+        log.error("Error while storing meter reading into database", t)
       case Success(v) =>
         log.info("Successfully stored meter reading into database")
     }
