@@ -5,9 +5,9 @@ import java.time.LocalDate
 import akka.actor.FSM.StateTimeout
 import akka.actor.Props
 import akka.testkit.{TestFSMRef, TestProbe}
-
 import hyperion.MessageDistributor.RegisterReceiver
 import hyperion.DailyHistoryActor.{Empty, Receiving, Sleeping, StoreMeterReading}
+import hyperion.database.MeterReadingDAO.MeterReading
 
 class DailyHistoryActorSpec extends BaseAkkaSpec {
   "The Daily History Actor" should {
@@ -43,7 +43,7 @@ class DailyHistoryActorSpec extends BaseAkkaSpec {
       // Act
       val fsm = TestFSMRef(new DailyHistoryActor(messageDispatcher.ref, settings), "schedule-database-insert")
       val currentState = fsm.stateName
-      messageDispatcher.send(fsm, StoreMeterReading((LocalDate.now(), BigDecimal(3), BigDecimal(42), BigDecimal(16))))
+      messageDispatcher.send(fsm, StoreMeterReading(MeterReading(LocalDate.now(), BigDecimal(3), BigDecimal(42), BigDecimal(16))))
 
       // Assert
       fsm.stateName shouldBe currentState

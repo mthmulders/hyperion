@@ -3,10 +3,10 @@ package hyperion
 import java.time.{Duration, LocalDate, LocalDateTime}
 
 import scala.concurrent.duration.DurationLong
-
 import akka.actor.{ActorLogging, ActorRef, FSM, Props}
 import hyperion.MessageDistributor.RegisterReceiver
 import hyperion.DailyHistoryActor._
+import hyperion.database.MeterReadingDAO.MeterReading
 import hyperion.database.{DatabaseSupport, MeterReadingDAO}
 
 object DailyHistoryActor {
@@ -49,7 +49,7 @@ class DailyHistoryActor(messageDistributor: ActorRef, settings: AppSettings)
       val electricityNormal = telegram.data.totalConsumption(P1Constants.normalTariff)
       val electricityLow = telegram.data.totalConsumption(P1Constants.lowTariff)
       log.info("Scheduling database I/O")
-      self ! StoreMeterReading((today, gas, electricityNormal, electricityLow))
+      self ! StoreMeterReading(MeterReading(today, gas, electricityNormal, electricityLow))
       log.debug("Sleeping for {}", settings.daily.resolution)
       goto(Sleeping) using Empty
 
@@ -73,10 +73,10 @@ class DailyHistoryActor(messageDistributor: ActorRef, settings: AppSettings)
   private def storeMeterReading(event: StoreMeterReading) = {
     val reading = event.reading
     log.info("Storing one record in database:")
-    log.info("  Date               : {}", reading._1)
-    log.info("  Gas                : {}", reading._2)
-    log.info("  Electricity normal : {}", reading._3)
-    log.info("  Electricity low    : {}", reading._4)
+    log.info("  Date               : {}", reading.recordDate)
+    log.info("  Gas                : {}", reading.gas)
+    log.info("  Electricity normal : {}", reading.electricityNormal)
+    log.info("  Electricity low    : {}", reading.electricityLow)
     MeterReadingDAO.recordMeterReading(reading)
 
     stay()

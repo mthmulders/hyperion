@@ -11,7 +11,10 @@ import scala.util.{Failure, Success}
 object MeterReadingDAO extends DatabaseSupport with DateTimeColumns {
   private[this] val log = LoggerFactory.getLogger(getClass)
 
-  type MeterReading = (LocalDate, BigDecimal, BigDecimal, BigDecimal)
+  case class MeterReading(recordDate: LocalDate,
+                          gas: BigDecimal,
+                          electricityNormal: BigDecimal,
+                          electricityLow: BigDecimal)
 
   class MeterReadings(tag: Tag) extends Table[MeterReading](tag, "meter_readings") {
     def recordDate = column[LocalDate]("record_date", O.PrimaryKey)
@@ -19,7 +22,7 @@ object MeterReadingDAO extends DatabaseSupport with DateTimeColumns {
     def electricityNormal = column[BigDecimal]("electricity_normal")
     def electricityLow = column[BigDecimal]("electricity_low")
 
-    def * = (recordDate, gas, electricityNormal, electricityLow)
+    def * = (recordDate, gas, electricityNormal, electricityLow) <> (MeterReading.tupled, MeterReading.unapply)
   }
 
   private[this] val meterReadings = TableQuery[MeterReadings]
