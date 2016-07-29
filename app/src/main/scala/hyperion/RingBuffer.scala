@@ -67,7 +67,11 @@ class RingBuffer[T](limit: Int)(implicit m: ClassTag[T]) extends mutable.Abstrac
     }
   }
 
-  override def insertAll(n: Int, elems: scala.Traversable[T]): Unit = ???
+  /** @inheritdoc */
+  override def insertAll(n: Int, elems: scala.Traversable[T]): Unit = {
+    val elemsList = elems.seq.toList
+    for (i <- 0 until elems.size) update(n + i, elemsList(i))
+  }
 
   /** @inheritdoc */
   override def iterator: scala.Iterator[T] = {

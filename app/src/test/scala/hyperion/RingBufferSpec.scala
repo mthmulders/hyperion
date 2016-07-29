@@ -82,6 +82,21 @@ class RingBufferSpec extends BaseSpec {
       buffer should contain inOrderOnly ("foo", "2")
     }
 
+    "insert multiple elements in one call without touching other elements" in {
+      // Arrange
+      val buffer = RingBuffer[String](4)
+      buffer += "1"
+      buffer += "2"
+      buffer += "3"
+      buffer += "4"
+
+      // Act
+      buffer.insertAll(1, Seq("a", "b"))
+
+      // Assert
+      buffer should contain inOrderOnly ("1", "a", "b", "4")
+    }
+
     "should throw a NoSuchElementException when an element is accessed that is not yet initialised" in {
       // Arrange
       val buffer = RingBuffer[String](2)
