@@ -15,7 +15,7 @@ import akka.util.Timeout
 import hyperion.MessageDistributor.RegisterReceiver
 import hyperion.DailyHistoryActor._
 import hyperion.database.MeterReadingDAO
-import hyperion.database.MeterReadingDAO.MeterReading
+import hyperion.database.MeterReadingDAO.HistoricalMeterReading
 import org.mockito.Mockito.verify
 import org.mockito.Mockito.when
 import org.scalatest.concurrent.ScalaFutures
@@ -63,7 +63,7 @@ class DailyHistoryActorSpec extends BaseAkkaSpec with MockitoSugar with ScalaFut
       // Act
       val fsm = TestFSMRef(new DailyHistoryActor(messageDispatcher.ref, meterReadingDAO, settings), "schedule-database-insert")
       val currentState = fsm.stateName
-      messageDispatcher.send(fsm, StoreMeterReading(MeterReading(LocalDate.now(), BigDecimal(3), BigDecimal(42), BigDecimal(16))))
+      messageDispatcher.send(fsm, StoreMeterReading(HistoricalMeterReading(LocalDate.now(), BigDecimal(3), BigDecimal(42), BigDecimal(16))))
 
       // Assert
       fsm.stateName shouldBe currentState
@@ -107,7 +107,7 @@ class DailyHistoryActorSpec extends BaseAkkaSpec with MockitoSugar with ScalaFut
   private def storeTelegramsInDatabase(state: State) = {
     // Arrange
     val messageDispatcher = TestProbe("message-distributor")
-    val reading = MeterReading(LocalDate.now(), Random.nextDouble(), Random.nextDouble(), Random.nextDouble())
+    val reading = HistoricalMeterReading(LocalDate.now(), Random.nextDouble(), Random.nextDouble(), Random.nextDouble())
 
     // Act
     val fsm = TestFSMRef(new DailyHistoryActor(messageDispatcher.ref, meterReadingDAO, settings), s"$state-daily-store")
@@ -123,7 +123,7 @@ class DailyHistoryActorSpec extends BaseAkkaSpec with MockitoSugar with ScalaFut
   private def retrieveMeterReadingsFromDatabase(state: State) = {
     // Arrange
     val date = LocalDate.now()
-    val result = Seq(MeterReading(LocalDate.now(), Random.nextDouble(), Random.nextDouble(), Random.nextDouble()))
+    val result = Seq(HistoricalMeterReading(LocalDate.now(), Random.nextDouble(), Random.nextDouble(), Random.nextDouble()))
     when(meterReadingDAO.retrieveMeterReading(date)).thenReturn(Future { result })
 
     // Act

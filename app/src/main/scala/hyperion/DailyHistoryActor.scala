@@ -9,7 +9,7 @@ import scala.util.{Failure, Success}
 import akka.actor.{ActorLogging, ActorRef, FSM}
 import hyperion.MessageDistributor.RegisterReceiver
 import hyperion.DailyHistoryActor._
-import hyperion.database.MeterReadingDAO.MeterReading
+import hyperion.database.MeterReadingDAO.HistoricalMeterReading
 import hyperion.database.{DatabaseSupport, MeterReadingDAO}
 
 object DailyHistoryActor {
@@ -20,9 +20,9 @@ object DailyHistoryActor {
   sealed trait Data
   case object Empty extends Data
 
-  case class StoreMeterReading(reading: MeterReadingDAO.MeterReading)
+  case class StoreMeterReading(reading: MeterReadingDAO.HistoricalMeterReading)
   case class RetrieveMeterReading(date: LocalDate)
-  case class RetrievedMeterReading(reading: Option[MeterReadingDAO.MeterReading])
+  case class RetrievedMeterReading(reading: Option[MeterReadingDAO.HistoricalMeterReading])
 }
 
 /**
@@ -76,7 +76,7 @@ class DailyHistoryActor(messageDistributor: ActorRef,
     val electricityLow = telegram.data.totalConsumption(P1Constants.lowTariff)
 
     log.info("Scheduling database I/O")
-    self ! StoreMeterReading(MeterReading(today, gas, electricityNormal, electricityLow))
+    self ! StoreMeterReading(HistoricalMeterReading(today, gas, electricityNormal, electricityLow))
 
     log.debug("Sleeping for {}", settings.daily.resolution)
     goto(Sleeping) using Empty
@@ -96,7 +96,7 @@ class DailyHistoryActor(messageDistributor: ActorRef,
     stay()
   }
 
-  private def storeMeterReading(reading: MeterReading) = {
+  private def storeMeterReading(reading: HistoricalMeterReading) = {
     log.info("Storing one record in database:")
     log.info("  Date               : {}", reading.recordDate)
     log.info("  Gas                : {}", reading.gas)
