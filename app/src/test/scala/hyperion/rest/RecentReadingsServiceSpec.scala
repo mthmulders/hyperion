@@ -24,7 +24,7 @@ class RecentReadingsServiceSpec extends BaseSpec with ScalatestRouteTest with Hy
             case GetRecentHistory => sender ! RecentReadings(history)
             case m => logger.warn(s"Unexecpted message $m")
           }
-          TestActor.KeepRunning
+          keepRunning
         }
       })
 

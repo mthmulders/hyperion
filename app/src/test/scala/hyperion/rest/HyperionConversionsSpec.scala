@@ -5,7 +5,7 @@ import hyperion.rest.HyperionConversions.telegramWrapper
 import org.scalatest.OptionValues
 
 class HyperionConversionsSpec extends BaseSpec with OptionValues {
-  "telegramWrapper" should {
+  "The telegramWrapper" should {
     "convert a P1 telegram in a MeterReading object" in {
       // Arrange
       val telegram = TestSupport.randomTelegram()

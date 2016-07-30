@@ -10,7 +10,7 @@ import spray.json.{JsNumber, DeserializationException, JsString}
 class OffsetDateTimeFormatSpec extends BaseSpec {
   val format = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSX")
 
-  "Converting a LocalDateTime" should {
+  "Converting a OffsetDateTime" should {
     "write the value following ISO 8601 converted to local time zone" in {
       // Arrange
       val str = "2012-04-23T18:25:43.511Z"
@@ -39,7 +39,7 @@ class OffsetDateTimeFormatSpec extends BaseSpec {
       the[DeserializationException] thrownBy {
         OffsetDateTimeFormat.read(JsString("bogus"))
         // Assert
-      } should have message "Cannot convert bogus to a ZonedDateTime"
+      } should have message "Cannot convert bogus to a OffsetDateTime"
     }
 
     "not parse things that are not a string" in {
@@ -47,7 +47,7 @@ class OffsetDateTimeFormatSpec extends BaseSpec {
       the[DeserializationException] thrownBy {
         OffsetDateTimeFormat.read(JsNumber(3))
         // Assert
-      } should have message "Cannot convert 3 to a ZonedDateTime"
+      } should have message "Cannot convert 3 to a OffsetDateTime"
     }
   }
 }
