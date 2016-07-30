@@ -11,7 +11,7 @@ object HyperionConversions {
     * @param telegram The [[P1Telegram]]
     * @return a [[MeterReading]] value
     */
-  implicit def telegramWrapper(telegram: P1Telegram): MeterReading = {
+  def telegramWrapper(telegram: P1Telegram): MeterReading = {
     val gasConsumption = telegram.data.devices
       .find(_.isInstanceOf[P1GasMeter])
       .map(_.asInstanceOf[P1GasMeter].gasDelivered)

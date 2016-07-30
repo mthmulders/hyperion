@@ -26,7 +26,7 @@ class ActualValuesHandlerActor(val httpClient: ActorRef, val messageDistributor:
 
   def businessLogic: Receive = {
     case TelegramReceived(telegram) =>
-      val reading: MeterReading = telegram
+      val reading: MeterReading = telegramWrapper(telegram)
       send(TextFrame(reading.toJson.toString))
   }
 

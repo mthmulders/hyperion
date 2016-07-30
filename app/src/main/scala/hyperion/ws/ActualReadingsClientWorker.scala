@@ -26,8 +26,7 @@ class ActualReadingsClientWorker(val messageDistributor: ActorRef,
 
   override def businessLogic: Receive = {
     case TelegramReceived(telegram) =>
-      val reading = telegram
-      val json = meterReadingFormat.write(reading)
+      val json = meterReadingFormat.write(telegramWrapper(telegram))
       send(TextFrame(json.toString()))
   }
 
