@@ -40,7 +40,7 @@ lazy val sprayWS      = "com.wandoulabs.akka"      %% "spray-websocket"         
 //
 lazy val commonSettings = Seq(
   organization := "hyperion",
-  version := "2.0.0-SNAPSHOT",
+  version := "2.0.0",
   description := "Hyperion",
   scalaVersion := "2.11.7",
   scalacOptions ++= Seq(
