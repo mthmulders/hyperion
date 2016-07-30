@@ -55,7 +55,7 @@ trait BootedCore extends Core with RestApi with WebSocketApi {
 trait HyperionActors { this: Core =>
   val messageDistributor = system.actorOf(Props(new MessageDistributor()), "receiver")
   val collectingActor = system.actorOf(Props(new CollectingActor(messageDistributor)), "collecting-actor")
-  val meterAgent = system.actorOf(Props(new MeterAgent(messageDistributor, settings)), "meter-agent")
+  val meterAgent = system.actorOf(Props(new MeterAgent(collectingActor, settings)), "meter-agent")
   val recentHistoryActor = system.actorOf(Props(new RecentHistoryActor(messageDistributor, settings)), "recent-history")
   val dailyHistoryActor = system.actorOf(Props(new DailyHistoryActor(messageDistributor, new MeterReadingDAO(), settings)), "daily-history")
 }
