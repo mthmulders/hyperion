@@ -3,7 +3,7 @@ package hyperion
 import java.time.{Duration, LocalDate, LocalDateTime}
 
 import scala.concurrent.duration.DurationLong
-import akka.actor.{ActorLogging, ActorRef, FSM, Props}
+import akka.actor.{ActorLogging, ActorRef, FSM}
 import hyperion.MessageDistributor.RegisterReceiver
 import hyperion.DailyHistoryActor._
 import hyperion.database.MeterReadingDAO.MeterReading
@@ -24,8 +24,9 @@ object DailyHistoryActor {
   * Actor that stores a daily meter reading in an external database
   *
   * @param messageDistributor The Actor that distributes incoming telegrams.
+  * @param meterReadingDAO DAO for interacting with the database.
   */
-class DailyHistoryActor(messageDistributor: ActorRef, settings: AppSettings)
+class DailyHistoryActor(messageDistributor: ActorRef, meterReadingDAO: MeterReadingDAO, settings: AppSettings)
     extends FSM[DailyHistoryActor.State, DailyHistoryActor.Data]
     with ActorLogging
     with DatabaseSupport {
@@ -77,7 +78,7 @@ class DailyHistoryActor(messageDistributor: ActorRef, settings: AppSettings)
     log.info("  Gas                : {}", reading.gas)
     log.info("  Electricity normal : {}", reading.electricityNormal)
     log.info("  Electricity low    : {}", reading.electricityLow)
-    MeterReadingDAO.recordMeterReading(reading)
+    meterReadingDAO.recordMeterReading(reading)
 
     stay()
   }
@@ -86,7 +87,7 @@ class DailyHistoryActor(messageDistributor: ActorRef, settings: AppSettings)
     val tomorrowMidnight = LocalDate.now().plusDays(1).atStartOfDay()
     val untilMidnight = Duration.between(LocalDateTime.now(), tomorrowMidnight)
     log.info("Sleeping for {} milliseconds", untilMidnight.toMillis)
-    setTimer("initial-daily-awake", StateTimeout, untilMidnight.toMillis millis, repeat = false)
+    setTimer("initial-daily-awake", StateTimeout, 1000 millis, repeat = false)
 
     setTimer("repeating-daily-awake", StateTimeout, settings.daily.resolution, repeat = true)
   }

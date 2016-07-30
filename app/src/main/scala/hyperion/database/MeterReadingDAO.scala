@@ -2,19 +2,22 @@ package hyperion.database
 
 import java.time.LocalDate
 
+import hyperion.database.MeterReadingDAO.MeterReading
 import org.slf4j.LoggerFactory
 import slick.driver.PostgresDriver.api._
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.util.{Failure, Success}
 
-object MeterReadingDAO extends DatabaseSupport with DateTimeColumns {
-  private[this] val log = LoggerFactory.getLogger(getClass)
-
+object MeterReadingDAO {
   case class MeterReading(recordDate: LocalDate,
                           gas: BigDecimal,
                           electricityNormal: BigDecimal,
                           electricityLow: BigDecimal)
+}
+
+class MeterReadingDAO extends DatabaseSupport with DateTimeColumns {
+  private[this] val log = LoggerFactory.getLogger(getClass)
 
   class MeterReadings(tag: Tag) extends Table[MeterReading](tag, "meter_readings") {
     def recordDate = column[LocalDate]("record_date", O.PrimaryKey)

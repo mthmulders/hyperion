@@ -7,6 +7,7 @@ import scala.util.{Failure, Success}
 import akka.actor.{ActorRefFactory, ActorSystem, Props, Terminated}
 import akka.event.Logging
 import akka.io.IO
+import hyperion.database.MeterReadingDAO
 import hyperion.rest.RestApi
 import hyperion.ws.WebSocketApi
 import spray.can.Http
@@ -19,6 +20,7 @@ import spray.can.server.UHttp
 trait Core {
   protected implicit def system: ActorSystem
   protected implicit def settings = AppSettings(system)
+  protected val meterReadingDAO = new MeterReadingDAO()
 }
 
 /**
@@ -56,5 +58,5 @@ trait HyperionActors { this: Core =>
   val collectingActor = system.actorOf(Props(new CollectingActor(messageDistributor)), "collecting-actor")
   val meterAgent = system.actorOf(Props(new MeterAgent(messageDistributor, settings)), "meter-agent")
   val recentHistoryActor = system.actorOf(Props(new RecentHistoryActor(messageDistributor, settings)), "recent-history")
-  val dailyHistoryActor = system.actorOf(Props(new DailyHistoryActor(messageDistributor, settings)), "daily-history")
+  val dailyHistoryActor = system.actorOf(Props(new DailyHistoryActor(messageDistributor, meterReadingDAO, settings)), "daily-history")
 }

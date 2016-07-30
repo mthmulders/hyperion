@@ -7,16 +7,22 @@ import akka.actor.Props
 import akka.testkit.{TestFSMRef, TestProbe}
 import hyperion.MessageDistributor.RegisterReceiver
 import hyperion.DailyHistoryActor.{Empty, Receiving, Sleeping, StoreMeterReading}
+import hyperion.database.MeterReadingDAO
 import hyperion.database.MeterReadingDAO.MeterReading
+import org.mockito.Matchers.any
+import org.mockito.Mockito.verify
+import org.scalatest.mock.MockitoSugar
 
-class DailyHistoryActorSpec extends BaseAkkaSpec {
+class DailyHistoryActorSpec extends BaseAkkaSpec with MockitoSugar {
+  override val meterReadingDAO = mock[MeterReadingDAO]
+
   "The Daily History Actor" should {
     "register itself with the Message Distributor" in {
       // Arrange
       val messageDistributor = TestProbe("recemessage-distributor")
 
       // Act
-      system.actorOf(Props(new DailyHistoryActor(messageDistributor.ref, settings)), "daily-register")
+      system.actorOf(Props(new DailyHistoryActor(messageDistributor.ref, meterReadingDAO, settings)), "daily-register")
 
       // Assert
       messageDistributor.expectMsg(RegisterReceiver)
@@ -28,7 +34,7 @@ class DailyHistoryActorSpec extends BaseAkkaSpec {
       val telegram = TestSupport.randomTelegram()
 
       // Act
-      val fsm = TestFSMRef(new DailyHistoryActor(messageDispatcher.ref, settings), "daily-go-to-sleep")
+      val fsm = TestFSMRef(new DailyHistoryActor(messageDispatcher.ref, meterReadingDAO, settings), "daily-go-to-sleep")
       messageDispatcher.send(fsm, TelegramReceived(telegram))
 
       // Assert
@@ -41,7 +47,7 @@ class DailyHistoryActorSpec extends BaseAkkaSpec {
       val telegram = TestSupport.randomTelegram()
 
       // Act
-      val fsm = TestFSMRef(new DailyHistoryActor(messageDispatcher.ref, settings), "schedule-database-insert")
+      val fsm = TestFSMRef(new DailyHistoryActor(messageDispatcher.ref, meterReadingDAO, settings), "schedule-database-insert")
       val currentState = fsm.stateName
       messageDispatcher.send(fsm, StoreMeterReading(MeterReading(LocalDate.now(), BigDecimal(3), BigDecimal(42), BigDecimal(16))))
 
@@ -54,7 +60,7 @@ class DailyHistoryActorSpec extends BaseAkkaSpec {
       val messageDispatcher = TestProbe("message-distributor")
 
       // Act
-      val fsm = TestFSMRef(new DailyHistoryActor(messageDispatcher.ref, settings), "daily-wake-up")
+      val fsm = TestFSMRef(new DailyHistoryActor(messageDispatcher.ref, meterReadingDAO, settings), "daily-wake-up")
       fsm.setState(Sleeping, Empty)
       fsm ! StateTimeout // Since sleep time is 1 day, we need to simulate it's time to wake up
 
@@ -68,11 +74,11 @@ class DailyHistoryActorSpec extends BaseAkkaSpec {
       val history = RingBuffer[P1Telegram](2)
 
       // Act
-      val fsm = TestFSMRef(new RecentHistoryActor(messageDispatcher.ref, settings), "recent-store")
+      val fsm = TestFSMRef(new DailyHistoryActor(messageDispatcher.ref, meterReadingDAO, settings), "recent-store")
       messageDispatcher.send(fsm, TelegramReceived(telegram))
 
       // Assert
-
+      verify(meterReadingDAO).recordMeterReading(any(classOf[MeterReading]))
     }
   }
 }
