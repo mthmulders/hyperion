@@ -1,7 +1,7 @@
 package hyperion
 
 import org.scalactic.TypeCheckedTripleEquals
-`import org.scalatest._
+import org.scalatest._
 import org.slf4j.LoggerFactory
 
 abstract class BaseSpec
