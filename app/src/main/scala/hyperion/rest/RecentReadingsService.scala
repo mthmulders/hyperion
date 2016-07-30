@@ -11,8 +11,13 @@ import spray.httpx.SprayJsonSupport
 import spray.json._
 import spray.routing.Directives
 
+/**
+  * Provides the Spray route to retrieve the most recent meter readings from memory.
+  * @param recentHistoryActor Ref to the ``RecentHistoryActor``.
+  * @param executionContext An ``ExecutionContext``.
+  */
 class RecentReadingsService(recentHistoryActor: ActorRef)(implicit executionContext: ExecutionContext)
-  extends Directives with HyperionJsonProtocol with DefaultJsonProtocol with SprayJsonSupport {
+  extends Directives with HyperionJsonProtocol {
 
   implicit val timeout = Timeout(500 milliseconds)
 

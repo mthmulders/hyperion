@@ -9,7 +9,7 @@ import spray.json._
 import scala.util.{Failure, Success, Try}
 
 /** Allows easy mix-in of [[HyperionJsonProtocol]] */
-trait HyperionJsonProtocol {
+trait HyperionJsonProtocol extends DefaultJsonProtocol with SprayJsonSupport {
   implicit def meterReadingFormat: RootJsonFormat[MeterReading] = HyperionJsonProtocol.meterReadingFormat
 }
 
