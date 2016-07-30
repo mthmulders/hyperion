@@ -18,8 +18,6 @@ class AppInfoServiceSpec extends BaseSpec with ScalatestRouteTest with HyperionJ
         entity.asString should include(s""""appVersion": "${BuildInfo.version}"""")
         entity.asString should include(s""""scalaVersion": "${BuildInfo.scalaVersion}"""")
         entity.asString should include(s""""javaVersion": """")
-
-        logger.info(entity.asString)
       }
     }
   }
