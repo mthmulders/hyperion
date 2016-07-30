@@ -113,7 +113,7 @@ class DailyHistoryActor(messageDistributor: ActorRef,
     val tomorrowMidnight = LocalDate.now().plusDays(1).atStartOfDay()
     val untilMidnight = Duration.between(LocalDateTime.now(), tomorrowMidnight)
     log.info("Sleeping for {} milliseconds", untilMidnight.toMillis)
-    setTimer("initial-daily-awake", StateTimeout, 1000 millis, repeat = false)
+    setTimer("initial-daily-awake", StateTimeout, untilMidnight.toMillis millis, repeat = false)
 
     setTimer("repeating-daily-awake", StateTimeout, settings.daily.resolution, repeat = true)
   }
