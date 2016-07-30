@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory
 import slick.driver.PostgresDriver.api._
 
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 import scala.util.{Failure, Success}
 
 object MeterReadingDAO {
@@ -30,7 +31,7 @@ class MeterReadingDAO extends DatabaseSupport with DateTimeColumns {
 
   private[this] val meterReadings = TableQuery[MeterReadings]
 
-  def recordMeterReading(value: MeterReading) = {
+  def recordMeterReading(value: MeterReading): Future[Unit] = {
     val insert = DBIO.seq(meterReadings += value)
     db.run(insert) andThen {
       case Failure(t) =>
@@ -38,5 +39,10 @@ class MeterReadingDAO extends DatabaseSupport with DateTimeColumns {
       case Success(v) =>
         log.info("Successfully stored meter reading into database")
     }
+  }
+
+  def retrieveMeterReading(date: LocalDate): Future[Seq[MeterReading]] = {
+    val query = meterReadings.filter(_.recordDate === date)
+    db.run(query.result)
   }
 }

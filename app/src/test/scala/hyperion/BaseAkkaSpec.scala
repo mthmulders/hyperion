@@ -3,7 +3,7 @@ package hyperion
 import akka.actor.{ActorIdentity, ActorRef, ActorSystem, Identify}
 import akka.testkit.{EventFilter, ImplicitSender, TestEvent, TestKit, TestProbe}
 import org.scalactic.TypeCheckedTripleEquals
-import org.scalatest.{BeforeAndAfterAll, Matchers, WordSpecLike}
+import org.scalatest.{BeforeAndAfterAll, BeforeAndAfterEach, Matchers, WordSpecLike}
 import org.slf4j.LoggerFactory
 
 import scala.collection.{immutable, mutable}
@@ -13,7 +13,11 @@ import scala.concurrent.duration.{Duration, DurationInt, FiniteDuration}
 abstract class BaseAkkaSpec extends TestKit(ActorSystem())
   with Core
   with ImplicitSender
-  with WordSpecLike with Matchers with BeforeAndAfterAll with TypeCheckedTripleEquals {
+  with WordSpecLike
+  with Matchers
+  with BeforeAndAfterAll
+  with BeforeAndAfterEach
+  with TypeCheckedTripleEquals {
 
   protected[this] val log = LoggerFactory.getLogger(getClass)
 
