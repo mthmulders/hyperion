@@ -37,7 +37,7 @@ trait BootedCore extends Core with RestApi with WebSocketApi {
   IO(UHttp)(system) ! Http.Bind(rootService, "0.0.0.0", settings.api.port)
 
   sys.addShutdownHook({
-    log.info("Shutting down the Hyperion Core")
+    log.info("Shutting down Hyperion")
     IO(UHttp)(system) ! Http.Unbind
     val termination: Future[Terminated] = system.terminate()
     termination onComplete {
