@@ -5,7 +5,7 @@ import akka.actor.Props
 import akka.testkit.TestProbe
 import hyperion.MessageDistributor.RegisterReceiver
 import hyperion._
-import hyperion.rest.{ActualValuesHandlerActor, HyperionJsonProtocol, MeterReading}
+import hyperion.rest.{HyperionJsonProtocol, MeterReading}
 import org.scalatest.OptionValues
 import spray.can.server.UHttp.UpgradeServer
 import spray.can.websocket

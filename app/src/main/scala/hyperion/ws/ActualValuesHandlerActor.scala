@@ -1,13 +1,14 @@
-package hyperion.rest
+package hyperion.ws
 
 import akka.actor.{ActorLogging, ActorRef}
-import hyperion.TelegramReceived
 import hyperion.MessageDistributor.RegisterReceiver
+import hyperion.TelegramReceived
 import hyperion.rest.HyperionConversions.telegramWrapper
+import hyperion.rest.{HyperionJsonProtocol, MeterReading}
 import spray.can.websocket.WebSocketServerWorker
 import spray.can.websocket.frame.TextFrame
-import spray.routing.HttpServiceActor
 import spray.json._
+import spray.routing.HttpServiceActor
 
 /**
   * Actor that upgrades an HTTP connection to a WebSocket connection and then updates the client
