@@ -14,5 +14,6 @@ import spray.routing.HttpService
 trait RestApi extends HttpService with HyperionActors with Core {
   val restRoutes =
     new RecentReadingsService(recentHistoryActor).route ~
-    new DailyHistoryService(dailyHistoryActor).route
+    new DailyHistoryService(dailyHistoryActor).route ~
+    new AppInfoService().route
 }
