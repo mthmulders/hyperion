@@ -1,14 +1,12 @@
 package hyperion.rest
 
 import scala.concurrent.duration.DurationInt
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 import akka.actor.ActorRef
 import akka.pattern.ask
 import akka.util.Timeout
 import hyperion.RecentHistoryActor.{GetRecentHistory, RecentReadings}
 import hyperion.rest.HyperionConversions.telegramWrapper
-import spray.httpx.SprayJsonSupport
-import spray.json._
 import spray.routing.Directives
 
 /**
