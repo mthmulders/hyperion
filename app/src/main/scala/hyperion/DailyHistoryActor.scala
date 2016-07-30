@@ -42,10 +42,9 @@ class DailyHistoryActor(messageDistributor: ActorRef,
   override def preStart = {
     messageDistributor ! RegisterReceiver
 
-    log.info("Connected to database {} {}.{} at {}",
+    log.info("Connected to database {} {} at {}",
       session.metaData.getDatabaseProductName,
-      session.metaData.getDatabaseMajorVersion,
-      session.metaData.getDatabaseMinorVersion,
+      session.metaData.getDatabaseProductVersion,
       session.metaData.getURL)
 
     scheduleAwakenings()

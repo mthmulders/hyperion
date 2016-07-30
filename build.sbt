@@ -82,6 +82,7 @@ lazy val testSupport = (project in file("test-support"))
 
 lazy val app = (project in file("app"))
   .enablePlugins(JavaServerAppPackaging)
+  .enablePlugins(BuildInfoPlugin)
   .settings(commonSettings: _*)
   .settings(Seq(
     name := "hyperion",
@@ -105,6 +106,8 @@ lazy val app = (project in file("app"))
       sprayTestKit % "test",
       sprayWS
     ),
+    buildInfoOptions += BuildInfoOption.BuildTime,
+    buildInfoPackage := "hyperion",
     packageName in Linux := "hyperion",
     maintainer in Linux := "Maarten Mulders",
     packageSummary in Linux := "Hyperion",
