@@ -28,7 +28,7 @@ class DailyHistoryService(dailyHistoryActor: ActorRef)(implicit executionContext
 
   implicit val timeout = Timeout(500 milliseconds)
 
-  implicit val LocalDateDeserializer = new Deserializer[String, LocalDate] {
+  implicit val localDateDeserializer = new Deserializer[String, LocalDate] {
     def apply(value: String) = Try(LocalDate.parse(value, ISO_DATE)) match {
       case Success(date) =>
         Right(date)
