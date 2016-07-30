@@ -24,11 +24,10 @@ class RecentReadingsService(recentHistoryActor: ActorRef)(implicit executionCont
   val route = path("recent") {
     get {
       complete {
-        val response: Future[Vector[MeterReading]] = (recentHistoryActor ? GetRecentHistory)
+        (recentHistoryActor ? GetRecentHistory)
           .mapTo[RecentReadings]
           .map(_.telegrams)
           .map(_.map(telegramWrapper))
-        response
       }
     }
   }
