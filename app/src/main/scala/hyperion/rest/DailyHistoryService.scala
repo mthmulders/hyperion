@@ -26,7 +26,7 @@ class DailyHistoryService(dailyHistoryActor: ActorRef)(implicit executionContext
   extends Directives with HyperionJsonProtocol {
   private[this] val logger = LoggerFactory.getLogger(getClass)
 
-  implicit val timeout = Timeout(500 milliseconds)
+  implicit val timeout = Timeout(15 seconds)
 
   implicit val localDateDeserializer = new Deserializer[String, LocalDate] {
     def apply(value: String) = Try(LocalDate.parse(value, ISO_DATE)) match {
