@@ -103,7 +103,7 @@ class DailyHistoryActor(messageDistributor: ActorRef,
     log.info("  Electricity low    : {}", reading.electricityLow)
     meterReadingDAO.recordMeterReading(reading) andThen {
       case Success(_)      => log.info("Succeeded")
-      case Failure(reason) => log.error("Could not store meter reading in database", reason)
+      case Failure(reason) => log.error("Could not store meter reading in database: {}", reason)
     }
 
     stay()
