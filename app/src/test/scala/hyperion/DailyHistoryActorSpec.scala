@@ -42,20 +42,35 @@ class DailyHistoryActorSpec extends BaseAkkaSpec with MockitoSugar with ScalaFut
       messageDistributor.expectMsg(RegisterReceiver)
     }
 
-    "go to sleep after having received one Telegram" in {
-      // Arrange
-      val messageDispatcher = TestProbe("message-distributor")
-      val telegram = TestSupport.randomTelegram()
+    "after having received one Telegram" should {
+      "schedule to wake up" in {
+        // Arrange
+        val messageDispatcher = TestProbe("message-distributor")
+        val telegram = TestSupport.randomTelegram()
 
-      // Act
-      val fsm = TestFSMRef(new DailyHistoryActor(messageDispatcher.ref, meterReadingDAO, settings), "daily-go-to-sleep")
-      messageDispatcher.send(fsm, TelegramReceived(telegram))
+        // Act
+        val fsm = TestFSMRef(new DailyHistoryActor(messageDispatcher.ref, meterReadingDAO, settings), "schedule-awakening")
+        messageDispatcher.send(fsm, TelegramReceived(telegram))
 
-      // Assert
-      fsm.stateName shouldBe Sleeping
+        // Assert
+        fsm.isTimerActive("wake-up") shouldBe true
+      }
+
+      "go to sleep" in {
+        // Arrange
+        val messageDispatcher = TestProbe("message-distributor")
+        val telegram = TestSupport.randomTelegram()
+
+        // Act
+        val fsm = TestFSMRef(new DailyHistoryActor(messageDispatcher.ref, meterReadingDAO, settings), "go-to-sleep")
+        messageDispatcher.send(fsm, TelegramReceived(telegram))
+
+        // Assert
+        fsm.stateName shouldBe Sleeping
+      }
     }
 
-    "schedule perform database insert" in {
+    "schedule to perform database insert" in {
       // Arrange
       val messageDispatcher = TestProbe("message-distributor")
       val telegram = TestSupport.randomTelegram()
@@ -76,7 +91,7 @@ class DailyHistoryActorSpec extends BaseAkkaSpec with MockitoSugar with ScalaFut
       // Act
       val fsm = TestFSMRef(new DailyHistoryActor(messageDispatcher.ref, meterReadingDAO, settings), "daily-wake-up")
       fsm.setState(Sleeping, Empty)
-      fsm ! StateTimeout // Since sleep time is 1 day, we need to simulate it's time to wake up
+      fsm ! StateTimeout // Since sleep time is typically 1 day, we need to simulate it's time to wake up
 
       // Assert
       fsm.stateName shouldBe Receiving

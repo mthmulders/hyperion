@@ -47,7 +47,7 @@ class DailyHistoryActor(messageDistributor: ActorRef,
       session.metaData.getDatabaseProductVersion,
       session.metaData.getURL)
 
-    scheduleAwakenings()
+    scheduleNextAwakening()
   }
 
   startWith(Sleeping, Empty)
@@ -77,7 +77,7 @@ class DailyHistoryActor(messageDistributor: ActorRef,
     log.info("Scheduling database I/O")
     self ! StoreMeterReading(HistoricalMeterReading(today, gas, electricityNormal, electricityLow))
 
-    log.debug("Sleeping for {}", settings.daily.resolution)
+    scheduleNextAwakening()
     goto(Sleeping) using Empty
   }
 
@@ -109,12 +109,10 @@ class DailyHistoryActor(messageDistributor: ActorRef,
     stay()
   }
 
-  private def scheduleAwakenings() = {
-    val tomorrowMidnight = LocalDate.now().plusDays(1).atStartOfDay()
-    val untilMidnight = Duration.between(LocalDateTime.now(), tomorrowMidnight)
+  private def scheduleNextAwakening() = {
+    val midnight = LocalDate.now().plusDays(1).atStartOfDay()
+    val untilMidnight = Duration.between(LocalDateTime.now(), midnight)
     log.info("Sleeping for {} milliseconds", untilMidnight.toMillis)
-    setTimer("initial-daily-awake", StateTimeout, untilMidnight.toMillis millis, repeat = false)
-
-    setTimer("repeating-daily-awake", StateTimeout, settings.daily.resolution, repeat = true)
+    setTimer("wake-up", StateTimeout, untilMidnight.toMillis millis, repeat = false)
   }
 }
