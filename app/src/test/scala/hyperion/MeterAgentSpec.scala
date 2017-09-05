@@ -22,7 +22,7 @@ class MeterAgentSpec extends BaseAkkaSpec with MockitoSugar {
   "Receiving the \"CommandFailed\" message" should {
     "log the failed command and the reason as an error" in {
       val actor = system.actorOf(Props(new MeterAgent(dummy, settings)), "log-command-failure")
-      EventFilter[IllegalArgumentException](pattern = "Could not open serial port due to IllegalArgumentException", occurrences = 1) intercept {
+      EventFilter.error("Could not open serial port due to IllegalArgumentException", occurrences = 1) intercept {
         val reason = new IllegalArgumentException("test")
         actor ! Serial.CommandFailed(Open("", mock[SerialSettings], 1), reason)
       }
