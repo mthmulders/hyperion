@@ -13,12 +13,6 @@ jobs:
 
       - restore_cache:
           key: hyperion-{{ .Branch }}-{{ checksum "build.sbt" }}
-      - run: sbt goOffline
-      - save_cache:
-          paths:
-            - ~/.sbt
-            - ./.ivy2
-          key: hyperion-{{ .Branch }}-{{ checksum "build.sbt" }}
 
       - run:
           name: Create output directories
@@ -32,6 +26,12 @@ jobs:
           command: |
             sbt '; set javaOptions += "-Dconfig.resource=.circleci/application.conf" ; coverage test'
             sbt coverageAggregate
+
+      - save_cache:
+          paths:
+            - ~/.sbt
+            - ./.ivy2
+          key: hyperion-{{ .Branch }}-{{ checksum "build.sbt" }}
 
       - run:
           name: Report coverage to Codacy
