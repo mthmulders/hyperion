@@ -57,7 +57,17 @@ jobs:
           name: Create Debian packages
           command: sbt debian:packageBin
 
+      - run:
+          name: Prepare archival of packages
+          command: |
+            mkdir -p app/target/native/debian
+            mv app/target/*.deb app/target/native/debian/
+
+      - store_test_results:
+          path: "app/target/test-reports/"
       - store_artifacts:
-          path: "app/target/test-reports/*.xml"
+          destination: "test-results"
+          path: "app/target/test-reports/"
       - store_artifacts:
-          path: "app/target/*.deb"
+          destination: "packages/debian"
+          path: "app/target/native/debian"
