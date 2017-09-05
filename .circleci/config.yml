@@ -37,7 +37,7 @@ jobs:
           name: Create PostgreSQL schema
           command: psql -h localhost -p 5432 -f scripts/database/schema.sql circle_test
       - run:
-          name: Collect test coverage
+          name: Run tests (with coverage)
           # Specify different config file, see https://stackoverflow.com/a/21433585
           command: |
             sbt -Dconfig.file=.circleci/application.conf coverage test
@@ -58,6 +58,6 @@ jobs:
           command: sbt debian:packageBin
 
       - store_artifacts:
-          path: "**/target/test-reports/*.xml"
+          path: "app/target/test-reports/*.xml"
       - store_artifacts:
-          path: "**/target/*.deb"
+          path: "app/target/*.deb"
