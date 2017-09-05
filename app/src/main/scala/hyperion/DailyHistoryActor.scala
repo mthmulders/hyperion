@@ -10,7 +10,7 @@ import akka.actor.{ActorLogging, ActorRef, FSM}
 import hyperion.MessageDistributor.RegisterReceiver
 import hyperion.DailyHistoryActor._
 import hyperion.database.MeterReadingDAO.HistoricalMeterReading
-import hyperion.database.{DatabaseSupport, MeterReadingDAO}
+import hyperion.database.MeterReadingDAO
 
 object DailyHistoryActor {
   sealed trait State
@@ -36,16 +36,10 @@ class DailyHistoryActor(messageDistributor: ActorRef,
                         settings: AppSettings)
                        (implicit executionContext: ExecutionContext)
     extends FSM[DailyHistoryActor.State, DailyHistoryActor.Data]
-    with ActorLogging
-    with DatabaseSupport {
+    with ActorLogging {
 
   override def preStart = {
     messageDistributor ! RegisterReceiver
-
-    log.info("Connected to database {} {} at {}",
-      session.metaData.getDatabaseProductName,
-      session.metaData.getDatabaseProductVersion,
-      session.metaData.getURL)
 
     scheduleNextAwakening()
   }

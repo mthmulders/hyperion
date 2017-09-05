@@ -33,7 +33,7 @@ class DailyHistoryService(dailyHistoryActor: ActorRef)(implicit executionContext
       case Success(date) =>
         Right(date)
       case Failure(reason) =>
-        logger.error(s"Could not parse $value as date due to", reason)
+        logger.error(s"Could not parse $value as date due to ${reason.getMessage}")
         Left(MalformedContent(s"'$value' is not a valid date value"))
     }
   }

@@ -36,7 +36,7 @@ class MeterAgent(collectingActor: ActorRef, settings: AppSettings) extends Actor
     case Serial.CommandFailed(command, reason) =>
       val commandName = command.getClass.getSimpleName.toLowerCase
       val reasonName = reason.getClass.getSimpleName
-      log.error(reason, s"Could not $commandName serial port due to $reasonName")
+      log.error(s"Could not $commandName serial port due to $reasonName")
     case Serial.Opened(openedPort) =>
       log.info(s"Opened serial port $openedPort")
     case Serial.Received(bytes) =>

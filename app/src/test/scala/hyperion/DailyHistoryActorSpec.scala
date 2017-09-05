@@ -26,7 +26,6 @@ class DailyHistoryActorSpec extends BaseAkkaSpec with MockitoSugar with ScalaFut
   implicit val timeout = Timeout(500 milliseconds)
 
   override def beforeEach = {
-    log.info("Creating new MeterReadingDAO mock")
     meterReadingDAO = mock[MeterReadingDAO]
   }
 
