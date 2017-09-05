@@ -27,6 +27,7 @@ class DailyHistoryActorSpec extends BaseAkkaSpec with MockitoSugar with ScalaFut
 
   override def beforeEach = {
     meterReadingDAO = mock[MeterReadingDAO]
+    // Somehow make recordMeterReading return a Future#successful()
   }
 
   "The Daily History Actor" should {
