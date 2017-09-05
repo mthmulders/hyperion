@@ -19,8 +19,8 @@ jobs:
           key: hyperion-{{ .Branch }}-{{ checksum "build.sbt" }}
 
       - run:
-          name: Install PostgreSQL client
-          command: sudo apt install -y postgresql-client
+          name: Install build dependencies
+          command: sudo apt install -y postgresql-client fakeroot
       - run:
           name: Install dockerize
           command: |
