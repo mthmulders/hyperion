@@ -40,7 +40,7 @@ jobs:
           name: Collect test coverage
           # Specify different config file, see https://stackoverflow.com/a/21433585
           command: |
-            sbt '; set javaOptions += "-Dconfig.resource=.circleci/application.conf" ; coverage test'
+            sbt '; set javaOptions += "-Dconfig.resource=.circleci/application.conf" ; coverage; test'
             sbt coverageAggregate
 
       - save_cache:
