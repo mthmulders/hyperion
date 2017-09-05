@@ -29,7 +29,9 @@ jobs:
       - run:
           name: Collect test coverage
           # Specify different config file, see https://stackoverflow.com/a/21433585
-          command: sbt '; set javaOptions += "-Dconfig.resource=.circleci/application.conf" ; coverage test' && sbt coverageAggregate
+          command: |
+            sbt '; set javaOptions += "-Dconfig.resource=.circleci/application.conf" ; coverage test'
+            sbt coverageAggregate
 
       - run:
           name: Report coverage to Codacy
@@ -39,8 +41,7 @@ jobs:
           name: Create Debian packages
           command: sbt debian:packageBin
 
-      - store_test_results:
-          path: */target/test-reports/*.xml
-
       - store_artifacts:
-          path: */target/*.deb
+          path: "**/target/test-reports/*.xml"
+      - store_artifacts:
+          path: "**/target/*.deb"
