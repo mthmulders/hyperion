@@ -31,7 +31,7 @@ jobs:
 
       - run:
           name: Create PostgreSQL schema
-          command: psql -f scripts/database/schema.sql circle_test
+          command: psql -p 5432 -f scripts/database/schema.sql circle_test
       - run:
           name: Collect test coverage
           # Specify different config file, see https://stackoverflow.com/a/21433585
