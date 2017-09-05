@@ -15,9 +15,6 @@ jobs:
           key: hyperion-{{ .Branch }}-{{ checksum "build.sbt" }}
 
       - run:
-          name: Create output directories
-          command: mkdir -p $CIRCLE_TEST_REPORTS/{junit,deb}/
-      - run:
           name: Create PostgreSQL schema
           command: psql -f scripts/database/schema.sql circle_test
       - run:
