@@ -4,7 +4,6 @@
 lazy val akkaVer = "2.4.4"
 lazy val flowVer = "2.4.1"
 lazy val logbackVer = "1.2.3"
-lazy val mockitoVer = "1.10.19"
 lazy val parserCombVer = "1.0.4"
 lazy val postgreSqlVer = "42.1.4"
 lazy val scalaMockVer = "3.6.0"
@@ -22,7 +21,6 @@ lazy val akkaTestKit  = "com.typesafe.akka"        %% "akka-testkit"            
 lazy val flow         = "com.github.jodersky"      %% "flow"                          % flowVer
 lazy val flowNative   = "com.github.jodersky"      %  "flow-native"                   % flowVer
 lazy val logback      = "ch.qos.logback"           %  "logback-classic"               % logbackVer
-lazy val mockito      = "org.mockito"              %  "mockito-core"                  % mockitoVer
 lazy val parserComb   = "org.scala-lang.modules"   %% "scala-parser-combinators"      % parserCombVer
 lazy val postgreSql   = "org.postgresql"           %  "postgresql"                    % postgreSqlVer
 lazy val scalaMock    = "org.scalamock"            %% "scalamock-scalatest-support"   % scalaMockVer
@@ -94,7 +92,6 @@ lazy val app = (project in file("app"))
       flow,
       flowNative,
       logback,
-      mockito % "test",
       parserComb,
       postgreSql,
       scalaMock % "test",

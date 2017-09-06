@@ -6,7 +6,6 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.concurrent.duration.DurationInt
 import scala.util.Random
-
 import akka.actor.FSM.StateTimeout
 import akka.actor.Props
 import akka.pattern.ask
@@ -16,19 +15,13 @@ import hyperion.MessageDistributor.RegisterReceiver
 import hyperion.DailyHistoryActor._
 import hyperion.database.MeterReadingDAO
 import hyperion.database.MeterReadingDAO.HistoricalMeterReading
-import org.mockito.Mockito.verify
-import org.mockito.Mockito.when
+import org.scalamock.scalatest.MockFactory
+import org.scalatest.OneInstancePerTest
 import org.scalatest.concurrent.ScalaFutures
-import org.scalatest.mockito.MockitoSugar
 
-class DailyHistoryActorSpec extends BaseAkkaSpec with MockitoSugar with ScalaFutures {
-  var meterReadingDAO: MeterReadingDAO = _
+class DailyHistoryActorSpec extends BaseAkkaSpec with OneInstancePerTest with MockFactory with ScalaFutures {
+  val meterReadingDAO: MeterReadingDAO = mock[MeterReadingDAO]
   implicit val timeout = Timeout(500 milliseconds)
-
-  override def beforeEach = {
-    meterReadingDAO = mock[MeterReadingDAO]
-    // Somehow make recordMeterReading return a Future#successful()
-  }
 
   "The Daily History Actor" should {
     "register itself with the Message Distributor" in {
@@ -124,22 +117,20 @@ class DailyHistoryActorSpec extends BaseAkkaSpec with MockitoSugar with ScalaFut
     val messageDispatcher = TestProbe("message-distributor")
     val reading = HistoricalMeterReading(LocalDate.now(), Random.nextDouble(), Random.nextDouble(), Random.nextDouble())
 
+    // Assert
+    (meterReadingDAO.recordMeterReading _).expects(reading)
+
     // Act
     val fsm = TestFSMRef(new DailyHistoryActor(messageDispatcher.ref, meterReadingDAO, settings), s"$state-daily-store")
     fsm.setState(state)
     messageDispatcher.send(fsm, StoreMeterReading(reading))
-
-    // Assert
-    within(1 second) {
-      verify(meterReadingDAO).recordMeterReading(reading)
-    }
   }
 
   private def retrieveMeterReadingsFromDatabase(state: State) = {
     // Arrange
     val date = LocalDate.now()
     val result = Seq(HistoricalMeterReading(LocalDate.now(), Random.nextDouble(), Random.nextDouble(), Random.nextDouble()))
-    when(meterReadingDAO.retrieveMeterReading(date)).thenReturn(Future { result })
+    (meterReadingDAO.retrieveMeterReading _).expects(date).returns(Future { result })
 
     // Act
     val fsm = TestFSMRef(new DailyHistoryActor(TestProbe().ref, meterReadingDAO, settings), s"$state-daily-retrieve")

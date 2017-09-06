@@ -5,11 +5,12 @@ import akka.testkit.{EventFilter, TestProbe}
 import akka.util.ByteString
 import com.github.jodersky.flow.{Serial, SerialSettings}
 import com.github.jodersky.flow.Serial.Open
-import org.scalatest.mockito.MockitoSugar
+import org.scalamock.scalatest.MockFactory
+import org.scalatest.OneInstancePerTest
 
 import scala.concurrent.duration.DurationInt
 
-class MeterAgentSpec extends BaseAkkaSpec with MockitoSugar {
+class MeterAgentSpec extends BaseAkkaSpec with OneInstancePerTest with MockFactory {
   private val dummy = TestProbe().ref
 
   "Creating the Meter Agent" should {
