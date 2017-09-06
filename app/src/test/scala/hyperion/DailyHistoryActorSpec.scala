@@ -67,6 +67,7 @@ class DailyHistoryActorSpec extends BaseAkkaSpec with OneInstancePerTest with Mo
       // Arrange
       val messageDispatcher = TestProbe("message-distributor")
       val telegram = TestSupport.randomTelegram()
+      (meterReadingDAO.recordMeterReading _).expects(*).returns(Future {})
 
       // Act
       val fsm = TestFSMRef(new DailyHistoryActor(messageDispatcher.ref, meterReadingDAO, settings), "schedule-database-insert")
@@ -118,7 +119,7 @@ class DailyHistoryActorSpec extends BaseAkkaSpec with OneInstancePerTest with Mo
     val reading = HistoricalMeterReading(LocalDate.now(), Random.nextDouble(), Random.nextDouble(), Random.nextDouble())
 
     // Assert
-    (meterReadingDAO.recordMeterReading _).expects(reading)
+    (meterReadingDAO.recordMeterReading _).expects(reading).returns(Future {})
 
     // Act
     val fsm = TestFSMRef(new DailyHistoryActor(messageDispatcher.ref, meterReadingDAO, settings), s"$state-daily-store")
