@@ -81,7 +81,7 @@ lazy val testSupport = (project in file("test-support"))
 ).dependsOn(common)
 
 lazy val app = (project in file("app"))
-  .enablePlugins(JavaServerAppPackaging)
+  .enablePlugins(JavaServerAppPackaging, SystemVPlugin)
   .enablePlugins(BuildInfoPlugin)
   .settings(commonSettings: _*)
   .settings(Seq(
@@ -117,7 +117,6 @@ lazy val app = (project in file("app"))
     },
     daemonUser in Linux := "hyperion",
     daemonGroup in Linux := "hyperion",
-    serverLoading in Debian := com.typesafe.sbt.packager.archetypes.ServerLoader.SystemV,
     debianPackageDependencies in Debian ++= Seq("oracle-java8-jdk"),
     bashScriptExtraDefines += """addJava "-Dconfig.file=${app_home}/../conf/hyperion.conf"""",
     maintainerScripts in Debian := maintainerScriptsAppend((maintainerScripts in Debian).value)(
