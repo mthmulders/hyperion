@@ -1,7 +1,10 @@
 package hyperion
 
 import akka.actor.Props
+import org.slf4j.LoggerFactory
 
 trait HyperionTestActors extends HyperionActors { this: Core =>
-  override val meterAgent = system.actorOf(Props(new MeterAgent(messageDistributor, settings)), "meter-agent")
+  LoggerFactory.getLogger(getClass).warn("Overriding meter agent with a fake one")
+
+  override val meterAgent = system.actorOf(Props(new FakeMeterAgent(messageDistributor, settings)), "fake-meter-agent")
 }

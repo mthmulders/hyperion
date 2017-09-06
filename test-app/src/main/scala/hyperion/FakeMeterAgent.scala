@@ -4,7 +4,7 @@ import akka.actor.{Actor, ActorLogging, ActorRef}
 
 import scala.io.StdIn
 
-class MeterAgent(messageDistributor: ActorRef, settings: AppSettings) extends Actor with ActorLogging {
+class FakeMeterAgent(messageDistributor: ActorRef, settings: AppSettings) extends Actor with ActorLogging {
   override def receive = {
     case _ =>
       log.warning("No messages expected")
