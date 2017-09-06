@@ -19,7 +19,7 @@ import hyperion.database.MeterReadingDAO.HistoricalMeterReading
 import org.mockito.Mockito.verify
 import org.mockito.Mockito.when
 import org.scalatest.concurrent.ScalaFutures
-import org.scalatest.mock.MockitoSugar
+import org.scalatest.mockito.MockitoSugar
 
 class DailyHistoryActorSpec extends BaseAkkaSpec with MockitoSugar with ScalaFutures {
   var meterReadingDAO: MeterReadingDAO = _

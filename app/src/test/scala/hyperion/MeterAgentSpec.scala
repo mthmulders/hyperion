@@ -5,7 +5,7 @@ import akka.testkit.{EventFilter, TestProbe}
 import akka.util.ByteString
 import com.github.jodersky.flow.{Serial, SerialSettings}
 import com.github.jodersky.flow.Serial.Open
-import org.scalatest.mock.MockitoSugar
+import org.scalatest.mockito.MockitoSugar
 
 import scala.concurrent.duration.DurationInt
 
