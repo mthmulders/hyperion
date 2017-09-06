@@ -9,7 +9,8 @@ lazy val postgreSqlVer = "42.1.4"
 lazy val scalaMockVer = "3.6.0"
 lazy val scalaTestVer = "3.0.4"
 lazy val slickVer = "3.2.1"
-lazy val sprayVer = "1.3.2"
+lazy val sprayVer = "1.3.4"
+lazy val sprayJsonVer = "1.3.3"
 lazy val sprayWsVer = "0.1.4"
 
 //
@@ -28,7 +29,7 @@ lazy val scalaTest    = "org.scalatest"            %% "scalatest"               
 lazy val slick        = "com.typesafe.slick"       %% "slick"                         % slickVer
 lazy val sprayCan     = "io.spray"                 %% "spray-can"                     % sprayVer
 lazy val sprayHttpx   = "io.spray"                 %% "spray-httpx"                   % sprayVer
-lazy val sprayJson    = "io.spray"                 %% "spray-json"                    % sprayVer
+lazy val sprayJson    = "io.spray"                 %% "spray-json"                    % sprayJsonVer
 lazy val sprayTestKit = "io.spray"                 %% "spray-testkit"                 % sprayVer
 lazy val sprayWS      = "com.wandoulabs.akka"      %% "spray-websocket"               % sprayWsVer
 
