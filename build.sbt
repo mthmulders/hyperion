@@ -8,7 +8,7 @@ lazy val parserCombVer = "1.0.4"
 lazy val postgreSqlVer = "42.1.4"
 lazy val scalaMockVer = "3.6.0"
 lazy val scalaTestVer = "3.0.4"
-lazy val slickVer = "3.1.1"
+lazy val slickVer = "3.2.1"
 lazy val sprayVer = "1.3.2"
 lazy val sprayWsVer = "0.1.4"
 

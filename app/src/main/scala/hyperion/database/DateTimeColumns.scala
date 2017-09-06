@@ -3,7 +3,7 @@ package hyperion.database
 import java.time.LocalDate
 import java.sql.Date
 
-import slick.driver.MySQLDriver.api._
+import slick.jdbc.PostgresProfile.api._
 
 /**
   * Add support for Java 8 Date/Time types in Slick.
