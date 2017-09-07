@@ -1,43 +1,43 @@
 //
 // Define dependency versions
 //
-lazy val akkaVer = "2.4.4"
-lazy val flowVer = "2.4.1"
-lazy val logbackVer = "1.2.3"
-lazy val parserCombVer = "1.0.6"
-lazy val postgreSqlVer = "42.1.4"
-lazy val scalaMockVer = "3.6.0"
-lazy val scalaTestVer = "3.0.4"
-lazy val slickVer = "3.2.1"
-lazy val sprayVer = "1.3.4"
-lazy val sprayJsonVer = "1.3.3"
-lazy val sprayWsVer = "0.1.4"
+val akkaVer = "2.4.4"
+val flowVer = "2.4.1"
+val logbackVer = "1.2.3"
+val parserCombVer = "1.0.6"
+val postgreSqlVer = "42.1.4"
+val scalaMockVer = "3.6.0"
+val scalaTestVer = "3.0.4"
+val slickVer = "3.2.1"
+val sprayVer = "1.3.4"
+val sprayJsonVer = "1.3.3"
+val sprayWsVer = "0.1.4"
 
 //
 // Define dependencies
 //
-lazy val akkaActor    = "com.typesafe.akka"        %% "akka-actor"                    % akkaVer
-lazy val akkaSlf4j    = "com.typesafe.akka"        %% "akka-slf4j"                    % akkaVer
-lazy val akkaTestKit  = "com.typesafe.akka"        %% "akka-testkit"                  % akkaVer
-lazy val flow         = "com.github.jodersky"      %% "flow"                          % flowVer
-lazy val flowNative   = "com.github.jodersky"      %  "flow-native"                   % flowVer
-lazy val logback      = "ch.qos.logback"           %  "logback-classic"               % logbackVer
-lazy val parserComb   = "org.scala-lang.modules"   %% "scala-parser-combinators"      % parserCombVer
-lazy val postgreSql   = "org.postgresql"           %  "postgresql"                    % postgreSqlVer
-lazy val scalaMock    = "org.scalamock"            %% "scalamock-scalatest-support"   % scalaMockVer
-lazy val scalaTest    = "org.scalatest"            %% "scalatest"                     % scalaTestVer
-lazy val slick        = "com.typesafe.slick"       %% "slick"                         % slickVer
-lazy val sprayCan     = "io.spray"                 %% "spray-can"                     % sprayVer
-lazy val sprayHttpx   = "io.spray"                 %% "spray-httpx"                   % sprayVer
-lazy val sprayJson    = "io.spray"                 %% "spray-json"                    % sprayJsonVer
-lazy val sprayTestKit = "io.spray"                 %% "spray-testkit"                 % sprayVer
-lazy val sprayWS      = "com.wandoulabs.akka"      %% "spray-websocket"               % sprayWsVer
+val akkaActor    = "com.typesafe.akka"      %% "akka-actor"                  % akkaVer
+val akkaSlf4j    = "com.typesafe.akka"      %% "akka-slf4j"                  % akkaVer
+val akkaTestKit  = "com.typesafe.akka"      %% "akka-testkit"                % akkaVer
+val flow         = "com.github.jodersky"    %% "flow"                        % flowVer
+val flowNative   = "com.github.jodersky"    %  "flow-native"                 % flowVer
+val logback      = "ch.qos.logback"         %  "logback-classic"             % logbackVer
+val parserComb   = "org.scala-lang.modules" %% "scala-parser-combinators"    % parserCombVer
+val postgreSql   = "org.postgresql"         %  "postgresql"                  % postgreSqlVer
+val scalaMock    = "org.scalamock"          %% "scalamock-scalatest-support" % scalaMockVer
+val scalaTest    = "org.scalatest"          %% "scalatest"                   % scalaTestVer
+val slick        = "com.typesafe.slick"     %% "slick"                       % slickVer
+val sprayCan     = "io.spray"               %% "spray-can"                   % sprayVer
+val sprayHttpx   = "io.spray"               %% "spray-httpx"                 % sprayVer
+val sprayJson    = "io.spray"               %% "spray-json"                  % sprayJsonVer
+val sprayTestKit = "io.spray"               %% "spray-testkit"               % sprayVer
+val sprayWS      = "com.wandoulabs.akka"    %% "spray-websocket"             % sprayWsVer
 
 
 //
 // Shared settings
 //
-lazy val commonSettings = Seq(
+val commonSettings = Seq(
   organization := "hyperion",
   version := "2.0.2-SNAPSHOT",
   description := "Hyperion",
@@ -65,21 +65,21 @@ lazy val commonSettings = Seq(
 // Per-module settings
 //
 
-lazy val common = (project in file("common"))
+val common = (project in file("common"))
   .settings(commonSettings: _*)
   .settings(Seq(
     name := "hyperion-common"
   )
 )
 
-lazy val testSupport = (project in file("test-support"))
+val testSupport = (project in file("test-support"))
   .settings(commonSettings: _*)
   .settings(Seq(
     name := "hyperion-test-support"
   )
 ).dependsOn(common)
 
-lazy val app = (project in file("app"))
+val app = (project in file("app"))
   .enablePlugins(JavaServerAppPackaging, SystemVPlugin)
   .enablePlugins(BuildInfoPlugin)
   .settings(commonSettings: _*)
@@ -123,13 +123,13 @@ lazy val app = (project in file("app"))
   )
 ).dependsOn(common, testSupport)
 
-lazy val testApp = (project in file("test-app"))
+val testApp = (project in file("test-app"))
   .settings(commonSettings: _*)
   .settings(Seq(
     name := "hyperion-test-app"
   )
 ).dependsOn(app, testSupport)
 
-lazy val root = (project in file("."))
+val root = (project in file("."))
   .settings(commonSettings: _*)
   .aggregate(app, common, testApp, testSupport)
