@@ -2,14 +2,14 @@ package hyperion
 
 import java.time.{LocalDateTime, OffsetDateTime, ZoneId}
 
-import org.scalatest.{OptionValues, Inside}
+import org.scalatest.{TryValues, Inside}
 
 import scala.io.Source
 
 import P1TelegramParser._
 import P1Constants._
 
-class P1TelegramParserSpec extends BaseSpec with Inside with OptionValues {
+class P1TelegramParserSpec extends BaseSpec with Inside with TryValues {
 
   val newline = "\r\n"
 
@@ -43,17 +43,18 @@ class P1TelegramParserSpec extends BaseSpec with Inside with OptionValues {
     }
 
     "parse a complete telegram" in {
+      // Arrage
       val source = Source.fromInputStream(getClass.getResourceAsStream("/valid-telegram1.txt"))
       val text = try source.mkString finally source.close()
 
-      val result: Option[P1Telegram] = parseTelegram(text)
+      // Act
+      val result = parseTelegram(text)
 
-      result shouldBe defined
-
+      // Assert
       val gasTs = localDateTimeAtCurrentOffset(LocalDateTime.parse("2010-12-09T11:00:00"))
       val ts = localDateTimeAtCurrentOffset(LocalDateTime.parse("2010-12-09T11:30:20"))
 
-      inside(result.get) {
+      inside(result.success.value) {
         case P1Telegram(header, metadata, data, checksum) =>
           inside(header) { case P1Header(make, identification) =>
             make shouldBe "ISk"
@@ -82,16 +83,20 @@ class P1TelegramParserSpec extends BaseSpec with Inside with OptionValues {
     }
 
     "parse another complete telegram" in {
+      // Arrage
       val source = Source.fromInputStream(getClass.getResourceAsStream("/valid-telegram2.txt"))
       val text = try source.mkString finally source.close()
 
-      val result: Option[P1Telegram] = parseTelegram(text)
+      // Act
+      val result = parseTelegram(text)
 
-      result shouldBe defined
+      // Assert
+      result.isSuccess shouldBe true
     }
 
     "not parse a malformed telegram" in {
-      parseTelegram("foo") should not be defined
+      val result = parseTelegram("foo")
+      result.failure.exception should have message "Not all required lines are found"
     }
   }
 

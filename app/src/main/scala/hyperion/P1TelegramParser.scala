@@ -3,16 +3,16 @@ package hyperion
 import java.time.format.DateTimeFormatter
 import java.time.{LocalDateTime, OffsetDateTime, ZoneId}
 
-import org.slf4j.LoggerFactory
-
 import scala.collection.immutable
-import util.parsing.combinator.RegexParsers
+import scala.util.Try
+import scala.util.control.NoStackTrace
+import scala.util.parsing.combinator.RegexParsers
 
 import P1Constants._
 
-object P1TelegramParser extends RegexParsers {
-  private val logger = LoggerFactory.getLogger(getClass)
+final case class TelegramParseException private (message: String) extends Exception(message) with NoStackTrace
 
+object P1TelegramParser extends RegexParsers {
   override def skipWhitespace = true
 
   private val dateFormat = DateTimeFormatter.ofPattern("yyMMddHHmmss")
@@ -98,14 +98,9 @@ object P1TelegramParser extends RegexParsers {
     case header ~ metadata ~ data ~ checksum => P1Telegram(header, metadata, data, checksum)
   } | failure("Not all required lines are found")
 
-
-  def parseTelegram(text: String): Option[P1Telegram] = parseAll(parser, text) match {
-    case Success(result, _) => Some(result)
-    case Failure(msg, _)    => handleParseFailure(msg); None
-    case Error(msg, _)      => handleParseFailure(msg); None
-  }
-
-  private[this] def handleParseFailure(msg: String) = {
-    logger.error("Could not parse telegram: {}", msg)
+  def parseTelegram(text: String): Try[P1Telegram] = parseAll(parser, text) match {
+    case Success(result, _) => scala.util.Success(result)
+    case Failure(msg, _)    => scala.util.Failure(TelegramParseException(msg))
+    case Error(msg, _)      => scala.util.Failure(TelegramParseException(msg))
   }
 }
