@@ -1,7 +1,7 @@
 //
 // Define dependency versions
 //
-val akkaVer = "2.4.4"
+val akkaVer = "2.4.20"
 val akkaHttpVer = "10.0.10"
 val flowVer = "2.4.1"
 val logbackVer = "1.2.3"
