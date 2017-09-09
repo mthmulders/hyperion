@@ -11,42 +11,39 @@ import org.scalatest.OneInstancePerTest
 import scala.concurrent.duration.DurationInt
 
 class MeterAgentSpec extends BaseAkkaSpec with OneInstancePerTest with MockFactory {
-  private val dummy = TestProbe().ref
+  private val collectingActor = TestProbe()
 
-  "Creating the Meter Agent" should {
-    "result in creating a IO-SERIAL system actor" in {
-      system.actorOf(Props(new MeterAgent(dummy, settings)), "create-system-actor")
+  private val ma = system.actorOf(Props(new MeterAgent(collectingActor.ref, settings)), "meter-agent")
+
+  "The Meter Agent actor" should {
+    "create the IO-SERIAL system actor" in {
       TestProbe().expectActor("/system/IO-SERIAL", 2 seconds) should not be empty
     }
-  }
 
-  "Receiving the \"CommandFailed\" message" should {
-    "log the failed command and the reason as an error" in {
-      val actor = system.actorOf(Props(new MeterAgent(dummy, settings)), "log-command-failure")
-      EventFilter.error("Could not open serial port due to IllegalArgumentException", occurrences = 1) intercept {
-        val reason = new IllegalArgumentException("test")
-        actor ! Serial.CommandFailed(Open("", mock[SerialSettings], 1), reason)
+    "when it receives a \"CommandFailed\" message" should {
+      "log the failed command and the reason as an error" in {
+        EventFilter.error("Could not open serial port due to IllegalArgumentException", occurrences = 1) intercept {
+          val reason = new IllegalArgumentException("test")
+          ma ! Serial.CommandFailed(Open("", mock[SerialSettings], 1), reason)
+        }
       }
     }
-  }
 
-  "Receiving the \"Opened\" message" should {
-    "log having opened the port at info" in {
-      val actor = system.actorOf(Props(new MeterAgent(dummy, settings)), "log-port-opened")
-      EventFilter.info("Opened serial port /foo", occurrences = 1) intercept {
-        actor ! Serial.Opened("/foo")
+    "when it receives an \"Opened\" message" should {
+      "log having opened the port at info" in {
+        EventFilter.info("Opened serial port /foo", occurrences = 1) intercept {
+          ma ! Serial.Opened("/foo")
+        }
       }
     }
-  }
 
-  "Receiving the \"Received\" message" should {
-    "convert the bytes to a String and forward them to the CollectingActor" in {
-      val collectingActor = TestProbe()
-      val actor = system.actorOf(Props(new MeterAgent(collectingActor.ref, settings)), "forward-string-to-collectingactor")
-      val bytes = ByteString(41, 13, 10)
-      actor ! Serial.Received(bytes)
+    "when it receives a \"Received\" message" should {
+      "convert the bytes to a String and forward them to the CollectingActor" in {
+        val bytes = ByteString(41, 13, 10)
+        ma ! Serial.Received(bytes)
 
-      collectingActor expectMsg MeterAgent.IncomingData(")\r\n")
+        collectingActor expectMsg MeterAgent.IncomingData(")\r\n")
+      }
     }
   }
 }

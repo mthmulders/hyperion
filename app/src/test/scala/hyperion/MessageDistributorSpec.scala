@@ -5,32 +5,32 @@ import hyperion.MessageDistributor.RegisterReceiver
 import scala.concurrent.duration.DurationInt
 
 class MessageDistributorSpec extends BaseAkkaSpec {
+  private val md = system.actorOf(MessageDistributor.props(), "message-distributor")
+
   "The MessageDistributor Actor" should {
     "forward messages it receives to all recipients" in {
       // Arrange
-      val receiver = system.actorOf(MessageDistributor.props(), "forward-messages")
       val msg = "msg"
       val probe = TestProbe()
 
       // Act
-      probe.send(receiver, RegisterReceiver)
-      receiver ! msg
+      probe.send(md, RegisterReceiver)
+      md ! msg
 
       // Assert
       probe.expectMsgAllOf(msg)
     }
 
-    "stop forwarding messages once a recipient is stopped" in {
+    "stop forwarding messages once a recipient is terminated" in {
       // Arrange
-      val receiver = system.actorOf(MessageDistributor.props(), "stop-forwarding")
       val msg = "msg"
       val probe = TestProbe()
 
       // Act
-      probe.send(receiver, RegisterReceiver)
+      probe.send(md, RegisterReceiver)
       system.stop(probe.ref)
       Thread.sleep(500)
-      receiver ! msg
+      md ! msg
 
       // Assert
       probe.expectNoMsg(1 second)

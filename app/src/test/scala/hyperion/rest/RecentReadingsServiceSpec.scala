@@ -14,6 +14,7 @@ import hyperion.RecentHistoryActor.{GetRecentHistory, RecentReadings}
 class RecentReadingsServiceSpec extends BaseSpec with ScalatestRouteTest with HyperionJsonProtocol {
   private val telegram = TestSupport.randomTelegram()
   private val recentHistoryActor = TestProbe()
+
   recentHistoryActor.setAutoPilot(new AutoPilot {
     override def run(sender: ActorRef, msg: Any): AutoPilot = {
       msg match {
@@ -23,6 +24,7 @@ class RecentReadingsServiceSpec extends BaseSpec with ScalatestRouteTest with Hy
       keepRunning
     }
   })
+
   private val route = new RecentReadingsService(recentHistoryActor.ref).route
 
   "The RecentReadings REST API" should {

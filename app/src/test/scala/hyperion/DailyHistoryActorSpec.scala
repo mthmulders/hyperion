@@ -20,17 +20,14 @@ import org.scalatest.OneInstancePerTest
 import org.scalatest.concurrent.ScalaFutures
 
 class DailyHistoryActorSpec extends BaseAkkaSpec with OneInstancePerTest with MockFactory with ScalaFutures {
-  val meterReadingDAO: MeterReadingDAO = mock[MeterReadingDAO]
-  implicit val timeout = Timeout(500 milliseconds)
+  private val meterReadingDAO: MeterReadingDAO = mock[MeterReadingDAO]
+  private implicit val timeout: Timeout = Timeout(500 milliseconds)
+  private val messageDistributor = TestProbe("message-distributor")
+
+  private val dha = TestFSMRef(new DailyHistoryActor(messageDistributor.ref, meterReadingDAO, settings), "daily-history-actor")
 
   "The Daily History Actor" should {
     "register itself with the Message Distributor" in {
-      // Arrange
-      val messageDistributor = TestProbe("recemessage-distributor")
-
-      // Act
-      system.actorOf(Props(new DailyHistoryActor(messageDistributor.ref, meterReadingDAO, settings)), "daily-register")
-
       // Assert
       messageDistributor.expectMsg(RegisterReceiver)
     }
@@ -38,57 +35,50 @@ class DailyHistoryActorSpec extends BaseAkkaSpec with OneInstancePerTest with Mo
     "after having received one Telegram" should {
       "schedule to wake up" in {
         // Arrange
-        val messageDispatcher = TestProbe("message-distributor")
         val telegram = TestSupport.randomTelegram()
 
         // Act
-        val fsm = TestFSMRef(new DailyHistoryActor(messageDispatcher.ref, meterReadingDAO, settings), "schedule-awakening")
-        messageDispatcher.send(fsm, TelegramReceived(telegram))
+        messageDistributor.send(dha, TelegramReceived(telegram))
 
         // Assert
-        fsm.isTimerActive("wake-up") shouldBe true
+        dha.isTimerActive("wake-up") shouldBe true
       }
 
       "go to sleep" in {
         // Arrange
-        val messageDispatcher = TestProbe("message-distributor")
         val telegram = TestSupport.randomTelegram()
 
         // Act
-        val fsm = TestFSMRef(new DailyHistoryActor(messageDispatcher.ref, meterReadingDAO, settings), "go-to-sleep")
-        messageDispatcher.send(fsm, TelegramReceived(telegram))
+        messageDistributor.send(dha, TelegramReceived(telegram))
 
         // Assert
-        fsm.stateName shouldBe Sleeping
+        dha.stateName shouldBe Sleeping
       }
     }
 
     "schedule to perform database insert" in {
       // Arrange
-      val messageDispatcher = TestProbe("message-distributor")
       val telegram = TestSupport.randomTelegram()
       (meterReadingDAO.recordMeterReading _).expects(*).returns(Future {})
+      val msg = StoreMeterReading(HistoricalMeterReading(LocalDate.now(), BigDecimal(3), BigDecimal(42), BigDecimal(16)))
 
       // Act
-      val fsm = TestFSMRef(new DailyHistoryActor(messageDispatcher.ref, meterReadingDAO, settings), "schedule-database-insert")
-      val currentState = fsm.stateName
-      messageDispatcher.send(fsm, StoreMeterReading(HistoricalMeterReading(LocalDate.now(), BigDecimal(3), BigDecimal(42), BigDecimal(16))))
+      val currentState = dha.stateName
+      messageDistributor.send(dha, msg)
 
       // Assert
-      fsm.stateName shouldBe currentState
+      dha.stateName shouldBe currentState
     }
 
     "wake up after resolution time" in {
       // Arrange
-      val messageDispatcher = TestProbe("message-distributor")
 
       // Act
-      val fsm = TestFSMRef(new DailyHistoryActor(messageDispatcher.ref, meterReadingDAO, settings), "daily-wake-up")
-      fsm.setState(Sleeping, Empty)
-      fsm ! StateTimeout // Since sleep time is typically 1 day, we need to simulate it's time to wake up
+      dha.setState(Sleeping, Empty)
+      dha ! StateTimeout // Since sleep time is typically 1 day, we need to simulate it's time to wake up
 
       // Assert
-      fsm.stateName shouldBe Receiving
+      dha.stateName shouldBe Receiving
     }
 
     "while sleeping" should {
@@ -113,30 +103,27 @@ class DailyHistoryActorSpec extends BaseAkkaSpec with OneInstancePerTest with Mo
   }
 
   // Re-usabe testcases that need to be ran in multiple states
-  private def storeTelegramsInDatabase(state: State) = {
+  private val storeTelegramsInDatabase = (state: State) => {
     // Arrange
-    val messageDispatcher = TestProbe("message-distributor")
     val reading = HistoricalMeterReading(LocalDate.now(), Random.nextDouble(), Random.nextDouble(), Random.nextDouble())
 
     // Assert
     (meterReadingDAO.recordMeterReading _).expects(reading).returns(Future {})
 
     // Act
-    val fsm = TestFSMRef(new DailyHistoryActor(messageDispatcher.ref, meterReadingDAO, settings), s"$state-daily-store")
-    fsm.setState(state)
-    messageDispatcher.send(fsm, StoreMeterReading(reading))
+    dha.setState(state)
+    messageDistributor.send(dha, StoreMeterReading(reading))
   }
 
-  private def retrieveMeterReadingsFromDatabase(state: State) = {
+  private val retrieveMeterReadingsFromDatabase = (state: State) => {
     // Arrange
     val date = LocalDate.now()
     val result = Seq(HistoricalMeterReading(LocalDate.now(), Random.nextDouble(), Random.nextDouble(), Random.nextDouble()))
     (meterReadingDAO.retrieveMeterReading _).expects(date).returns(Future { result })
 
     // Act
-    val fsm = TestFSMRef(new DailyHistoryActor(TestProbe().ref, meterReadingDAO, settings), s"$state-daily-retrieve")
-    fsm.setState(state)
-    val future = fsm ? RetrieveMeterReading(date)
+    dha.setState(state)
+    val future = dha ? RetrieveMeterReading(date)
 
     // Assert
     whenReady(future) { answer =>

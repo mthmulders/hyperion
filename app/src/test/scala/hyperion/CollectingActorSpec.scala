@@ -5,37 +5,34 @@ import akka.testkit.TestProbe
 import scala.concurrent.duration._
 import scala.io.Source
 
-class CollectingActorSpec extends BaseAkkaSpec with HyperionActors {
-  val newline = "\r\n"
+class CollectingActorSpec extends BaseAkkaSpec {
+  private val newline = "\r\n"
+  private val receiver = TestProbe()
+
+  private val ca = system.actorOf(CollectingActor.props(receiver.ref), "collecting-actor")
 
   "Receiving the \"IncomingData\"" should {
     "skip data until the first complete Telegram comes in" in {
-      val receiver = TestProbe()
-      val actor = system.actorOf(CollectingActor.props(receiver.ref), "skip-data")
-
-      collectingActor ! MeterAgent.IncomingData("1-3:0.2.8(42)\r\n!522B\r\n/TEST")
+      ca ! MeterAgent.IncomingData(s"1-3:0.2.8(42)$newline!522B$newline/TEST")
 
       receiver.expectNoMsg(500 milliseconds)
     }
 
     "emit only complete Telegrams" in {
       //Arrange
-      val receiver = TestProbe()
-      val actor = system.actorOf(CollectingActor.props(receiver.ref), "emit-telegrams")
-
       val source = Source.fromInputStream(getClass.getResourceAsStream("/valid-telegram1.txt"))
       val text = try source.mkString finally source.close()
 
-      val data = text.grouped(100).toIndexedSeq
+      val data = text.grouped(100)
 
       // Act
-      actor ! MeterAgent.IncomingData("!XXXX" + newline) // simulate end of previous message
+      ca ! MeterAgent.IncomingData(s"$newline!XXXX$newline") // simulate end of previous message
       for (chunk <- data) {
-        actor ! MeterAgent.IncomingData(chunk)
+        ca ! MeterAgent.IncomingData(chunk)
       }
 
       // Assert
-      val telegram = receiver.expectMsgPF(1 second) {
+      val telegram = receiver.expectMsgPF(1500 millis) {
         case TelegramReceived(content) => content
       }
       telegram.checksum shouldBe "522B" // other parsing is tested in P1TelegramParserSpec

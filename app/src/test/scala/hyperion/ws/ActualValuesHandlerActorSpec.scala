@@ -12,7 +12,7 @@ class ActualValuesHandlerActorSpec extends BaseAkkaSpec {
   private val messageDistributor = TestProbe()
   private val source = TestProbe()
 
-  private val sut = system.actorOf(Props(new ActualValuesHandlerActor(source.ref, messageDistributor.ref)), "ActualValuesHandlerActor")
+  private val avha = system.actorOf(Props(new ActualValuesHandlerActor(source.ref, messageDistributor.ref)), "actual-values-handler")
 
   "The ActualReadings WebSocket worker" should {
     "should register with the message distributor" in {

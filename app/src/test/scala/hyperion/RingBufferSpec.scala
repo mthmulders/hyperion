@@ -97,7 +97,7 @@ class RingBufferSpec extends BaseSpec {
       buffer should contain inOrderOnly ("1", "a", "b", "4")
     }
 
-    "should throw a NoSuchElementException when an element is accessed that is not yet initialised" in {
+    "throw a NoSuchElementException when an element is accessed that is not yet initialised" in {
       // Arrange
       val buffer = RingBuffer[String](2)
       buffer += "1"
