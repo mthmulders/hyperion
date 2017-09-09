@@ -7,6 +7,7 @@ import scala.concurrent.duration.DurationLong
 import scala.util.{Failure, Success}
 
 import akka.actor.{ActorLogging, ActorRef, FSM}
+
 import hyperion.MessageDistributor.RegisterReceiver
 import hyperion.DailyHistoryActor._
 import hyperion.database.MeterReadingDAO.HistoricalMeterReading
@@ -85,6 +86,7 @@ class DailyHistoryActor(messageDistributor: ActorRef,
 
       case Failure(reason) =>
         log.error("Error retrieving meter reading from database: {}", reason)
+        receiver ! RetrievedMeterReading(None)
     }
     stay()
   }

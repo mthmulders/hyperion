@@ -1,13 +1,12 @@
 package hyperion
 
-import akka.actor.{Actor, ActorLogging, ActorRef}
-
 import scala.io.StdIn
 
+import akka.actor.{Actor, ActorLogging, ActorRef}
+
 class FakeMeterAgent(messageDistributor: ActorRef, settings: AppSettings) extends Actor with ActorLogging {
-  override def receive = {
-    case _ =>
-      log.warning("No messages expected")
+  override def receive: Actor.Receive = {
+    case _ => log.warning("No messages expected")
   }
 
   log.warning("+--------------------------------------------------------------+")

@@ -2,6 +2,7 @@
 // Define dependency versions
 //
 val akkaVer = "2.4.4"
+val akkaHttpVer = "10.0.10"
 val flowVer = "2.4.1"
 val logbackVer = "1.2.3"
 val parserCombVer = "1.0.6"
@@ -17,6 +18,9 @@ val sprayWsVer = "0.1.4"
 // Define dependencies
 //
 val akkaActor    = "com.typesafe.akka"      %% "akka-actor"                  % akkaVer
+val akkaHttp     = "com.typesafe.akka"      %% "akka-http"                   % akkaHttpVer
+val akkaHttpJson = "com.typesafe.akka"      %% "akka-http-spray-json"        % akkaHttpVer
+val akkaHttpTest = "com.typesafe.akka"      %% "akka-http-testkit"           % akkaHttpVer
 val akkaSlf4j    = "com.typesafe.akka"      %% "akka-slf4j"                  % akkaVer
 val akkaTestKit  = "com.typesafe.akka"      %% "akka-testkit"                % akkaVer
 val flow         = "com.github.jodersky"    %% "flow"                        % flowVer
@@ -27,11 +31,7 @@ val postgreSql   = "org.postgresql"         %  "postgresql"                  % p
 val scalaMock    = "org.scalamock"          %% "scalamock-scalatest-support" % scalaMockVer
 val scalaTest    = "org.scalatest"          %% "scalatest"                   % scalaTestVer
 val slick        = "com.typesafe.slick"     %% "slick"                       % slickVer
-val sprayCan     = "io.spray"               %% "spray-can"                   % sprayVer
-val sprayHttpx   = "io.spray"               %% "spray-httpx"                 % sprayVer
 val sprayJson    = "io.spray"               %% "spray-json"                  % sprayJsonVer
-val sprayTestKit = "io.spray"               %% "spray-testkit"               % sprayVer
-val sprayWS      = "com.wandoulabs.akka"    %% "spray-websocket"             % sprayWsVer
 
 
 //
@@ -88,6 +88,9 @@ val app = (project in file("app"))
     resolvers += Resolver.bintrayRepo("jodersky", "maven"),
     libraryDependencies ++= Seq(
       akkaActor,
+      akkaHttp,
+      akkaHttpJson,
+      akkaHttpTest % "test",
       akkaSlf4j,
       akkaTestKit % "test",
       flow,
@@ -97,12 +100,7 @@ val app = (project in file("app"))
       postgreSql,
       scalaMock % "test",
       scalaTest % "test",
-      slick,
-      sprayCan,
-      sprayHttpx,
-      sprayJson,
-      sprayTestKit % "test",
-      sprayWS
+      slick
     ),
     buildInfoOptions += BuildInfoOption.BuildTime,
     buildInfoPackage := "hyperion",

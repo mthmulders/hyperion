@@ -1,17 +1,16 @@
 package hyperion.rest
 
-import hyperion.BuildInfo
-import org.slf4j.LoggerFactory
-import spray.httpx.SprayJsonSupport
+import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport
+import akka.http.scaladsl.server.{Directives, Route}
+
 import spray.json.DefaultJsonProtocol
-import spray.routing.Directives
+
+import hyperion.BuildInfo
 
 /**
   * Provides the Spray route to retrieve some system information.
   */
 class AppInfoService extends Directives with DefaultJsonProtocol with SprayJsonSupport {
-  private val logger = LoggerFactory.getLogger(getClass)
-
   case class AppInfo(appVersion: String,
                      scalaVersion: String,
                      javaVersion: String,
@@ -21,7 +20,7 @@ class AppInfoService extends Directives with DefaultJsonProtocol with SprayJsonS
                      database: String)
   implicit val appInfoJsonFormat = jsonFormat7(AppInfo)
 
-  val route = path("info") {
+  val route: Route = path("info") {
     get {
       complete {
         AppInfo(

@@ -2,8 +2,11 @@ package hyperion.rest
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
+import akka.http.scaladsl.server.Directives._
+import akka.http.scaladsl.server.Route
+import hyperion.ws.ActualReadingsService
+
 import hyperion.{Core, HyperionActors}
-import spray.routing.HttpService
 
 /**
   * The REST API layer. It exposes the REST services, but does not provide any web server interface.
@@ -11,9 +14,10 @@ import spray.routing.HttpService
   * Notice that it requires to be mixed in with ``hyperion.HyperionActors``, which provides access
   * to the top-level actors that make up the system.
   */
-trait RestApi extends HttpService with HyperionActors with Core {
-  val restRoutes =
+trait HttpApi extends HyperionActors with Core {
+  val routes: Route =
     new RecentReadingsService(recentHistoryActor).route ~
     new DailyHistoryService(dailyHistoryActor).route ~
-    new AppInfoService().route
+    new AppInfoService().route ~
+    new ActualReadingsService(messageDistributor, system).route
 }

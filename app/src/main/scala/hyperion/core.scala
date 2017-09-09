@@ -1,17 +1,15 @@
 package hyperion
 
-import scala.concurrent.duration.Duration
-import scala.concurrent.{Await, Future}
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.util.{Failure, Success}
-import akka.actor.{ActorRefFactory, ActorSystem, Props, Terminated}
+
+import akka.actor.{ActorSystem, Props}
 import akka.event.Logging
-import akka.io.IO
+import akka.http.scaladsl.Http
+import akka.http.scaladsl.server.Route
+import akka.stream.{ActorMaterializer, Materializer}
+
 import hyperion.database.MeterReadingDAO
-import hyperion.rest.RestApi
-import hyperion.ws.WebSocketApi
-import spray.can.Http
-import spray.can.server.UHttp
+import hyperion.rest.HttpApi
 
 /**
   * Core is type containing the ``system: ActorSystem`` member. This enables us to use it in our
@@ -26,25 +24,20 @@ trait Core {
   * This trait implements ``Core`` by starting the required ``ActorSystem`` and registering the
   * termination handler to stop the system when the JVM exits.
   */
-trait BootedCore extends Core with RestApi with WebSocketApi {
+trait BootedCore extends Core with HttpApi {
+  override protected implicit def system = ActorSystem("hyperion")
+  private[this] implicit val materializer: Materializer = ActorMaterializer()
   private[this] val log = Logging(system, getClass.getName)
 
-  implicit lazy val system = ActorSystem("hyperion-system")
-  def actorRefFactory: ActorRefFactory = system
+  log.info("Starting Hyperion")
 
-  val rootService = system.actorOf(Props(new RoutedHttpService(restRoutes ~ webSocketRoutes)))
-
-  IO(UHttp)(system) ! Http.Bind(rootService, "0.0.0.0", settings.api.port)
+  private[this] val bindingFuture = Http().bindAndHandle(Route.handlerFlow(routes), "0.0.0.0", settings.api.port)
 
   sys.addShutdownHook({
     log.info("Shutting down Hyperion")
-    IO(UHttp)(system) ! Http.Unbind
-    val termination: Future[Terminated] = system.terminate()
-    termination onComplete {
-      case Success(_)     => log.info("Clean shut down complete")
-      case Failure(cause) => log.info(s"Shut down with problems: ${cause.getMessage}", cause)
-    }
-    Await.result(termination, Duration.Inf)
+    bindingFuture
+      .flatMap(_.unbind())
+      .onComplete(_ => system.terminate())
   })
 }
 

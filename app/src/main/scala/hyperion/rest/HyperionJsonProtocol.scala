@@ -2,18 +2,22 @@ package hyperion.rest
 
 import java.time.{LocalDate, OffsetDateTime}
 import java.time.format.DateTimeFormatter.{ISO_DATE, ISO_OFFSET_DATE_TIME}
-import java.time.temporal.Temporal
 
-import hyperion.database.MeterReadingDAO.HistoricalMeterReading
-import spray.httpx.SprayJsonSupport
+import scala.concurrent.{ExecutionContext, Future}
+import scala.util.{Failure, Success, Try}
+
+import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport
+import akka.http.scaladsl.unmarshalling.Unmarshaller
+import akka.stream.Materializer
 import spray.json._
 
-import scala.util.{Failure, Success, Try}
+import hyperion.database.MeterReadingDAO.HistoricalMeterReading
 
 /** Allows easy mix-in of [[HyperionJsonProtocol]] */
 trait HyperionJsonProtocol extends DefaultJsonProtocol with SprayJsonSupport {
   implicit def meterReadingFormat: RootJsonFormat[MeterReading] = HyperionJsonProtocol.meterReadingFormat
   implicit def historicalMeterReadingFormat: RootJsonFormat[HistoricalMeterReading] = HyperionJsonProtocol.historicalMeterReadingFormat
+  implicit def localDateUnmarshaller: Unmarshaller[String, LocalDate] = HyperionJsonProtocol.localDateUnmarshaller
 }
 
 /** Converts the model of Hyperions REST API into JSON and back */
@@ -46,6 +50,15 @@ object HyperionJsonProtocol extends DefaultJsonProtocol with SprayJsonSupport {
     )
   }
 
-  implicit val meterReadingFormat = jsonFormat9(MeterReading)
-  implicit val historicalMeterReadingFormat = jsonFormat4(HistoricalMeterReading)
+  implicit val localDateUnmarshaller: Unmarshaller[String, LocalDate] = new Unmarshaller[String, LocalDate] {
+    override def apply(value: String)(implicit ec: ExecutionContext, materializer: Materializer): Future[LocalDate] = {
+      Try(LocalDate.parse(value, ISO_DATE)) match {
+        case Success(date) => Future { date }
+        case Failure(reason) => Future.failed(reason)
+      }
+    }
+  }
+
+  implicit val meterReadingFormat: RootJsonFormat[MeterReading] = jsonFormat9(MeterReading)
+  implicit val historicalMeterReadingFormat: RootJsonFormat[HistoricalMeterReading] = jsonFormat4(HistoricalMeterReading)
 }

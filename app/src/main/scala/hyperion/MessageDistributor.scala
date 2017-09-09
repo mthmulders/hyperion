@@ -2,7 +2,8 @@ package hyperion
 
 import scala.collection.mutable
 
-import akka.actor._
+import akka.actor.{Actor, ActorLogging, ActorRef, Props, Terminated}
+
 import hyperion.MessageDistributor.RegisterReceiver
 
 object MessageDistributor {
@@ -14,9 +15,9 @@ object MessageDistributor {
 }
 
 class MessageDistributor extends Actor with ActorLogging {
-  val recipients = mutable.Buffer.empty[ActorRef]
+  private val recipients = mutable.Buffer.empty[ActorRef]
 
-  override def receive = {
+  override def receive: Receive = {
     case RegisterReceiver =>
       log.debug("Adding {} to list of recipients", sender())
       recipients += sender()

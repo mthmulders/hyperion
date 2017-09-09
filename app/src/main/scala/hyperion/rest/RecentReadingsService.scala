@@ -2,12 +2,14 @@ package hyperion.rest
 
 import scala.concurrent.duration.DurationInt
 import scala.concurrent.ExecutionContext
+
 import akka.actor.ActorRef
+import akka.http.scaladsl.server.{Directives, Route}
 import akka.pattern.ask
 import akka.util.Timeout
+
 import hyperion.RecentHistoryActor.{GetRecentHistory, RecentReadings}
 import hyperion.rest.HyperionConversions.telegramWrapper
-import spray.routing.Directives
 
 /**
   * Provides the Spray route to retrieve the most recent meter readings from memory.
@@ -19,7 +21,7 @@ class RecentReadingsService(recentHistoryActor: ActorRef)(implicit executionCont
 
   implicit val timeout = Timeout(500 milliseconds)
 
-  val route = path("recent") {
+  val route: Route = path("recent") {
     get {
       complete {
         (recentHistoryActor ? GetRecentHistory)

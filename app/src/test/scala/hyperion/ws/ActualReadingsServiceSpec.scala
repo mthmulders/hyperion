@@ -1,23 +1,26 @@
 package hyperion.ws
 
+import akka.http.scaladsl.testkit.{ScalatestRouteTest, WSProbe}
 import akka.testkit.TestProbe
+
 import hyperion.rest.HyperionJsonProtocol
 import hyperion.BaseSpec
-import hyperion.MessageDistributor.RegisterReceiver
-import spray.testkit.ScalatestRouteTest
 
 class ActualReadingsServiceSpec extends BaseSpec with ScalatestRouteTest with HyperionJsonProtocol {
-  "The ActualReadings WebSocket API" should {
-    "should link the client to the message distributor" in {
+  private val messageDistributor = TestProbe()
+  private val route = new ActualReadingsService(messageDistributor.ref, system).route
+
+  "The ActualReadings service" should {
+    "upgrade the connection to a WebSocket" in {
       // Arrange
-      val messageDistributor = TestProbe()
-      val route = new ActualReadingsService(messageDistributor.ref, system).route
+      val wsClient = WSProbe()
 
-        // Act
-      Get("/actual") ~> route
-
-      // Assert
-      messageDistributor.expectMsg(RegisterReceiver)
+      // Act
+      WS("/actual", wsClient.flow) ~> route ~>
+        check {
+          // Assert
+          isWebSocketUpgrade shouldEqual true
+        }
     }
   }
 }
