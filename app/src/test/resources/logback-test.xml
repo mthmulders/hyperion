@@ -5,9 +5,9 @@
         </encoder>
     </appender>
 
-    <logger name="hyperion" level="debug" />
+    <logger name="hyperion" level="info" />
 
-    <root level="info">
+    <root level="warn">
         <appender-ref ref="stdout" />
     </root>
 </configuration>
