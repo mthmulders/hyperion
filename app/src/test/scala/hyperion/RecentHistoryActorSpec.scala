@@ -1,20 +1,16 @@
 package hyperion
 
-import akka.actor.ActorDSL.actor
-import akka.actor.Props
 import akka.testkit.{TestFSMRef, TestProbe}
 import hyperion.MessageDistributor.RegisterReceiver
 import hyperion.RecentHistoryActor.{GetRecentHistory, History, Receiving, RecentReadings, Sleeping}
 
 class RecentHistoryActorSpec extends BaseAkkaSpec {
+  private val messageDistributor: TestProbe = TestProbe("message-distributor")
+
+  private val rha = TestFSMRef(new RecentHistoryActor(messageDistributor.ref), "recent-history-actor")
+
   "The Recent History Actor" should {
     "register itself with the Message Distributor" in {
-      // Arrange
-      val messageDistributor = TestProbe("recemessage-distributor")
-
-      // Act
-      system.actorOf(Props(new RecentHistoryActor(messageDistributor.ref, settings)), "recent-register")
-
       // Assert
       messageDistributor.expectMsg(RegisterReceiver)
     }
@@ -25,11 +21,10 @@ class RecentHistoryActorSpec extends BaseAkkaSpec {
       val telegram = TestSupport.randomTelegram()
 
       // Act
-      val fsm = TestFSMRef(new RecentHistoryActor(messageDispatcher.ref, settings), "recent-go-to-sleep")
-      messageDispatcher.send(fsm, TelegramReceived(telegram))
+      rha ! TelegramReceived(telegram)
 
       // Assert
-      fsm.stateName shouldBe Sleeping
+      rha.stateName shouldBe Sleeping
     }
 
     "wake up after resolution time" in {
@@ -40,43 +35,38 @@ class RecentHistoryActorSpec extends BaseAkkaSpec {
       val history = RingBuffer[P1Telegram](2)
 
       // Act
-      val fsm = TestFSMRef(new RecentHistoryActor(messageDispatcher.ref, settings), "recent-wake-up")
-      fsm.setState(Sleeping, History(history))
+      rha.setState(Sleeping, History(history))
       Thread.sleep(1000)
 
       // Assert
-      fsm.stateName shouldBe Receiving
+      rha.stateName shouldBe Receiving
     }
 
     "store telegrams in memory" in {
       // Arrange
-      val messageDispatcher = TestProbe("message-distributor")
       val telegram = TestSupport.randomTelegram()
       val history = RingBuffer[P1Telegram](2)
 
       // Act
-      val fsm = TestFSMRef(new RecentHistoryActor(messageDispatcher.ref, settings), "recent-store")
-      messageDispatcher.send(fsm, TelegramReceived(telegram))
+      rha ! TelegramReceived(telegram)
 
       // Assert
-      fsm.stateData shouldBe an[History]
-      fsm.stateData.asInstanceOf[History].telegrams.length shouldBe 1
+      rha.stateData shouldBe an[History]
+      rha.stateData.asInstanceOf[History].telegrams.length shouldBe 1
     }
 
     "return all recent readings when asked" in {
       // Arrange
       val client = TestProbe()
-      val messageDispatcher = TestProbe("message-distributor")
       val telegram = TestSupport.randomTelegram()
 
       // Act
-      val sut = actor("recent-retrieve-history")(new RecentHistoryActor(messageDispatcher.ref, settings))
-      messageDispatcher.send(sut, TelegramReceived(telegram))
-      client.send(sut, GetRecentHistory)
+      rha ! TelegramReceived(telegram)
+      client.send(rha, GetRecentHistory)
 
       // Assert
       val result = client.expectMsgClass(classOf[RecentReadings])
-      result.telegrams should contain only telegram
+      result.telegrams.length should (be > 0 and be <= 10)
     }
   }
 }

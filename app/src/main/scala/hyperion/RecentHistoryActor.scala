@@ -1,10 +1,10 @@
 package hyperion
 
+import scala.collection.immutable
+
 import akka.actor.{ActorLogging, ActorRef, FSM, Props}
 import hyperion.MessageDistributor.RegisterReceiver
 import hyperion.RecentHistoryActor._
-
-import scala.collection.immutable
 
 object RecentHistoryActor {
   sealed trait State
@@ -22,9 +22,9 @@ object RecentHistoryActor {
   *
   * @param messageDistributor The Actor that distributes incoming telegrams.
   */
-class RecentHistoryActor(messageDistributor: ActorRef, settings: AppSettings)
+class RecentHistoryActor(messageDistributor: ActorRef)
   extends FSM[RecentHistoryActor.State, RecentHistoryActor.Data]
-  with ActorLogging {
+  with ActorLogging with AppSettings {
 
   
   override def preStart = {

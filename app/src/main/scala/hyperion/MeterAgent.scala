@@ -6,7 +6,6 @@ import com.github.jodersky.flow.{Serial, SerialSettings}
 
 import MeterAgent._
 
-
 object MeterAgent {
   case class IncomingData(data: String)
 }
@@ -14,9 +13,8 @@ object MeterAgent {
 /**
   * This actor is an intermediary between Flow (for reading the serial port) and the Hyperion Meter Agent. It receives data from Flow and forwards it for processing to the Collecting Actor.
   * @param collectingActor The Collecting Actor that collects data from the serial line.
-  * @param settings Application settings.
   */
-class MeterAgent(collectingActor: ActorRef, settings: AppSettings) extends Actor with ActorLogging {
+class MeterAgent(collectingActor: ActorRef) extends Actor with ActorLogging with AppSettings {
   private val operator = IO(Serial)(context.system)
 
   override def preStart = {

@@ -7,7 +7,6 @@ import scala.concurrent.Future
 import scala.concurrent.duration.DurationInt
 import scala.util.Random
 import akka.actor.FSM.StateTimeout
-import akka.actor.Props
 import akka.pattern.ask
 import akka.testkit.{TestFSMRef, TestProbe}
 import akka.util.Timeout
@@ -24,7 +23,7 @@ class DailyHistoryActorSpec extends BaseAkkaSpec with OneInstancePerTest with Mo
   private implicit val timeout: Timeout = Timeout(500 milliseconds)
   private val messageDistributor = TestProbe("message-distributor")
 
-  private val dha = TestFSMRef(new DailyHistoryActor(messageDistributor.ref, meterReadingDAO, settings), "daily-history-actor")
+  private val dha = TestFSMRef(new DailyHistoryActor(messageDistributor.ref, meterReadingDAO), "daily-history-actor")
 
   "The Daily History Actor" should {
     "register itself with the Message Distributor" in {

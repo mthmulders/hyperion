@@ -1,5 +1,7 @@
 package hyperion
 
+import scala.concurrent.duration.DurationInt
+
 import akka.actor.Props
 import akka.testkit.{EventFilter, TestProbe}
 import akka.util.ByteString
@@ -8,12 +10,10 @@ import com.github.jodersky.flow.Serial.Open
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.OneInstancePerTest
 
-import scala.concurrent.duration.DurationInt
-
 class MeterAgentSpec extends BaseAkkaSpec with OneInstancePerTest with MockFactory {
   private val collectingActor = TestProbe()
 
-  private val ma = system.actorOf(Props(new MeterAgent(collectingActor.ref, settings)), "meter-agent")
+  private val ma = system.actorOf(Props(new MeterAgent(collectingActor.ref)), "meter-agent")
 
   "The Meter Agent actor" should {
     "create the IO-SERIAL system actor" in {

@@ -1,18 +1,22 @@
 package hyperion
 
-import akka.actor.{ActorSystem, ExtendedActorSystem, Extension, ExtensionKey}
+import scala.concurrent.duration._
+
+import akka.actor.{Actor, ActorSystem, ExtendedActorSystem, Extension, ExtensionId, ExtensionIdProvider}
 import com.github.jodersky.flow.{Parity => EParity}
 import com.github.jodersky.flow.Parity.Parity
-
-import scala.concurrent.duration._
+import com.typesafe.config.Config
 
 /**
   * Provides convenient access to the settings in application.conf.
   */
-object AppSettings extends ExtensionKey[AppSettings]
+object AppSettings extends ExtensionId[AppSettingsImpl] with ExtensionIdProvider {
+  override def lookup: AppSettings.type = AppSettings
+  override def createExtension(system: ExtendedActorSystem) = new AppSettingsImpl(system.settings.config)
+}
 
-class AppSettings(system: ExtendedActorSystem) extends Extension {
-  private val hyperion = system.settings.config getConfig "hyperion"
+class AppSettingsImpl(config: Config) extends Extension {
+  private val hyperion = config getConfig "hyperion"
 
   object api {
     val port              = hyperion getInt    "api.port"
@@ -45,5 +49,9 @@ class AppSettings(system: ExtendedActorSystem) extends Extension {
 }
 
 trait SystemSettings { system: ActorSystem =>
-  val settings: AppSettings = AppSettings(system)
+  val settings = AppSettings(system)
+}
+
+trait AppSettings { actor: Actor =>
+  val settings = AppSettings(context.system)
 }

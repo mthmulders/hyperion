@@ -33,11 +33,10 @@ object DailyHistoryActor {
   * @param meterReadingDAO DAO for interacting with the database.
   */
 class DailyHistoryActor(messageDistributor: ActorRef,
-                        meterReadingDAO: MeterReadingDAO,
-                        settings: AppSettings)
+                        meterReadingDAO: MeterReadingDAO)
                        (implicit executionContext: ExecutionContext)
     extends FSM[DailyHistoryActor.State, DailyHistoryActor.Data]
-    with ActorLogging {
+    with ActorLogging with AppSettings {
 
   override def preStart = {
     messageDistributor ! RegisterReceiver
