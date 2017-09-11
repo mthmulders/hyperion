@@ -6,11 +6,10 @@ val akkaHttpVer = "10.0.10"
 val akkaSerialVer = "4.1.1"
 val logbackVer = "1.2.3"
 val parserCombVer = "1.0.6"
-val postgreSqlVer = "42.1.4"
+val postgresqlVer = "42.1.4"
 val scalaMockVer = "3.6.0"
 val scalaTestVer = "3.0.4"
 val slickVer = "3.2.1"
-val sprayVer = "1.3.4"
 val sprayJsonVer = "1.3.3"
 val sprayWsVer = "0.1.4"
 
@@ -23,11 +22,12 @@ val akkaHttpJson     = "com.typesafe.akka"      %% "akka-http-spray-json"       
 val akkaHttpTest     = "com.typesafe.akka"      %% "akka-http-testkit"           % akkaHttpVer
 val akkaSerial       = "ch.jodersky"            %% "akka-serial-core"            % akkaSerialVer
 val akkaSerialNative = "ch.jodersky"            %  "akka-serial-native"          % akkaSerialVer
+val akkaStream       = "com.typesafe.akka"      %% "akka-stream"                 % akkaVer
 val akkaSlf4j        = "com.typesafe.akka"      %% "akka-slf4j"                  % akkaVer
 val akkaTestKit      = "com.typesafe.akka"      %% "akka-testkit"                % akkaVer
 val logback          = "ch.qos.logback"         %  "logback-classic"             % logbackVer
 val parserComb       = "org.scala-lang.modules" %% "scala-parser-combinators"    % parserCombVer
-val postgreSql       = "org.postgresql"         %  "postgresql"                  % postgreSqlVer
+val postgresql       = "org.postgresql"         %  "postgresql"                  % postgresqlVer
 val scalaMock        = "org.scalamock"          %% "scalamock-scalatest-support" % scalaMockVer
 val scalaTest        = "org.scalatest"          %% "scalatest"                   % scalaTestVer
 val slick            = "com.typesafe.slick"     %% "slick"                       % slickVer
@@ -92,11 +92,12 @@ val app = (project in file("app"))
       akkaHttpTest % "test",
       akkaSerial,
       akkaSerialNative,
+      akkaStream,
       akkaSlf4j,
       akkaTestKit % "test",
       logback,
       parserComb,
-      postgreSql,
+      postgresql,
       scalaMock % "test",
       scalaTest % "test",
       slick
