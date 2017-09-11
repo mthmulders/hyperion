@@ -3,7 +3,7 @@ package hyperion
 import akka.actor.{Actor, ActorLogging, ActorRef, Props}
 
 import scala.collection.mutable
-import scala.concurrent.{Future, Promise}
+import scala.concurrent.Future
 import scala.util.{Failure, Success}
 
 object CollectingActor {
@@ -53,15 +53,15 @@ class CollectingActor(receiver: ActorRef) extends Actor with ActorLogging {
     }
   }
 
-  private val processBuffer = (lines: mutable.Buffer[String]) => {
+  private def processBuffer(lines: mutable.Buffer[String]): Unit = {
     import context.dispatcher
 
     Future {
       val source = lines.mkString("")
-      P1TelegramParser.parseTelegram(source)
-    } onSuccess {
-      case Success(telegram) => receiver ! TelegramReceived(telegram)
-      case Failure(reason)   => log.error(s"Could not parse telegram: ${reason.getMessage}")
+      P1TelegramParser.parseTelegram(source) match {
+        case Success(telegram) => receiver ! TelegramReceived(telegram)
+        case Failure(reason)   => log.error(s"Could not parse telegram: ${reason.getMessage}")
+      }
     }
   }
 }
