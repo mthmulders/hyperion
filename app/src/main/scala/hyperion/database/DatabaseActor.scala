@@ -2,6 +2,7 @@ package hyperion.database
 
 import java.time.LocalDate
 
+import scala.collection.immutable.Seq
 import scala.concurrent.ExecutionContextExecutor
 import scala.util.{Failure, Success}
 
@@ -11,7 +12,7 @@ import hyperion.database.DatabaseActor._
 
 object DatabaseActor {
   case class RetrieveMeterReadingForDate(date: LocalDate)
-  case class RetrievedMeterReading(reading: Option[HistoricalMeterReading])
+  case class RetrievedMeterReadings(readings: Seq[HistoricalMeterReading])
   case class StoreMeterReading(reading: HistoricalMeterReading)
 }
 
@@ -26,13 +27,17 @@ class DatabaseActor(meterReadingDAO: MeterReadingDAO) extends Actor with ActorLo
   private def retrieveMeterReadingByDate(receiver: ActorRef, date: LocalDate) = {
     log.info(s"Retrieve meter reading for $date")
 
-    meterReadingDAO.retrieveMeterReading(date).map(_.headOption) andThen {
-      case Success(result) =>
-        receiver ! RetrievedMeterReading(result)
+    meterReadingDAO.retrieveMeterReading(date) andThen {
+      case Success(Some(result)) =>
+        receiver ! RetrievedMeterReadings(Seq(result))
+
+      case Success(None) =>
+        log.error(s"No meter reading for date: $date")
+        receiver ! RetrievedMeterReadings(Seq.empty)
 
       case Failure(reason) =>
         log.error("Error retrieving meter reading from database: {}", reason)
-        receiver ! RetrievedMeterReading(None)
+        receiver ! RetrievedMeterReadings(Seq.empty)
     }
   }
 

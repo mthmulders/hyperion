@@ -2,6 +2,8 @@ package hyperion.rest
 
 import java.time.LocalDate
 
+import scala.collection.immutable.Seq
+
 import akka.actor.ActorRef
 import akka.http.scaladsl.model.StatusCodes
 import akka.http.scaladsl.server.Route.seal
@@ -11,7 +13,7 @@ import akka.testkit.TestActor.AutoPilot
 import akka.testkit.TestProbe
 
 import hyperion.BaseSpec
-import hyperion.database.DatabaseActor.{RetrieveMeterReadingForDate, RetrievedMeterReading}
+import hyperion.database.DatabaseActor.{RetrieveMeterReadingForDate, RetrievedMeterReadings}
 import hyperion.database.HistoricalMeterReading
 
 class HistoryServiceSpec extends BaseSpec with ScalatestRouteTest with HyperionJsonProtocol {
@@ -24,9 +26,9 @@ class HistoryServiceSpec extends BaseSpec with ScalatestRouteTest with HyperionJ
     override def run(sender: ActorRef, msg: Any): AutoPilot = {
       msg match {
         case RetrieveMeterReadingForDate(date) if today.isEqual(date) =>
-          sender ! RetrievedMeterReading(Some(meterReading));
+          sender ! RetrievedMeterReadings(Seq(meterReading));
         case RetrieveMeterReadingForDate(date) =>
-          sender ! RetrievedMeterReading(None);
+          sender ! RetrievedMeterReadings(Seq.empty);
       }
       keepRunning
     }

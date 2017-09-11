@@ -39,8 +39,8 @@ class MeterReadingDAO extends DatabaseSupport with DateTimeColumns {
     }
   }
 
-  def retrieveMeterReading(date: LocalDate): Future[Seq[HistoricalMeterReading]] = {
+  def retrieveMeterReading(date: LocalDate): Future[Option[HistoricalMeterReading]] = {
     val query = meterReadings.filter(_.recordDate === date)
-    db.run(query.result)
+    db.run(query.result) map (_.headOption)
   }
 }

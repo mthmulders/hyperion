@@ -39,14 +39,14 @@ class DatabaseActorSpec extends BaseAkkaSpec with OneInstancePerTest with MockFa
       "by exact date" in {
         // Arrange
         val date = LocalDate.now()
-        val result = Seq(HistoricalMeterReading(LocalDate.now(), BigDecimal(1), BigDecimal(2), BigDecimal(3)))
-        (meterReadingDAO.retrieveMeterReading _).when(date).returns(Future { result })
+        val result = HistoricalMeterReading(LocalDate.now(), BigDecimal(1), BigDecimal(2), BigDecimal(3))
+        (meterReadingDAO.retrieveMeterReading _).when(date).returns(Future { Some(result) })
 
         // Act
-        whenReady((da ? RetrieveMeterReadingForDate(date)).mapTo[RetrievedMeterReading]) { answer =>
+        whenReady((da ? RetrieveMeterReadingForDate(date)).mapTo[RetrievedMeterReadings]) { answer =>
           // Assert
-          answer shouldBe an[RetrievedMeterReading]
-          answer.reading shouldBe result.headOption
+          answer shouldBe an[RetrievedMeterReadings]
+          answer.readings should contain only result
         }
       }
     }
