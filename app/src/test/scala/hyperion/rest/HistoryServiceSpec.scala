@@ -14,7 +14,7 @@ import hyperion.BaseSpec
 import hyperion.database.DatabaseActor.{RetrieveMeterReading, RetrievedMeterReading}
 import hyperion.database.HistoricalMeterReading
 
-class DailyHistoryServiceSpec extends BaseSpec with ScalatestRouteTest with HyperionJsonProtocol {
+class HistoryServiceSpec extends BaseSpec with ScalatestRouteTest with HyperionJsonProtocol {
   private val today = LocalDate.now()
   private val meterReading = HistoricalMeterReading(today, BigDecimal(1), BigDecimal(2), BigDecimal(3))
 
@@ -32,7 +32,7 @@ class DailyHistoryServiceSpec extends BaseSpec with ScalatestRouteTest with Hype
     }
   })
 
-  private val route = new DailyHistoryService(databaseActor.ref).route
+  private val route = new HistoryService(databaseActor.ref).route
 
   "The Daily History REST API" should {
     "query the Daily History Actor" in {
