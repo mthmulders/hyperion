@@ -3,8 +3,8 @@ package hyperion
 import scala.concurrent.duration._
 
 import akka.actor.{Actor, ActorSystem, ExtendedActorSystem, Extension, ExtensionId, ExtensionIdProvider}
-import com.github.jodersky.flow.{Parity => EParity}
-import com.github.jodersky.flow.Parity.Parity
+import akka.serial.Parity
+import akka.serial.Parity.Parity
 import com.typesafe.config.Config
 
 /**
@@ -39,12 +39,13 @@ class AppSettingsImpl(config: Config) extends Extension {
   }
 
   object meter {
+    private val __parity = hyperion getString "meter.parity"
+
     val serialPort: String = hyperion getString "meter.serial-port"
     val baudRate: Int      = hyperion getInt    "meter.baud-rate"
     val characterSize: Int = hyperion getInt    "meter.character-size"
     val stopBits: Int      = hyperion getInt    "meter.stop-bits"
-    val parity: Parity     = EParity.values.find(_.toString.equalsIgnoreCase(hyperion getString "meter.parity"))
-                                  .getOrElse(EParity.None)
+    val parity: Parity     = Parity.values.find(_.toString equalsIgnoreCase __parity).getOrElse(Parity.None)
   }
 }
 

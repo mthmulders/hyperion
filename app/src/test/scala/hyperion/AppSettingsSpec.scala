@@ -1,12 +1,12 @@
 package hyperion
 
 import akka.actor.ActorSystem
-import com.github.jodersky.flow.Parity
+import akka.serial.Parity
 import scala.concurrent.duration.DurationInt
 
 class AppSettingsSpec extends BaseSpec {
-  implicit val system = ActorSystem()
-  val settings = AppSettings(system)
+  private val system = ActorSystem()
+  private val settings = AppSettings(system)
 
   "Inspecting 'api'" should {
     "return correct values" in {

@@ -3,7 +3,7 @@
 //
 val akkaVer = "2.5.4"
 val akkaHttpVer = "10.0.10"
-val flowVer = "2.4.1"
+val akkaSerialVer = "4.1.1"
 val logbackVer = "1.2.3"
 val parserCombVer = "1.0.6"
 val postgreSqlVer = "42.1.4"
@@ -17,21 +17,21 @@ val sprayWsVer = "0.1.4"
 //
 // Define dependencies
 //
-val akkaActor    = "com.typesafe.akka"      %% "akka-actor"                  % akkaVer
-val akkaHttp     = "com.typesafe.akka"      %% "akka-http"                   % akkaHttpVer
-val akkaHttpJson = "com.typesafe.akka"      %% "akka-http-spray-json"        % akkaHttpVer
-val akkaHttpTest = "com.typesafe.akka"      %% "akka-http-testkit"           % akkaHttpVer
-val akkaSlf4j    = "com.typesafe.akka"      %% "akka-slf4j"                  % akkaVer
-val akkaTestKit  = "com.typesafe.akka"      %% "akka-testkit"                % akkaVer
-val flow         = "com.github.jodersky"    %% "flow"                        % flowVer
-val flowNative   = "com.github.jodersky"    %  "flow-native"                 % flowVer
-val logback      = "ch.qos.logback"         %  "logback-classic"             % logbackVer
-val parserComb   = "org.scala-lang.modules" %% "scala-parser-combinators"    % parserCombVer
-val postgreSql   = "org.postgresql"         %  "postgresql"                  % postgreSqlVer
-val scalaMock    = "org.scalamock"          %% "scalamock-scalatest-support" % scalaMockVer
-val scalaTest    = "org.scalatest"          %% "scalatest"                   % scalaTestVer
-val slick        = "com.typesafe.slick"     %% "slick"                       % slickVer
-val sprayJson    = "io.spray"               %% "spray-json"                  % sprayJsonVer
+val akkaActor        = "com.typesafe.akka"      %% "akka-actor"                  % akkaVer
+val akkaHttp         = "com.typesafe.akka"      %% "akka-http"                   % akkaHttpVer
+val akkaHttpJson     = "com.typesafe.akka"      %% "akka-http-spray-json"        % akkaHttpVer
+val akkaHttpTest     = "com.typesafe.akka"      %% "akka-http-testkit"           % akkaHttpVer
+val akkaSerial       = "ch.jodersky"            %% "akka-serial-core"            % akkaSerialVer
+val akkaSerialNative = "ch.jodersky"            %  "akka-serial-native"          % akkaSerialVer
+val akkaSlf4j        = "com.typesafe.akka"      %% "akka-slf4j"                  % akkaVer
+val akkaTestKit      = "com.typesafe.akka"      %% "akka-testkit"                % akkaVer
+val logback          = "ch.qos.logback"         %  "logback-classic"             % logbackVer
+val parserComb       = "org.scala-lang.modules" %% "scala-parser-combinators"    % parserCombVer
+val postgreSql       = "org.postgresql"         %  "postgresql"                  % postgreSqlVer
+val scalaMock        = "org.scalamock"          %% "scalamock-scalatest-support" % scalaMockVer
+val scalaTest        = "org.scalatest"          %% "scalatest"                   % scalaTestVer
+val slick            = "com.typesafe.slick"     %% "slick"                       % slickVer
+val sprayJson        = "io.spray"               %% "spray-json"                  % sprayJsonVer
 
 
 //
@@ -85,16 +85,15 @@ val app = (project in file("app"))
   .settings(commonSettings: _*)
   .settings(Seq(
     name := "hyperion",
-    resolvers += Resolver.bintrayRepo("jodersky", "maven"),
     libraryDependencies ++= Seq(
       akkaActor,
       akkaHttp,
       akkaHttpJson,
       akkaHttpTest % "test",
+      akkaSerial,
+      akkaSerialNative,
       akkaSlf4j,
       akkaTestKit % "test",
-      flow,
-      flowNative,
       logback,
       parserComb,
       postgreSql,

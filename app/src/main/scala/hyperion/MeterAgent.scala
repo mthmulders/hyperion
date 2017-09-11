@@ -2,7 +2,7 @@ package hyperion
 
 import akka.actor.{Actor, ActorLogging, ActorRef, Terminated}
 import akka.io.IO
-import com.github.jodersky.flow.{Serial, SerialSettings}
+import akka.serial.{Serial, SerialSettings}
 
 import MeterAgent._
 

@@ -3,10 +3,10 @@ package hyperion
 import scala.concurrent.duration.DurationInt
 
 import akka.actor.Props
+import akka.serial.{Serial, SerialSettings}
+import akka.serial.Serial.Open
 import akka.testkit.{EventFilter, TestProbe}
 import akka.util.ByteString
-import com.github.jodersky.flow.{Serial, SerialSettings}
-import com.github.jodersky.flow.Serial.Open
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.OneInstancePerTest
 
