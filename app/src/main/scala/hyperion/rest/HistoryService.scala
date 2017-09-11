@@ -11,7 +11,7 @@ import akka.http.scaladsl.server.{Directives, Route}
 import akka.pattern.ask
 import akka.util.Timeout
 
-import hyperion.database.DatabaseActor.{RetrieveMeterReading, RetrievedMeterReading}
+import hyperion.database.DatabaseActor.{RetrieveMeterReadingForDate, RetrievedMeterReading}
 
 /**
   * Provides the Spray route to retrieve a meter reading by date from the database.
@@ -25,7 +25,7 @@ class HistoryService(databaseActor: ActorRef)(implicit executionContext: Executi
   val route: Route = path("history") {
     get {
       parameters('date.as[LocalDate]) { date =>
-        val query = (databaseActor ? RetrieveMeterReading(date)).mapTo[RetrievedMeterReading]
+        val query = (databaseActor ? RetrieveMeterReadingForDate(date)).mapTo[RetrievedMeterReading]
         onSuccess(query) { result =>
           complete(result.reading match {
             case None          => (StatusCodes.NotFound, None)

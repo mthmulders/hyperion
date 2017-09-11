@@ -11,7 +11,7 @@ import akka.testkit.TestActor.AutoPilot
 import akka.testkit.TestProbe
 
 import hyperion.BaseSpec
-import hyperion.database.DatabaseActor.{RetrieveMeterReading, RetrievedMeterReading}
+import hyperion.database.DatabaseActor.{RetrieveMeterReadingForDate, RetrievedMeterReading}
 import hyperion.database.HistoricalMeterReading
 
 class HistoryServiceSpec extends BaseSpec with ScalatestRouteTest with HyperionJsonProtocol {
@@ -23,9 +23,9 @@ class HistoryServiceSpec extends BaseSpec with ScalatestRouteTest with HyperionJ
   databaseActor.setAutoPilot(new AutoPilot {
     override def run(sender: ActorRef, msg: Any): AutoPilot = {
       msg match {
-        case RetrieveMeterReading(date) if today.isEqual(date) =>
+        case RetrieveMeterReadingForDate(date) if today.isEqual(date) =>
           sender ! RetrievedMeterReading(Some(meterReading));
-        case RetrieveMeterReading(date) =>
+        case RetrieveMeterReadingForDate(date) =>
           sender ! RetrievedMeterReading(None);
       }
       keepRunning
@@ -39,7 +39,7 @@ class HistoryServiceSpec extends BaseSpec with ScalatestRouteTest with HyperionJ
       // Act
       Get(s"/history?date=$today") ~> route ~> check {
         // Assert
-        databaseActor.expectMsgAllClassOf(classOf[RetrieveMeterReading]).map(_.date shouldBe today)
+        databaseActor.expectMsgAllClassOf(classOf[RetrieveMeterReadingForDate]).map(_.date shouldBe today)
       }
     }
 

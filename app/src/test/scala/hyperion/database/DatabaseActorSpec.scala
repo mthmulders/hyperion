@@ -43,7 +43,7 @@ class DatabaseActorSpec extends BaseAkkaSpec with OneInstancePerTest with MockFa
         (meterReadingDAO.retrieveMeterReading _).when(date).returns(Future { result })
 
         // Act
-        whenReady((da ? RetrieveMeterReading(date)).mapTo[RetrievedMeterReading]) { answer =>
+        whenReady((da ? RetrieveMeterReadingForDate(date)).mapTo[RetrievedMeterReading]) { answer =>
           // Assert
           answer shouldBe an[RetrievedMeterReading]
           answer.reading shouldBe result.headOption

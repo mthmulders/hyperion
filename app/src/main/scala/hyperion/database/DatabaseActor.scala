@@ -10,7 +10,7 @@ import akka.actor.{Actor, ActorLogging, ActorRef}
 import hyperion.database.DatabaseActor._
 
 object DatabaseActor {
-  case class RetrieveMeterReading(date: LocalDate)
+  case class RetrieveMeterReadingForDate(date: LocalDate)
   case class RetrievedMeterReading(reading: Option[HistoricalMeterReading])
   case class StoreMeterReading(reading: HistoricalMeterReading)
 }
@@ -19,7 +19,7 @@ class DatabaseActor(meterReadingDAO: MeterReadingDAO) extends Actor with ActorLo
   implicit val executionContext: ExecutionContextExecutor = context.dispatcher
 
   override def receive: Receive = {
-    case RetrieveMeterReading(date) => retrieveMeterReadingByDate(sender(), date)
+    case RetrieveMeterReadingForDate(date) => retrieveMeterReadingByDate(sender(), date)
     case StoreMeterReading(reading) => storeMeterReading(reading)
   }
 
