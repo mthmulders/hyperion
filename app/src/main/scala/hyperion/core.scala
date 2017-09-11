@@ -1,14 +1,12 @@
 package hyperion
 
 import scala.concurrent.ExecutionContext.Implicits.global
-
 import akka.actor.{ActorSystem, Props}
 import akka.event.Logging
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.server.Route
 import akka.stream.{ActorMaterializer, Materializer}
-
-import hyperion.database.MeterReadingDAO
+import hyperion.database.{DatabaseActor, MeterReadingDAO}
 import hyperion.rest.HttpApi
 
 /**
@@ -50,5 +48,6 @@ trait HyperionActors { this: Core =>
   val collectingActor = system.actorOf(Props(new CollectingActor(messageDistributor)), "collecting-actor")
   val meterAgent = system.actorOf(Props(new MeterAgent(collectingActor)), "meter-agent")
   val recentHistoryActor = system.actorOf(Props(new RecentHistoryActor(messageDistributor)), "recent-history")
-  val dailyHistoryActor = system.actorOf(Props(new DailyHistoryActor(messageDistributor, new MeterReadingDAO())), "daily-history")
+  val databaseActor = system.actorOf(Props(new DatabaseActor(new MeterReadingDAO())), "database")
+  val dailyHistoryActor = system.actorOf(Props(new DailyHistoryActor(messageDistributor, databaseActor)), "daily-history")
 }

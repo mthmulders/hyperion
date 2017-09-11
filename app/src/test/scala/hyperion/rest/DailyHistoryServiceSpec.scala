@@ -2,26 +2,25 @@ package hyperion.rest
 
 import java.time.LocalDate
 
-import scala.util.Random
-
 import akka.actor.ActorRef
 import akka.http.scaladsl.model.StatusCodes
 import akka.http.scaladsl.server.Route.seal
 import akka.http.scaladsl.testkit.ScalatestRouteTest
+import akka.http.scaladsl.model.HttpEntity.Empty
 import akka.testkit.TestActor.AutoPilot
 import akka.testkit.TestProbe
 
 import hyperion.BaseSpec
-import hyperion.DailyHistoryActor.{RetrieveMeterReading, RetrievedMeterReading}
-import hyperion.database.MeterReadingDAO.HistoricalMeterReading
+import hyperion.database.DatabaseActor.{RetrieveMeterReading, RetrievedMeterReading}
+import hyperion.database.HistoricalMeterReading
 
 class DailyHistoryServiceSpec extends BaseSpec with ScalatestRouteTest with HyperionJsonProtocol {
   private val today = LocalDate.now()
-  private val meterReading = HistoricalMeterReading(today, Random.nextDouble(), Random.nextDouble(), Random.nextDouble())
+  private val meterReading = HistoricalMeterReading(today, BigDecimal(1), BigDecimal(2), BigDecimal(3))
 
-  private val dailyHistoryActor = TestProbe()
+  private val databaseActor = TestProbe()
 
-  dailyHistoryActor.setAutoPilot(new AutoPilot {
+  databaseActor.setAutoPilot(new AutoPilot {
     override def run(sender: ActorRef, msg: Any): AutoPilot = {
       msg match {
         case RetrieveMeterReading(date) if today.isEqual(date) =>
@@ -33,14 +32,14 @@ class DailyHistoryServiceSpec extends BaseSpec with ScalatestRouteTest with Hype
     }
   })
 
-  private val route = new DailyHistoryService(dailyHistoryActor.ref).route
+  private val route = new DailyHistoryService(databaseActor.ref).route
 
   "The Daily History REST API" should {
     "query the Daily History Actor" in {
       // Act
       Get(s"/history?date=$today") ~> route ~> check {
         // Assert
-        dailyHistoryActor.expectMsgAllClassOf(classOf[RetrieveMeterReading]).map(_.date shouldBe today)
+        databaseActor.expectMsgAllClassOf(classOf[RetrieveMeterReading]).map(_.date shouldBe today)
       }
     }
 
@@ -60,7 +59,7 @@ class DailyHistoryServiceSpec extends BaseSpec with ScalatestRouteTest with Hype
       Get(s"/history?date=$yesterday") ~> route ~> check {
         // Assert
         status shouldBe StatusCodes.NotFound
-        responseAs[String] shouldBe s"No record found for date 2017-09-08"
+        responseEntity shouldBe Empty
       }
     }
 

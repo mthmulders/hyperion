@@ -11,7 +11,7 @@ import akka.http.scaladsl.unmarshalling.Unmarshaller
 import akka.stream.Materializer
 import spray.json._
 
-import hyperion.database.MeterReadingDAO.HistoricalMeterReading
+import hyperion.database.HistoricalMeterReading
 
 /** Allows easy mix-in of [[HyperionJsonProtocol]] */
 trait HyperionJsonProtocol extends DefaultJsonProtocol with SprayJsonSupport {
@@ -59,6 +59,6 @@ object HyperionJsonProtocol extends DefaultJsonProtocol with SprayJsonSupport {
     }
   }
 
-  implicit val meterReadingFormat: RootJsonFormat[MeterReading] = jsonFormat9(MeterReading)
-  implicit val historicalMeterReadingFormat: RootJsonFormat[HistoricalMeterReading] = jsonFormat4(HistoricalMeterReading)
+  val meterReadingFormat: RootJsonFormat[MeterReading] = jsonFormat9(MeterReading)
+  val historicalMeterReadingFormat: RootJsonFormat[HistoricalMeterReading] = jsonFormat4(HistoricalMeterReading)
 }

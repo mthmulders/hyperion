@@ -3,15 +3,13 @@ package hyperion.rest
 import java.time.LocalDate
 
 import hyperion.BaseSpec
-import hyperion.database.MeterReadingDAO.HistoricalMeterReading
-
-import scala.util.Random
+import hyperion.database.HistoricalMeterReading
 
 class HyperionJsonProtocolSpec extends BaseSpec with HyperionJsonProtocol {
   "A historical meter reading from the database" should {
     "be convertible to a JSON structure" in {
       // Arrange
-      val input = HistoricalMeterReading(LocalDate.now(), Random.nextDouble(), Random.nextDouble(), Random.nextDouble())
+      val input = HistoricalMeterReading(LocalDate.now(), BigDecimal(1), BigDecimal(2), BigDecimal(3))
 
       // Act
       val result = historicalMeterReadingFormat.write(input).toString()

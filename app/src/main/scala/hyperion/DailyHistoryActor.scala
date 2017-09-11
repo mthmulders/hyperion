@@ -4,14 +4,13 @@ import java.time.{Duration, LocalDate, LocalDateTime}
 
 import scala.concurrent.ExecutionContext
 import scala.concurrent.duration.DurationLong
-import scala.util.{Failure, Success}
 
 import akka.actor.{ActorLogging, ActorRef, FSM}
 
 import hyperion.MessageDistributor.RegisterReceiver
 import hyperion.DailyHistoryActor._
-import hyperion.database.MeterReadingDAO.HistoricalMeterReading
-import hyperion.database.MeterReadingDAO
+import hyperion.database.DatabaseActor.StoreMeterReading
+import hyperion.database.HistoricalMeterReading
 
 object DailyHistoryActor {
   sealed trait State
@@ -20,25 +19,21 @@ object DailyHistoryActor {
 
   sealed trait Data
   case object Empty extends Data
-
-  case class StoreMeterReading(reading: MeterReadingDAO.HistoricalMeterReading)
-  case class RetrieveMeterReading(date: LocalDate)
-  case class RetrievedMeterReading(reading: Option[MeterReadingDAO.HistoricalMeterReading])
 }
 
 /**
   * Actor that stores a daily meter reading in an external database
   *
   * @param messageDistributor The Actor that distributes incoming telegrams.
-  * @param meterReadingDAO DAO for interacting with the database.
+  * @param databaseActor The Actor that interacts with the database.
   */
 class DailyHistoryActor(messageDistributor: ActorRef,
-                        meterReadingDAO: MeterReadingDAO)
+                        databaseActor: ActorRef)
                        (implicit executionContext: ExecutionContext)
     extends FSM[DailyHistoryActor.State, DailyHistoryActor.Data]
     with ActorLogging with AppSettings {
 
-  override def preStart = {
+  override def preStart: Unit = {
     messageDistributor ! RegisterReceiver
 
     scheduleNextAwakening()
@@ -48,15 +43,11 @@ class DailyHistoryActor(messageDistributor: ActorRef,
 
   when(Receiving) {
     case Event(TelegramReceived(telegram), _) => prepareMeterReading(telegram)
-    case Event(StoreMeterReading(reading), _) => storeMeterReading(reading)
-    case Event(RetrieveMeterReading(date), _) => retrieveMeterReading(sender(), date)
     case Event(StateTimeout, _)               => stay()
   }
 
   when(Sleeping) {
     case Event(_: TelegramReceived, _)        => stay()
-    case Event(StoreMeterReading(reading), _) => storeMeterReading(reading)
-    case Event(RetrieveMeterReading(date), _) => retrieveMeterReading(sender(), date)
     case Event(StateTimeout, _)               => log.debug("Awaking to receive new meter reading"); goto(Receiving)
   }
 
@@ -69,42 +60,13 @@ class DailyHistoryActor(messageDistributor: ActorRef,
     val electricityLow = telegram.data.totalConsumption(P1Constants.lowTariff)
 
     log.info("Scheduling database I/O")
-    self ! StoreMeterReading(HistoricalMeterReading(today, gas, electricityNormal, electricityLow))
+    databaseActor ! StoreMeterReading(HistoricalMeterReading(today, gas, electricityNormal, electricityLow))
 
     scheduleNextAwakening()
     goto(Sleeping) using Empty
   }
 
-  private def retrieveMeterReading(receiver: ActorRef, date: LocalDate) = {
-    meterReadingDAO.retrieveMeterReading(date).andThen {
-      case Success(result) =>
-        if (result.size > 1) log.warning("Expected one meter reading, got {}", result.size)
-        if (result.isEmpty)  log.info("No meter reading found for date {}", date)
-
-        receiver ! RetrievedMeterReading(result.headOption)
-
-      case Failure(reason) =>
-        log.error("Error retrieving meter reading from database: {}", reason)
-        receiver ! RetrievedMeterReading(None)
-    }
-    stay()
-  }
-
-  private def storeMeterReading(reading: HistoricalMeterReading) = {
-    log.info("Storing one record in database:")
-    log.info("  Date               : {}", reading.recordDate)
-    log.info("  Gas                : {}", reading.gas)
-    log.info("  Electricity normal : {}", reading.electricityNormal)
-    log.info("  Electricity low    : {}", reading.electricityLow)
-    meterReadingDAO.recordMeterReading(reading) andThen {
-      case Success(_)      => log.info("Succeeded")
-      case Failure(reason) => log.error("Could not store meter reading in database: {}", reason)
-    }
-
-    stay()
-  }
-
-  private def scheduleNextAwakening() = {
+  private def scheduleNextAwakening(): Unit = {
     val midnight = LocalDate.now().plusDays(1).atStartOfDay()
     val untilMidnight = Duration.between(LocalDateTime.now(), midnight)
     log.info("Sleeping for {} milliseconds", untilMidnight.toMillis)
