@@ -7,6 +7,7 @@ val akkaSerialVer = "4.1.1"
 val logbackVer = "1.2.3"
 val parserCombVer = "1.0.6"
 val postgresqlVer = "42.1.4"
+val restAssuredVer = "3.0.3"
 val scalaMockVer = "3.6.0"
 val scalaTestVer = "3.0.4"
 val slickVer = "3.2.1"
@@ -28,6 +29,8 @@ val akkaTestKit      = "com.typesafe.akka"      %% "akka-testkit"               
 val logback          = "ch.qos.logback"         %  "logback-classic"             % logbackVer
 val parserComb       = "org.scala-lang.modules" %% "scala-parser-combinators"    % parserCombVer
 val postgresql       = "org.postgresql"         %  "postgresql"                  % postgresqlVer
+val restAssured      = "io.rest-assured"        %  "rest-assured"                % restAssuredVer
+val restAssuredScala = "io.rest-assured"        %  "scala-support"               % restAssuredVer
 val scalaMock        = "org.scalamock"          %% "scalamock-scalatest-support" % scalaMockVer
 val scalaTest        = "org.scalatest"          %% "scalatest"                   % scalaTestVer
 val slick            = "com.typesafe.slick"     %% "slick"                       % slickVer
@@ -128,6 +131,18 @@ val testApp = (project in file("test-app"))
   )
 ).dependsOn(app, testSupport)
 
+val integrationTest = (project in file("integration-test"))
+  .settings(commonSettings: _*)
+  .settings(Seq(
+    libraryDependencies ++= Seq(
+      restAssured,
+      restAssuredScala,
+      scalaTest
+    ),
+    name := "hyperion-integration-test"
+  )
+).dependsOn(app)
+
 val root = (project in file("."))
   .settings(commonSettings: _*)
-  .aggregate(app, common, testApp, testSupport)
+  .aggregate(app, common, integrationTest, testApp, testSupport)
