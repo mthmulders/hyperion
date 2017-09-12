@@ -53,7 +53,7 @@ class DatabaseActor(meterReadingDAO: MeterReadingDAO) extends Actor with ActorLo
         receiver ! RetrievedMeterReadings(result)
 
       case Success(result) if result.isEmpty =>
-        log.error(s"No meter readings for month: $month $year")
+        log.error(s"No meter readings for month $month $year")
         receiver ! RetrievedMeterReadings(Seq.empty)
 
       case Failure(reason) =>
