@@ -15,7 +15,7 @@ import hyperion.rest.HttpApi
   */
 trait Core {
   protected implicit def system: ActorSystem
-  protected implicit def settings = AppSettings(system)
+  protected implicit def settings: AppSettingsImpl = AppSettings(system)
 }
 
 /**
@@ -23,11 +23,11 @@ trait Core {
   * termination handler to stop the system when the JVM exits.
   */
 trait BootedCore extends Core with HttpApi {
-  override protected implicit def system = ActorSystem("hyperion")
+  override protected implicit def system: ActorSystem = ActorSystem("hyperion")
   private[this] implicit val materializer: Materializer = ActorMaterializer()
   private[this] val log = Logging(system, getClass.getName)
 
-  log.info("Starting Hyperion")
+  log.info(s"Starting Hyperion at port ${settings.api.port}")
 
   private[this] val bindingFuture = Http().bindAndHandle(Route.handlerFlow(routes), "0.0.0.0", settings.api.port)
 
