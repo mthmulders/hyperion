@@ -76,9 +76,14 @@ jobs:
 
       - store_test_results:
           path: "app/target/test-reports/"
+      - store_test_results:
+          path: "integrationTest/test-reports/"
       - store_artifacts:
-          destination: "test-results"
+          destination: "test-reports/unit-test"
           path: "app/target/test-reports/"
+      - store_artifacts:
+          destination: "test-reports/integration-test"
+          path: "integrationTest/target/test-reports/"
       - store_artifacts:
           destination: "packages/debian"
           path: "app/target/native/debian"
