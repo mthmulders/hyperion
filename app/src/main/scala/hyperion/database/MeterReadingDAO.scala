@@ -2,6 +2,7 @@ package hyperion.database
 
 import java.time.LocalDate
 
+import scala.collection.immutable.Seq
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.util.{Failure, Success}
@@ -42,5 +43,10 @@ class MeterReadingDAO extends DatabaseSupport with DateTimeColumns {
   def retrieveMeterReading(date: LocalDate): Future[Option[HistoricalMeterReading]] = {
     val query = meterReadings.filter(_.recordDate === date)
     db.run(query.result) map (_.headOption)
+  }
+
+  def retrieveMeterReadings(startDate: LocalDate, endDate: LocalDate): Future[Seq[HistoricalMeterReading]] = {
+    val query = meterReadings.filter(_.recordDate.between(startDate, endDate))
+    db.run(query.result) map(a => a.to[Seq])
   }
 }

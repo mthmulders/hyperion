@@ -1,6 +1,6 @@
 package hyperion.rest
 
-import java.time.LocalDate
+import java.time.{LocalDate, Month}
 
 import scala.collection.immutable.Seq
 import scala.concurrent.ExecutionContext
@@ -12,7 +12,7 @@ import akka.http.scaladsl.server.{Directives, Route}
 import akka.pattern.ask
 import akka.util.Timeout
 
-import hyperion.database.DatabaseActor.{RetrieveMeterReadingForDate, RetrievedMeterReadings}
+import hyperion.database.DatabaseActor._
 
 /**
   * Provides the Spray route to retrieve a meter reading by date from the database.
@@ -31,6 +31,15 @@ class HistoryService(databaseActor: ActorRef)(implicit executionContext: Executi
           complete(result.readings match {
             case Seq()            => (StatusCodes.NotFound, None)
             case Seq(item)        => (StatusCodes.OK, item)
+          })
+        }
+      } ~
+      parameters('month.as[Month], 'year.as[Int]) { (month, year) =>
+        val query = (databaseActor ? RetrieveMeterReadingForMonth(month, year)).mapTo[RetrievedMeterReadings]
+        onSuccess(query) { result =>
+          complete(result.readings match {
+            case Seq()            => (StatusCodes.NotFound, None)
+            case Seq(items @ _ *) => (StatusCodes.OK, items)
           })
         }
       }

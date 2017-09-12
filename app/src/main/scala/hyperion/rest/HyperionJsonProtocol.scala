@@ -1,6 +1,6 @@
 package hyperion.rest
 
-import java.time.{LocalDate, OffsetDateTime}
+import java.time.{LocalDate, Month, OffsetDateTime}
 import java.time.format.DateTimeFormatter.{ISO_DATE, ISO_OFFSET_DATE_TIME}
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -18,6 +18,7 @@ trait HyperionJsonProtocol extends DefaultJsonProtocol with SprayJsonSupport {
   implicit def meterReadingFormat: RootJsonFormat[MeterReading] = HyperionJsonProtocol.meterReadingFormat
   implicit def historicalMeterReadingFormat: RootJsonFormat[HistoricalMeterReading] = HyperionJsonProtocol.historicalMeterReadingFormat
   implicit def localDateUnmarshaller: Unmarshaller[String, LocalDate] = HyperionJsonProtocol.localDateUnmarshaller
+  implicit def monthUnmarshaller: Unmarshaller[String, Month] = HyperionJsonProtocol.monthUnmarshaller
 }
 
 /** Converts the model of Hyperions REST API into JSON and back */
@@ -54,6 +55,14 @@ object HyperionJsonProtocol extends DefaultJsonProtocol with SprayJsonSupport {
     override def apply(value: String)(implicit ec: ExecutionContext, materializer: Materializer): Future[LocalDate] = {
       Try(LocalDate.parse(value, ISO_DATE)) match {
         case Success(date) => Future { date }
+        case Failure(reason) => Future.failed(reason)
+      }
+    }
+  }
+  implicit val monthUnmarshaller: Unmarshaller[String, Month] = new Unmarshaller[String, Month] {
+    override def apply(value: String)(implicit ec: ExecutionContext, materializer: Materializer): Future[Month] = {
+      Try(value.toInt).map(Month.of) match {
+        case Success(month) => Future { month }
         case Failure(reason) => Future.failed(reason)
       }
     }

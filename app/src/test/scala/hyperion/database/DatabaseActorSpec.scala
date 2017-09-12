@@ -2,6 +2,7 @@ package hyperion.database
 
 import java.time.LocalDate
 
+import scala.collection.immutable.Seq
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration.DurationInt
@@ -22,6 +23,9 @@ class DatabaseActorSpec extends BaseAkkaSpec with OneInstancePerTest with MockFa
   private val meterReadingDAO = stub[MeterReadingDAO]
 
   private val da = system.actorOf(Props(new DatabaseActor(meterReadingDAO)), "database-actor")
+
+  private def dateRange(start: LocalDate, end: LocalDate): Seq[LocalDate] =
+    Iterator.iterate(start)(_.plusDays(1)).takeWhile(!_.isAfter(end)).to[Seq]
 
   "The database actor" should {
     "store new meter readings in the database" in {
@@ -45,8 +49,27 @@ class DatabaseActorSpec extends BaseAkkaSpec with OneInstancePerTest with MockFa
         // Act
         whenReady((da ? RetrieveMeterReadingForDate(date)).mapTo[RetrievedMeterReadings]) { answer =>
           // Assert
-          answer shouldBe an[RetrievedMeterReadings]
           answer.readings should contain only result
+        }
+      }
+
+      "by month" in {
+        // Arrange
+        val (month, year) = (LocalDate.now().getMonth, LocalDate.now().getYear)
+
+        val startDate = LocalDate.of(year, month, 1)
+        val endDate = startDate.plusMonths(1).minusDays(1)
+
+        // Create a record for every day of the selected month
+        val result = dateRange(startDate, endDate)
+          .map(HistoricalMeterReading(_, BigDecimal(1), BigDecimal(2), BigDecimal(3)))
+
+        (meterReadingDAO.retrieveMeterReadings _).when(startDate, endDate).returns(Future { result })
+
+        // Act
+        whenReady((da ? RetrieveMeterReadingForMonth(month, year)).mapTo[RetrievedMeterReadings]) { answer =>
+          // Assert
+          answer.readings should have length result.size
         }
       }
     }
