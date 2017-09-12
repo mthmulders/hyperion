@@ -68,20 +68,6 @@ val commonSettings = Seq(
 // Per-module settings
 //
 
-val common = (project in file("common"))
-  .settings(commonSettings: _*)
-  .settings(Seq(
-    name := "hyperion-common"
-  )
-)
-
-val testSupport = (project in file("test-support"))
-  .settings(commonSettings: _*)
-  .settings(Seq(
-    name := "hyperion-test-support"
-  )
-).dependsOn(common)
-
 val app = (project in file("app"))
   .enablePlugins(JavaServerAppPackaging, SystemVPlugin)
   .enablePlugins(BuildInfoPlugin)
@@ -122,14 +108,14 @@ val app = (project in file("app"))
       DebianConstants.Postinst -> "usermod -a -G dialout hyperion"
     )
   )
-).dependsOn(common, testSupport)
+)
 
 val testApp = (project in file("test-app"))
   .settings(commonSettings: _*)
   .settings(Seq(
     name := "hyperion-test-app"
   )
-).dependsOn(app, testSupport)
+).dependsOn(app % "compile->test")
 
 val integrationTest = (project in file("integration-test"))
   .settings(commonSettings: _*)
@@ -145,4 +131,4 @@ val integrationTest = (project in file("integration-test"))
 
 val root = (project in file("."))
   .settings(commonSettings: _*)
-  .aggregate(app, common, integrationTest, testApp, testSupport)
+  .aggregate(app, integrationTest, testApp)

@@ -5,12 +5,11 @@ import java.time.OffsetDateTime
 import scala.collection.immutable
 import scala.util.Random
 
-import hyperion.P1Constants._
+import hyperion.p1._
+import hyperion.p1.P1Constants._
 
 object TestSupport {
-  private def randomBigDecimal(): BigDecimal = {
-    BigDecimal(Random.nextDouble())
-  }
+  private def randomBigDecimal(): BigDecimal = BigDecimal(Random.nextDouble())
 
   def randomTelegram(): P1Telegram = {
     val totalConsumption = immutable.Map(lowTariff -> randomBigDecimal(), normalTariff -> randomBigDecimal())
