@@ -37,6 +37,9 @@ jobs:
           name: Create PostgreSQL schema
           command: psql -h localhost -p 5432 -f scripts/database/schema.sql circle_test
       - run:
+          name: Prepare data for integration tests
+          command: psql -h localhost -p 5432 -f scripts/database/test-data.sql circle_test
+      - run:
           name: Work-around sbt-codacy-coverage issue 20
           # https://github.com/codacy/sbt-codacy-coverage/issues/20
           command: mkdir -p target/scala-2.11/coverage-report/
@@ -46,7 +49,6 @@ jobs:
           command: |
             sbt -Dconfig.file=.circleci/application.conf coverage test
             sbt coverageReport coverageAggregate
-            sbt coverageAggregate
 
       - save_cache:
           paths:
@@ -57,6 +59,10 @@ jobs:
       - run:
           name: Report coverage to Codacy
           command: sbt codacyCoverage
+
+      - run:
+          name: Run integration tests
+          command: sbt -Dconfig.file=.circleci/application.conf integrationTest/test
 
       - run:
           name: Create Debian packages
