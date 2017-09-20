@@ -2,9 +2,7 @@ package hyperion.rest
 
 import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport
 import akka.http.scaladsl.server.{Directives, Route}
-
-import spray.json.DefaultJsonProtocol
-
+import spray.json.{DefaultJsonProtocol, RootJsonFormat}
 import hyperion.BuildInfo
 
 /**
@@ -18,7 +16,7 @@ class AppInfoService extends Directives with DefaultJsonProtocol with SprayJsonS
                      totalMem: String,
                      freeMem: String,
                      database: String)
-  implicit val appInfoJsonFormat = jsonFormat7(AppInfo)
+  implicit val appInfoJsonFormat: RootJsonFormat[AppInfo] = jsonFormat7(AppInfo)
 
   val route: Route = path("info") {
     get {

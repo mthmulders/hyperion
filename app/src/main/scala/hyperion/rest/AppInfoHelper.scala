@@ -8,29 +8,29 @@ import hyperion.database.DatabaseSupport
 object AppInfoHelper extends DatabaseSupport {
   private val runtime = Runtime.getRuntime
 
-  val javaVersion = {
+  val javaVersion: String = {
     val javaVersion = System.getProperty("java.version")
     val javaVendor = System.getProperty("java.vendor")
     s"$javaVersion ($javaVendor)"
   }
 
-  val os = {
+  val os: String = {
     val osName = System.getProperty("os.name")
     val osVersion = System.getProperty("os.version")
     val bits = System.getProperty("sun.arch.data.model")
     s"$osName $osVersion ($bits bits)"
   }
 
-  val database = {
+  val database: String = {
     val metadata = session.metaData
     s"${metadata.getDatabaseProductName} ${metadata.getDatabaseProductVersion}"
   }
 
-  def totalMem() = {
+  def totalMem(): String = {
     humanReadableByteCount(runtime.totalMemory())
   }
 
-  def freeMem() = {
+  def freeMem(): String = {
     humanReadableByteCount(runtime.freeMemory())
   }
 

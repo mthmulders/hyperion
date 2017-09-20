@@ -27,7 +27,7 @@ class RecentHistoryActor(messageDistributor: ActorRef)
   with ActorLogging with AppSettings {
 
   
-  override def preStart = {
+  override def preStart: Unit = {
     messageDistributor ! RegisterReceiver
   }
 

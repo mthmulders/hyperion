@@ -19,7 +19,7 @@ import hyperion.rest.HyperionConversions.telegramWrapper
 class RecentReadingsService(recentHistoryActor: ActorRef)(implicit executionContext: ExecutionContext)
   extends Directives with HyperionJsonProtocol {
 
-  implicit val timeout = Timeout(500 milliseconds)
+  implicit val timeout: Timeout = Timeout(500 milliseconds)
 
   val route: Route = path("recent") {
     get {
