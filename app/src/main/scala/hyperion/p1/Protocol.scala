@@ -1,7 +1,6 @@
 package hyperion.p1
 
 import java.time.OffsetDateTime
-import java.util.Date
 
 import scala.collection.immutable
 
