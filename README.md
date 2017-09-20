@@ -46,5 +46,16 @@ Pre-built Debian packages can be downloaded from [CircleCI](https://circleci.com
 Click on the latest green build and move to the 'Artifacts' tab.
 The packages are located in the `deb` folder.
 
+# Hyperion integration tests
+The integration tests are written using [Rest Assured](https://github.com/rest-assured/rest-assured) and stored in `./src/it/`.
+Test data is injected using an SQL script (found in `./scripts/database`).
+
+To run the tests locally, issue
+
+    sbt \
+        -Dconfig.file=app/src/test/resources/application.conf \
+        app/it:test
+
+
 # License
 Hyperion is licensed under the MIT License. See the `LICENSE` file for details.

@@ -69,9 +69,11 @@ val commonSettings = Seq(
 //
 
 val app = (project in file("app"))
+  .configs(IntegrationTest)
   .enablePlugins(JavaServerAppPackaging, SystemVPlugin)
   .enablePlugins(BuildInfoPlugin)
   .settings(commonSettings: _*)
+  .settings(Defaults.itSettings)
   .settings(Seq(
     name := "hyperion",
     libraryDependencies ++= Seq(
@@ -87,8 +89,10 @@ val app = (project in file("app"))
       logback,
       parserComb,
       postgresql,
+      restAssured % "it",
+      restAssuredScala % "it",
       scalaMock % "test",
-      scalaTest % "test",
+      scalaTest % "test,it",
       slick
     ),
     buildInfoOptions += BuildInfoOption.BuildTime,
@@ -117,18 +121,6 @@ val testApp = (project in file("test-app"))
   )
 ).dependsOn(app % "compile->test")
 
-val integrationTest = (project in file("integration-test"))
-  .settings(commonSettings: _*)
-  .settings(Seq(
-    libraryDependencies ++= Seq(
-      restAssured,
-      restAssuredScala,
-      scalaTest
-    ),
-    name := "hyperion-integration-test"
-  )
-).dependsOn(app)
-
 val root = (project in file("."))
   .settings(commonSettings: _*)
-  .aggregate(app, integrationTest, testApp)
+  .aggregate(app, testApp)

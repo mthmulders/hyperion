@@ -1,13 +1,10 @@
 package hyperion
 
-//import akka.actor.ActorSystem
-
-import akka.actor.ActorSystem
-
 import scala.concurrent.Await
 import scala.concurrent.duration.DurationInt
+
+import akka.actor.ActorSystem
 import com.typesafe.config.{Config, ConfigFactory}
-import org.slf4j.LoggerFactory
 
 object IntegrationTestApp {
   def apply(port: Int): IntegrationTestApp = {
@@ -17,7 +14,7 @@ object IntegrationTestApp {
        }
        hyperion {
          api {
-             port: $port
+           port: $port
          }
        }
     """)
