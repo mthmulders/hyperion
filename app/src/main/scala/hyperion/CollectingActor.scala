@@ -14,7 +14,7 @@ object CollectingActor {
   }
 }
 
-/** This actor collects incoming bytes and emits them in lines (seperated by CR LF) */
+/** This actor collects incoming bytes and emits them in lines (separated by CR LF) */
 class CollectingActor(receiver: ActorRef) extends Actor with ActorLogging {
   private val newline = "\r\n"
 
