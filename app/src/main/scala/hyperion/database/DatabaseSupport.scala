@@ -1,13 +1,15 @@
 package hyperion.database
 
-import akka.event.slf4j.Slf4jLogger
 import com.typesafe.config.ConfigFactory
+import org.slf4j.LoggerFactory
 import slick.jdbc.JdbcBackend.{Database, Session}
 
 /**
   * Allows for easy mix-in of database related stuff.
   */
-trait DatabaseSupport extends Slf4jLogger {
+trait DatabaseSupport {
+  private val log = LoggerFactory.getLogger(getClass)
+
   private val config = ConfigFactory.load()
 
   log.info("Connecting to database {}", config.getString("hyperion.database.url"))
