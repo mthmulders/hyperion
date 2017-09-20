@@ -17,7 +17,7 @@ object MeterAgent {
 class MeterAgent(collectingActor: ActorRef) extends Actor with ActorLogging with AppSettings {
   private val operator = IO(Serial)(context.system)
 
-  override def preStart = {
+  override def preStart: Unit = {
     val port = settings.meter.serialPort
     val serialSettings = SerialSettings(
       baud = settings.meter.baudRate,
