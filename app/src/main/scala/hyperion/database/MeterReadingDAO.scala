@@ -6,8 +6,6 @@ import scala.collection.immutable.Seq
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.util.{Failure, Success}
-
-import org.slf4j.LoggerFactory
 import slick.jdbc.PostgresProfile.api._
 
 case class HistoricalMeterReading (
@@ -18,8 +16,6 @@ case class HistoricalMeterReading (
 )
 
 class MeterReadingDAO extends DatabaseSupport with DateTimeColumns {
-  private[this] val log = LoggerFactory.getLogger(getClass)
-
   private class MeterReadings(tag: Tag) extends Table[HistoricalMeterReading](tag, "meter_readings") {
     def recordDate = column[LocalDate]("record_date", O.PrimaryKey)
     def gas = column[BigDecimal]("gas")
