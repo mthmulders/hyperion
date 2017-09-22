@@ -102,7 +102,7 @@ val app = (project in file("app"))
     packageSummary in Linux := "Hyperion",
     packageDescription in Linux := "The Hyperion system that shows realtime data from a Smart Meter",
     mappings in Universal += {
-      sourceDirectory.value / "main" / "deb" / "application.conf" -> "conf/hyperion.conf"
+      sourceDirectory.value / "main" / "deb" / "environment.conf" -> "conf/hyperion.conf"
     },
     daemonUser in Linux := "hyperion",
     daemonGroup in Linux := "hyperion",

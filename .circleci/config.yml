@@ -62,7 +62,7 @@ jobs:
 
       - run:
           name: Run integration tests
-          command: sbt -Dconfig.file=.circleci/application.conf app/it:test
+          command: sbt -Dconfig.file=.circleci/environment.conf app/it:test
 
       - run:
           name: Create Debian packages
