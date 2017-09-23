@@ -21,10 +21,12 @@ class RingBuffer[T](limit: Int)(implicit m: ClassTag[T]) extends mutable.Abstrac
     if (length >= limit) (cursor.get() + desiredPosition) % limit else desiredPosition
   }
 
+  private val x = null.asInstanceOf[T]
+
   override def apply(n: Int): T = {
     monitor.readLock().lock()
     try {
-      items(positionInArray(n)).orNull
+      items(positionInArray(n)).getOrElse(null.asInstanceOf[T])
     } finally {
       monitor.readLock().unlock()
     }
