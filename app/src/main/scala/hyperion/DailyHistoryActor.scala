@@ -12,7 +12,6 @@ import hyperion.DailyHistoryActor._
 import hyperion.database.DatabaseActor.StoreMeterReading
 import hyperion.database.HistoricalMeterReading
 import hyperion.p1._
-import hyperion.p1.TelegramReceived
 
 object DailyHistoryActor {
   sealed trait State

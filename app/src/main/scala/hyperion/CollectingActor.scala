@@ -6,9 +6,7 @@ import scala.collection.mutable
 import scala.concurrent.Future
 import scala.util.{Failure, Success}
 
-import hyperion.p1.P1TelegramParser
-import hyperion.p1.P1Constants._
-import hyperion.p1.TelegramReceived
+import hyperion.p1.{P1TelegramParser, TelegramReceived}
 
 object CollectingActor {
   case object ProcessBuffer
