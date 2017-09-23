@@ -2,9 +2,11 @@ package hyperion
 
 import scala.collection.immutable
 
-import akka.actor.{ActorLogging, ActorRef, FSM, Props}
+import akka.actor.{ActorLogging, ActorRef, FSM}
+
 import hyperion.MessageDistributor.RegisterReceiver
 import hyperion.RecentHistoryActor._
+import hyperion.p1._
 
 object RecentHistoryActor {
   sealed trait State

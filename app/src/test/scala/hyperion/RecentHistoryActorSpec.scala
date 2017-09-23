@@ -1,8 +1,10 @@
 package hyperion
 
 import akka.testkit.{TestFSMRef, TestProbe}
+
 import hyperion.MessageDistributor.RegisterReceiver
 import hyperion.RecentHistoryActor.{GetRecentHistory, History, Receiving, RecentReadings, Sleeping}
+import hyperion.p1.{P1Telegram, TelegramReceived}
 
 class RecentHistoryActorSpec extends BaseAkkaSpec {
   private val messageDistributor: TestProbe = TestProbe("message-distributor")

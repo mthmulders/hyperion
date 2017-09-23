@@ -5,6 +5,8 @@ import akka.testkit.TestProbe
 import scala.concurrent.duration._
 import scala.io.Source
 
+import hyperion.p1.TelegramReceived
+
 class CollectingActorSpec extends BaseAkkaSpec {
   private val newline = "\r\n"
   private val receiver = TestProbe()

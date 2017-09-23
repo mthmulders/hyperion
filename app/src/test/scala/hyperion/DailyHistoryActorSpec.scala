@@ -13,6 +13,7 @@ import org.scalatest.concurrent.ScalaFutures
 import hyperion.MessageDistributor.RegisterReceiver
 import hyperion.DailyHistoryActor._
 import hyperion.database.DatabaseActor.StoreMeterReading
+import hyperion.p1.TelegramReceived
 
 class DailyHistoryActorSpec extends BaseAkkaSpec with ScalaFutures {
   private implicit val timeout: Timeout = Timeout(500 milliseconds)

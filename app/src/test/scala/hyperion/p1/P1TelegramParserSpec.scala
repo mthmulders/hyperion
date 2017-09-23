@@ -1,13 +1,14 @@
-package hyperion
+package hyperion.p1
 
 import java.time.{LocalDateTime, OffsetDateTime, ZoneId}
 
-import org.scalatest.{TryValues, Inside}
-
 import scala.io.Source
 
-import P1TelegramParser._
-import P1Constants._
+import org.scalatest.{Inside, TryValues}
+
+import hyperion.BaseSpec
+import hyperion.p1.P1TelegramParser._
+import hyperion.p1.P1Constants._
 
 class P1TelegramParserSpec extends BaseSpec with Inside with TryValues {
 

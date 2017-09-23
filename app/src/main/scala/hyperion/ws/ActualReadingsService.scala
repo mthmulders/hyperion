@@ -11,7 +11,8 @@ import akka.stream.{ActorMaterializer, Materializer}
 import akka.stream.OverflowStrategy.dropHead
 import akka.stream.scaladsl.{BroadcastHub, Flow, Keep, MergeHub, Source}
 
-import hyperion.{Core, TelegramReceived}
+import hyperion.Core
+import hyperion.p1.TelegramReceived
 import hyperion.rest.HyperionConversions.telegramWrapper
 import hyperion.rest.HyperionJsonProtocol
 

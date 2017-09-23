@@ -1,6 +1,6 @@
 package hyperion.rest
 
-import hyperion.{P1Constants, P1GasMeter, P1Telegram}
+import hyperion.p1.{P1Constants, P1GasMeter, P1Telegram}
 
 /**
   * Provides implicit conversions to data structures for the REST API.

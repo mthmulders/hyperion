@@ -4,6 +4,8 @@ import scala.io.StdIn
 
 import akka.actor.{Actor, ActorLogging, ActorRef}
 
+import hyperion.p1.TelegramReceived
+
 class FakeMeterAgent(messageDistributor: ActorRef) extends Actor with ActorLogging {
   override def receive: Actor.Receive = {
     case _ => log.warning("No messages expected")

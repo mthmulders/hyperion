@@ -3,7 +3,7 @@ package hyperion.ws
 import akka.actor.{Actor, ActorLogging, ActorRef}
 
 import hyperion.MessageDistributor.RegisterReceiver
-import hyperion.TelegramReceived
+import hyperion.p1.TelegramReceived
 
 /**
   * Actor that forwards telegrams to a WebSocket connection
