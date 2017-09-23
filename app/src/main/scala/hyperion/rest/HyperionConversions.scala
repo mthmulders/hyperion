@@ -5,13 +5,13 @@ import hyperion.p1.{P1Constants, P1GasMeter, P1Telegram}
 /**
   * Provides implicit conversions to data structures for the REST API.
   */
-object HyperionConversions {
+trait HyperionConversions {
   /**
     * Converts a [[P1Telegram]] to a [[MeterReading]]
     * @param telegram The [[P1Telegram]]
     * @return a [[MeterReading]] value
     */
-  def telegramWrapper(telegram: P1Telegram): MeterReading = {
+  implicit def p1Telegram2MeterReading(telegram: P1Telegram): MeterReading = {
     val gasConsumption = telegram.data.devices
       .find(_.isInstanceOf[P1GasMeter])
       .map(_.asInstanceOf[P1GasMeter].gasDelivered)

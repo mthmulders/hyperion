@@ -2,17 +2,16 @@ package hyperion.rest
 
 import hyperion.{BaseSpec, TestSupport}
 import hyperion.p1.{P1Constants, P1GasMeter}
-import hyperion.rest.HyperionConversions.telegramWrapper
 import org.scalatest.OptionValues
 
-class HyperionConversionsSpec extends BaseSpec with OptionValues {
+class HyperionConversionsSpec extends BaseSpec with OptionValues with HyperionConversions {
   "The telegramWrapper" should {
     "convert a P1 telegram in a MeterReading object" in {
       // Arrange
       val telegram = TestSupport.randomTelegram()
 
       // Act
-      val result = telegramWrapper(telegram)
+      val result: MeterReading = telegram
 
       // Assert
       result.elecConsLow.value should be(telegram.data.totalConsumption(P1Constants.lowTariff))

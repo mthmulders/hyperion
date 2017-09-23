@@ -9,7 +9,6 @@ import akka.pattern.ask
 import akka.util.Timeout
 
 import hyperion.RecentHistoryActor.{GetRecentHistory, RecentReadings}
-import hyperion.rest.HyperionConversions.telegramWrapper
 
 /**
   * Provides the Spray route to retrieve the most recent meter readings from memory.
@@ -17,7 +16,7 @@ import hyperion.rest.HyperionConversions.telegramWrapper
   * @param executionContext An ``ExecutionContext``.
   */
 class RecentReadingsService(recentHistoryActor: ActorRef)(implicit executionContext: ExecutionContext)
-  extends Directives with HyperionJsonProtocol {
+  extends Directives with HyperionJsonProtocol with HyperionConversions {
 
   implicit val timeout: Timeout = Timeout(500 milliseconds)
 
@@ -27,7 +26,7 @@ class RecentReadingsService(recentHistoryActor: ActorRef)(implicit executionCont
         (recentHistoryActor ? GetRecentHistory)
           .mapTo[RecentReadings]
           .map(_.telegrams)
-          .map(_.map(telegramWrapper))
+          .map(_.map(p1Telegram2MeterReading))
       }
     }
   }
