@@ -12,8 +12,7 @@ import akka.stream.scaladsl.{BroadcastHub, Flow, Keep, Sink, Source}
 
 import hyperion.Core
 import hyperion.p1.TelegramReceived
-import hyperion.rest.HyperionConversions
-import hyperion.rest.HyperionJsonProtocol
+import hyperion.rest.{HyperionConversions, HyperionJsonProtocol}
 
 /**
   * Defines the WebSocket API for getting live updates from the metering system.

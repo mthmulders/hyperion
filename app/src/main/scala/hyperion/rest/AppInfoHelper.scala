@@ -36,11 +36,15 @@ object AppInfoHelper extends DatabaseSupport {
 
   private def humanReadableByteCount(bytes: Long): String = {
     val unit = 1024L
-    if (bytes < unit) return s"$bytes B"
-    val exp = (Math.log(bytes) / Math.log(unit)).toInt
-    val prefix = "KMGTPE".charAt(exp - 1)
-    val amount = (bytes / Math.pow(unit, exp)).toInt
 
-    s"$amount ${prefix}B"
+    if (bytes < unit) {
+      s"$bytes B"
+    } else {
+      val exp = (Math.log(bytes) / Math.log(unit)).toInt
+      val prefix = "KMGTPE".charAt(exp - 1)
+      val amount = (bytes / Math.pow(unit, exp)).toInt
+
+      s"$amount ${prefix}B"
+    }
   }
 }
