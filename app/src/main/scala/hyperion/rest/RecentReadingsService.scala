@@ -18,7 +18,7 @@ import hyperion.RecentHistoryActor.{GetRecentHistory, RecentReadings}
 class RecentReadingsService(recentHistoryActor: ActorRef)(implicit executionContext: ExecutionContext)
   extends Directives with HyperionJsonProtocol with HyperionConversions {
 
-  implicit val timeout: Timeout = Timeout(500 milliseconds)
+  implicit val timeout: Timeout = Timeout(5 seconds)
 
   val route: Route = path("recent") {
     get {

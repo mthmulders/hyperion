@@ -21,7 +21,7 @@ import hyperion.database.DatabaseActor._
 class HistoryService(databaseActor: ActorRef)(implicit executionContext: ExecutionContext)
   extends Directives with HyperionJsonProtocol {
 
-  implicit val timeout: Timeout = Timeout(2 seconds)
+  implicit val timeout: Timeout = Timeout(5 seconds)
 
   val route: Route = path("history") {
     get {
