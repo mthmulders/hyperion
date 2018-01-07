@@ -42,7 +42,7 @@ val sprayJson        = "io.spray"               %% "spray-json"                 
 //
 val commonSettings = Seq(
   organization := "hyperion",
-  version := "2.0.2-SNAPSHOT",
+  version := "2.1.0-SNAPSHOT",
   description := "Hyperion",
   scalaVersion := "2.12.3",
   scalacOptions ++= Seq(
