@@ -12,6 +12,7 @@ import hyperion.database.DatabaseActor._
 
 object DatabaseActor {
   case class RetrieveMeterReadingForDate(date: LocalDate)
+  case class RetrieveMeterReadingForDateRange(start: LocalDate, end: LocalDate)
   case class RetrieveMeterReadingForMonth(month: Month, year: Int)
   case class RetrievedMeterReadings(readings: Seq[HistoricalMeterReading])
   case class StoreMeterReading(reading: HistoricalMeterReading)
@@ -22,8 +23,26 @@ class DatabaseActor(meterReadingDAO: MeterReadingDAO) extends Actor with ActorLo
 
   override def receive: Receive = {
     case RetrieveMeterReadingForDate(date) => retrieveMeterReadingByDate(sender(), date)
+    case RetrieveMeterReadingForDateRange(start, end) => retrieveMeterReadingByDateRange(sender(), start, end)
     case RetrieveMeterReadingForMonth(month, year) => retrieveMeterReadingsByMonth(sender(), month, year)
     case StoreMeterReading(reading) => storeMeterReading(reading)
+  }
+
+  private def retrieveMeterReadingByDateRange(receiver: ActorRef, start: LocalDate, end: LocalDate) = {
+    log.info(s"Retrieve meter reading from $start to $end")
+
+    meterReadingDAO.retrieveMeterReadings(start, end) andThen {
+      case Success(result) if result.nonEmpty =>
+        receiver ! RetrievedMeterReadings(result)
+
+      case Success(result) if result.isEmpty =>
+        log.error(s"No meter readings between $start and $end")
+        receiver ! RetrievedMeterReadings(Seq.empty)
+
+      case Failure(reason) =>
+        log.error("Error retrieving meter readings from database: {}", reason)
+        receiver ! RetrievedMeterReadings(Seq.empty)
+    }
   }
 
   private def retrieveMeterReadingByDate(receiver: ActorRef, date: LocalDate) = {
@@ -48,18 +67,7 @@ class DatabaseActor(meterReadingDAO: MeterReadingDAO) extends Actor with ActorLo
     val startDate = LocalDate.of(year, month, 1)
     val endDate = startDate.plusMonths(1).minusDays(1)
 
-    meterReadingDAO.retrieveMeterReadings(startDate, endDate) andThen {
-      case Success(result) if result.nonEmpty =>
-        receiver ! RetrievedMeterReadings(result)
-
-      case Success(result) if result.isEmpty =>
-        log.error(s"No meter readings for month $month $year")
-        receiver ! RetrievedMeterReadings(Seq.empty)
-
-      case Failure(reason) =>
-        log.error("Error retrieving meter readings from database: {}", reason)
-        receiver ! RetrievedMeterReadings(Seq.empty)
-    }
+    retrieveMeterReadingByDateRange(sender, startDate, endDate)
   }
 
   private def storeMeterReading(reading: HistoricalMeterReading) = {

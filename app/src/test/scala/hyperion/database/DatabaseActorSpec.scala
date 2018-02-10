@@ -72,6 +72,27 @@ class DatabaseActorSpec extends BaseAkkaSpec with OneInstancePerTest with MockFa
           answer.readings should have length result.size
         }
       }
+
+      "by date range" in {
+        // Arrange
+        val (month, year) = (LocalDate.now().getMonth, LocalDate.now().getYear)
+
+        val startDate = LocalDate.of(year, month, 1)
+        val endDate = startDate.plusMonths(1)
+
+        // Create a record for every day of the selected month
+        val result = dateRange(startDate, endDate)
+          .map(HistoricalMeterReading(_, BigDecimal(1), BigDecimal(2), BigDecimal(3)))
+
+        (meterReadingDAO.retrieveMeterReadings _).when(startDate, endDate).returns(Future { result })
+
+        // Act
+        whenReady((da ? RetrieveMeterReadingForDateRange(startDate, endDate)).mapTo[RetrievedMeterReadings]) { answer =>
+          // Assert
+          answer.readings should have length result.size
+        }
+
+      }
     }
   }
 }
