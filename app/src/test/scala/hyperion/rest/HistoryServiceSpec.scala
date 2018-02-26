@@ -27,7 +27,7 @@ class HistoryServiceSpec extends BaseSpec with ScalatestRouteTest with HyperionJ
           sender ! RetrievedMeterReadings(Seq(meterReading))
         case RetrieveMeterReadingForDate(date) if today.isEqual(date) =>
           sender ! RetrievedMeterReadings(Seq(meterReading));
-        case RetrieveMeterReadingForDate(date) =>
+        case RetrieveMeterReadingForDate(_) =>
           sender ! RetrievedMeterReadings(Seq.empty);
       }
       keepRunning
@@ -37,7 +37,7 @@ class HistoryServiceSpec extends BaseSpec with ScalatestRouteTest with HyperionJ
   private val route = new HistoryService(databaseActor.ref).route
 
   "The Daily History REST API" should {
-    "query the Daily History Actor" in {
+    "query the database" in {
       // Act
       Get(s"/history?date=$today") ~> route ~> check {
         // Assert
