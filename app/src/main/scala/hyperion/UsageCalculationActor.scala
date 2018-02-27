@@ -45,15 +45,14 @@ class UsageCalculationActor(database: ActorRef) extends Actor with ActorLogging 
   private def combineMeterReadingsToUsageData(records: Seq[HistoricalMeterReading]): Seq[UsageDataRecord] = {
     log.debug(s"Retrieved ${records.length} records as input for calculation")
 
-    val result = records.sliding(2).map(recs => {
-      val (former: HistoricalMeterReading, latter: HistoricalMeterReading, _) = recs.take(2)
-      UsageDataRecord(
-        former.recordDate,
-        latter.gas               - former.gas,
-        latter.electricityNormal - former.electricityNormal,
-        latter.electricityLow    - former.electricityLow
-      )
-    })
-    result.toSeq
+    records.sliding(2).map({
+      case Seq(former, latter) =>
+        UsageDataRecord(
+          former.recordDate,
+          latter.gas - former.gas,
+          latter.electricityNormal - former.electricityNormal,
+          latter.electricityLow - former.electricityLow
+        )
+    }).toSeq
   }
 }
