@@ -4,7 +4,7 @@
             <level>WARN</level>
         </filter>
         <encoder>
-            <pattern>[%date] %-5level [%50.50X{akkaSource}] %logger{10} - %msg%n</pattern>
+            <pattern>%date  %-5level  %50.50logger -- %msg%n</pattern>
         </encoder>
     </appender>
 
@@ -18,7 +18,7 @@
             <maxHistory>30</maxHistory>
         </rollingPolicy>
         <encoder>
-            <pattern>%date{HH:mm:ss} %-5level [%30.30logger][%50.50X{akkaSource}] - %msg%n</pattern>
+            <pattern>%date{HH:mm:ss}  %-5level  %50.50logger -- %msg%n</pattern>
         </encoder>
     </appender>
 
