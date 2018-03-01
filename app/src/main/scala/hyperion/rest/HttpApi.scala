@@ -19,5 +19,6 @@ trait HttpApi extends HyperionActors with Core {
     new RecentReadingsService(recentHistoryActor).route ~
     new HistoryService(databaseActor).route ~
     new AppInfoService().route ~
-    new ActualReadingsService(messageDistributor, system).route
+    new ActualReadingsService(messageDistributor, system).route ~
+    new UsageService(usageCalculationActor).route
 }

@@ -5,18 +5,18 @@ import java.time.format.DateTimeFormatter.{ISO_DATE, ISO_OFFSET_DATE_TIME}
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Success, Try}
-
 import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport
 import akka.http.scaladsl.unmarshalling.Unmarshaller
 import akka.stream.Materializer
-import spray.json._
-
 import hyperion.database.HistoricalMeterReading
+import hyperion.UsageCalculationActor.UsageDataRecord
+import spray.json._
 
 /** Allows easy mix-in of [[HyperionJsonProtocol]] */
 trait HyperionJsonProtocol extends DefaultJsonProtocol with SprayJsonSupport {
   implicit def meterReadingFormat: RootJsonFormat[MeterReading] = HyperionJsonProtocol.meterReadingFormat
   implicit def historicalMeterReadingFormat: RootJsonFormat[HistoricalMeterReading] = HyperionJsonProtocol.historicalMeterReadingFormat
+  implicit def usageDataRecordFormat: RootJsonFormat[UsageDataRecord] = HyperionJsonProtocol.usageDataRecordFormat
   implicit def localDateUnmarshaller: Unmarshaller[String, LocalDate] = HyperionJsonProtocol.localDateUnmarshaller
   implicit def monthUnmarshaller: Unmarshaller[String, Month] = HyperionJsonProtocol.monthUnmarshaller
 }
@@ -59,6 +59,7 @@ object HyperionJsonProtocol extends DefaultJsonProtocol with SprayJsonSupport {
       }
     }
   }
+
   implicit val monthUnmarshaller: Unmarshaller[String, Month] = new Unmarshaller[String, Month] {
     override def apply(value: String)(implicit ec: ExecutionContext, materializer: Materializer): Future[Month] = {
       Try(value.toInt).map(Month.of) match {
@@ -68,6 +69,7 @@ object HyperionJsonProtocol extends DefaultJsonProtocol with SprayJsonSupport {
     }
   }
 
-  val meterReadingFormat: RootJsonFormat[MeterReading] = jsonFormat9(MeterReading)
   val historicalMeterReadingFormat: RootJsonFormat[HistoricalMeterReading] = jsonFormat4(HistoricalMeterReading)
+  val meterReadingFormat: RootJsonFormat[MeterReading] = jsonFormat9(MeterReading)
+  val usageDataRecordFormat: RootJsonFormat[UsageDataRecord] = jsonFormat4(UsageDataRecord)
 }

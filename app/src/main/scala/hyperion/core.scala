@@ -50,4 +50,5 @@ trait HyperionActors { this: Core =>
   val recentHistoryActor = system.actorOf(Props(new RecentHistoryActor(messageDistributor)), "recent-history")
   val databaseActor = system.actorOf(Props(new DatabaseActor(new MeterReadingDAO())), "database")
   val dailyHistoryActor = system.actorOf(Props(new DailyHistoryActor(messageDistributor, databaseActor)), "daily-history")
+  val usageCalculationActor = system.actorOf(Props(new UsageCalculationActor(databaseActor)), "usage-calculation")
 }
