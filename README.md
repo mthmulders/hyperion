@@ -53,7 +53,7 @@ Test data is injected using an SQL script (found in `./scripts/database`).
 To run the tests locally, issue
 
     sbt \
-        -Dconfig.file=app/src/test/resources/application.conf \
+        -Dconfig.file=app/src/test/resources/environment.conf \
         app/it:test
 
 
