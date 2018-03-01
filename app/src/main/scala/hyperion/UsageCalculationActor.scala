@@ -45,12 +45,9 @@ class UsageCalculationActor(database: ActorRef) extends Actor with ActorLogging 
   private def combineMeterReadingsToUsageData(records: Seq[HistoricalMeterReading]): Seq[UsageDataRecord] = {
     log.debug(s"Retrieved ${records.length} records as input for calculation")
 
-    if (records.lengthCompare(2) < 0) {
-      log.warning(s"Not enough data available to calculate usage")
-      return Seq.empty
-    }
-
-    records.sliding(2).map(recs => {
+    val hasData = records.lengthCompare(2) < 0
+    hasData || log.warning(s"Not enough data available to calculate usage")
+    hasData ? records.sliding(2).map(recs => {
       val former +: latter +: _ = recs
       UsageDataRecord(
         former.recordDate,
@@ -58,6 +55,6 @@ class UsageCalculationActor(database: ActorRef) extends Actor with ActorLogging 
         latter.electricityNormal - former.electricityNormal,
         latter.electricityLow - former.electricityLow
       )
-    }).toSeq
+    }).toSeq : Seq.empty
   }
 }
