@@ -30,7 +30,7 @@ class MeterAgent(collectingActor: ActorRef) extends Actor with ActorLogging with
     operator ! Serial.Open(port, serialSettings)
   }
 
-  override def receive = {
+  override def receive: Receive = {
     case Serial.CommandFailed(command, reason) =>
       val commandName = command.getClass.getSimpleName.toLowerCase
       val reasonName = reason.getClass.getSimpleName
