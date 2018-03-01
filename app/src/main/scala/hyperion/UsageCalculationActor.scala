@@ -15,7 +15,7 @@ import scala.concurrent.ExecutionContextExecutor
 import scala.util.{Failure, Success}
 
 object UsageCalculationActor {
-  case class UsageDataRecord(date: LocalDate, gas: BigDecimal, electNormal: BigDecimal, electLow: BigDecimal)
+  case class UsageDataRecord(date: LocalDate, gas: BigDecimal, electricityNormal: BigDecimal, electricityLow: BigDecimal)
 
   case class CalculateUsage(start: LocalDate, end: LocalDate)
 
@@ -45,14 +45,19 @@ class UsageCalculationActor(database: ActorRef) extends Actor with ActorLogging 
   private def combineMeterReadingsToUsageData(records: Seq[HistoricalMeterReading]): Seq[UsageDataRecord] = {
     log.debug(s"Retrieved ${records.length} records as input for calculation")
 
-    records.sliding(2).map({
-      case Seq(former, latter) =>
-        UsageDataRecord(
-          former.recordDate,
-          latter.gas - former.gas,
-          latter.electricityNormal - former.electricityNormal,
-          latter.electricityLow - former.electricityLow
-        )
+    if (records.lengthCompare(2) < 0) {
+      log.warning(s"Not enough data available to calculate usage")
+      return Seq.empty
+    }
+
+    records.sliding(2).map(recs => {
+      val former +: latter +: _ = recs
+      UsageDataRecord(
+        former.recordDate,
+        latter.gas - former.gas,
+        latter.electricityNormal - former.electricityNormal,
+        latter.electricityLow - former.electricityLow
+      )
     }).toSeq
   }
 }

@@ -35,6 +35,8 @@ class UsageCalculationActorSpec extends BaseAkkaSpec with ScalaFutures {
       msg match {
         case RetrieveMeterReadingForDateRange(_ @`firstDay`, _ @`lastDay`) =>
           sender ! RetrievedMeterReadings(meterReadings)
+        case RetrieveMeterReadingForDateRange(_, _) =>
+          sender ! RetrievedMeterReadings(Seq.empty)
       }
       keepRunning
     }
@@ -64,9 +66,20 @@ class UsageCalculationActorSpec extends BaseAkkaSpec with ScalaFutures {
       // Assert
       whenReady(answer.mapTo[Seq[UsageDataRecord]]) { records =>
         records.length shouldBe numDays
-        // each day has electricityNormal one higher than the day before
-        records.map(_.electNormal).sum shouldBe numberOfDays
-//        records.foldLeft(BigDecimal(0))((sum, udr) => sum + udr.electNormal) shouldBe numberOfDays
+        // each day has electricityNormal one higher than the day before, so each day electricityNormal increases with 1.
+        records.map(_.electricityNormal).sum shouldBe numberOfDays
+      }
+    }
+
+    "return empty result if there is not enough data" in {
+      // Arrange
+
+      // Act
+      val answer: Future[Any] = uca ? CalculateUsage(LocalDate.parse("1970-01-01"), LocalDate.parse("1970-01-02"))
+
+      // Assert
+      whenReady(answer.mapTo[Seq[UsageDataRecord]]) { records =>
+        records.length shouldBe 0
       }
     }
   }
