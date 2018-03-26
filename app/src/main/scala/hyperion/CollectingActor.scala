@@ -62,7 +62,7 @@ class CollectingActor(receiver: ActorRef) extends Actor with ActorLogging {
       val source = lines.mkString("")
       P1TelegramParser.parseTelegram(source) match {
         case Success(telegram) => receiver ! TelegramReceived(telegram)
-        case Failure(reason)   => log.error(s"Could not parse telegram: ${reason.getMessage}")
+        case Failure(reason)   => log.error(s"Could not parse telegram: ${reason.getMessage}. Source: \n$source")
       }
     }
   }
