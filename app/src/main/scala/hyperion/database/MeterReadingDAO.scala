@@ -34,7 +34,7 @@ class MeterReadingDAO extends DatabaseSupport with DateTimeColumns {
   def recordMeterReading(value: HistoricalMeterReading): Future[Int] = {
     db.run(meterReadings += value) andThen {
       case Failure(reason) =>
-        log.error("Could not store meter reading in database: {}", reason)
+        log.error(s"Could not store meter reading in database: ${reason.getMessage}", reason)
       case Success(count) =>
         log.info(s"Successfully stored meter $count reading(s) into database")
     }
