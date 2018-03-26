@@ -1,9 +1,11 @@
 package hyperion.database
 
+import java.sql.SQLException
 import java.time.{LocalDate, Month}
 
 import scala.collection.immutable.Seq
 import scala.concurrent.ExecutionContextExecutor
+import scala.concurrent.duration.DurationInt
 import scala.util.{Failure, Success}
 
 import akka.actor.{Actor, ActorLogging, ActorRef}
@@ -78,5 +80,11 @@ class DatabaseActor(meterReadingDAO: MeterReadingDAO) extends Actor with ActorLo
     log.info(s"  Electricity low    : ${reading.electricityLow}")
 
     meterReadingDAO.recordMeterReading(reading)
+      .recover { case e: SQLException => scheduleRetry(e, reading) }
+  }
+
+  private def scheduleRetry(cause: Throwable, reading: HistoricalMeterReading): Unit = {
+    log.error(s"Inserting failed due to ${cause.getMessage}, retrying in an hour...")
+    context.system.scheduler.scheduleOnce(30 seconds, self, StoreMeterReading(reading))
   }
 }
