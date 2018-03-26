@@ -17,7 +17,7 @@ class CollectingActorSpec extends BaseAkkaSpec {
     "skip data until the first complete Telegram comes in" in {
       ca ! MeterAgent.IncomingData(s"1-3:0.2.8(42)$newline!522B$newline/TEST")
 
-      receiver.expectNoMsg(500 milliseconds)
+      receiver.expectNoMessage(500 milliseconds)
     }
 
     "emit only complete Telegrams" in {
