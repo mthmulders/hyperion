@@ -21,12 +21,6 @@ class AppSettingsSpec extends BaseSpec {
     }
   }
 
-  "Inspecting 'daily'" should {
-    "return correct values" in {
-      settings.daily.resolution    shouldBe (1 day)
-    }
-  }
-
   "Inspecting 'database'" should {
     "return correct values" in {
       settings.database.driver     shouldBe "org.postgresql.Driver"

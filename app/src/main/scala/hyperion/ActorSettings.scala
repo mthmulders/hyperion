@@ -27,10 +27,6 @@ class AppSettingsImpl(config: Config) extends Extension {
     val limit             = hyperion getDuration("history.limit", HOURS) hours
   }
 
-  object daily {
-    val resolution        = hyperion getDuration("daily.resolution", MILLISECONDS) millis
-  }
-
   object database {
     val driver            = hyperion getString "database.driver"
     val user              = hyperion getString "database.user"
