@@ -44,7 +44,7 @@ class P1TelegramParserSpec extends BaseSpec with Inside with TryValues {
     }
 
     "parse a complete telegram" in {
-      // Arrage
+      // Arrange
       val source = Source.fromInputStream(getClass.getResourceAsStream("/valid-telegram1.txt"))
       val text = try source.mkString finally source.close()
 
@@ -99,6 +99,27 @@ class P1TelegramParserSpec extends BaseSpec with Inside with TryValues {
       val result = parseTelegram("foo")
       result.failure.exception should have message "Not all required lines are found"
     }
+
+    val testcases = List("equipment-identifier-empty.txt")
+    testcases.foreach(testcase => {
+      s"parse collected telegram $testcase" in {
+        // Arrange
+        val source = Source.fromInputStream(getClass.getResourceAsStream(s"/telegrams/$testcase"))
+        val text = try source.mkString finally source.close()
+
+        // Act
+        val result = parseTelegram(text)
+
+        // Assert
+        inside(result.success.value) {
+          case P1Telegram(header, metadata, _, _) =>
+            inside(header) { case P1Header(make, identification) =>
+                make shouldBe "KFM"
+                identification shouldBe "KAIFA-METER"
+            }
+        }
+      }
+    })
   }
 
 }

@@ -49,7 +49,7 @@ object P1TelegramParser extends RegexParsers {
   private[this] val currentProd          = "1-0:2.7.0("   ~> """\d*\.?\d*""".r <~ "*kW)"         ^^ { asBigDecimal }
 
   private[this] val externalDeviceId                  = "0-"                     ~> "[1-4]".r         <~ """:24.1.0\(\d{2,3}\)""".r ^^ { asInt }
-  private[this] val externalDeviceEquipmentId         = """0-[1-4]:96.1.0\(""".r ~> """\w{34}""".r    <~ ")"                   ^^ { asString }
+  private[this] val externalDeviceEquipmentId         = """0-[1-4]:96.1.0\(""".r ~> """\w{0,96}""".r    <~ ")"                   ^^ { asString }
   private[this] val externalDeviceGasReadingTimestamp = """0-[1-4]:24.2.1\(""".r ~> """\d{12}""".r    <~ """[SW]\)""".r             ^^ { asTimestamp }
   private[this] val externalDeviceGasReadingValue     = "("                      ~> """\d*\.?\d*""".r <~ "*m3)"                     ^^ { asBigDecimal }
   private[this] val externalDeviceGasValvePosition    = """0-[1-4]:24.4.0\(""".r ~> """\d{1}""".r     <~ ")"                   ^^ { asInt }
