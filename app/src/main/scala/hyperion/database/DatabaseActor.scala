@@ -85,6 +85,6 @@ class DatabaseActor(meterReadingDAO: MeterReadingDAO) extends Actor with ActorLo
 
   private def scheduleRetry(cause: Throwable, reading: HistoricalMeterReading): Unit = {
     log.error(s"Inserting failed due to ${cause.getMessage}, retrying in an hour...")
-    context.system.scheduler.scheduleOnce(30 seconds, self, StoreMeterReading(reading))
+    context.system.scheduler.scheduleOnce(1 hour, self, StoreMeterReading(reading))
   }
 }
