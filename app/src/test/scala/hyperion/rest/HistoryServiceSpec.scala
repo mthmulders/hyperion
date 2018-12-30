@@ -51,7 +51,7 @@ class HistoryServiceSpec extends BaseSpec with ScalatestRouteTest with HyperionJ
         // Assert
         status shouldBe StatusCodes.OK
         responseAs[String] should startWith("{")
-        responseAs[String] should include(s""""recordDate":"$today",""")
+        responseAs[String] should include(s""""recordDate":"$today"""")
         responseAs[String] should endWith("}")
       }
     }
@@ -62,7 +62,7 @@ class HistoryServiceSpec extends BaseSpec with ScalatestRouteTest with HyperionJ
         // Assert
         status shouldBe StatusCodes.OK
         responseAs[String] should startWith("[")
-        responseAs[String] should include(s""""recordDate":"$today",""")
+        responseAs[String] should include(s""""recordDate":"$today"""")
         responseAs[String] should endWith("]")
       }
     }
