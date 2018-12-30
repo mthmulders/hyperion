@@ -17,24 +17,25 @@ val sprayWsVer = "0.1.4"
 //
 // Define dependencies
 //
-val akkaActor        = "com.typesafe.akka"      %% "akka-actor"                  % akkaVer
-val akkaHttp         = "com.typesafe.akka"      %% "akka-http"                   % akkaHttpVer
-val akkaHttpJson     = "com.typesafe.akka"      %% "akka-http-spray-json"        % akkaHttpVer
-val akkaHttpTest     = "com.typesafe.akka"      %% "akka-http-testkit"           % akkaHttpVer
-val akkaSerial       = "ch.jodersky"            %% "akka-serial-core"            % akkaSerialVer
-val akkaSerialNative = "ch.jodersky"            %  "akka-serial-native"          % akkaSerialVer
-val akkaStream       = "com.typesafe.akka"      %% "akka-stream"                 % akkaVer
-val akkaSlf4j        = "com.typesafe.akka"      %% "akka-slf4j"                  % akkaVer
-val akkaTestKit      = "com.typesafe.akka"      %% "akka-testkit"                % akkaVer
-val logback          = "ch.qos.logback"         %  "logback-classic"             % logbackVer
-val parserComb       = "org.scala-lang.modules" %% "scala-parser-combinators"    % parserCombVer
-val postgresql       = "org.postgresql"         %  "postgresql"                  % postgresqlVer
-val restAssured      = "io.rest-assured"        %  "rest-assured"                % restAssuredVer
-val restAssuredScala = "io.rest-assured"        %  "scala-support"               % restAssuredVer
-val scalaMock        = "org.scalamock"          %% "scalamock-scalatest-support" % scalaMockVer
-val scalaTest        = "org.scalatest"          %% "scalatest"                   % scalaTestVer
-val slick            = "com.typesafe.slick"     %% "slick"                       % slickVer
-val sprayJson        = "io.spray"               %% "spray-json"                  % sprayJsonVer
+val akkaActor         = "com.typesafe.akka"      %% "akka-actor"                  % akkaVer
+val akkaHttp          = "com.typesafe.akka"      %% "akka-http"                   % akkaHttpVer
+val akkaHttpJson      = "com.typesafe.akka"      %% "akka-http-spray-json"        % akkaHttpVer
+val akkaHttpTest      = "com.typesafe.akka"      %% "akka-http-testkit"           % akkaHttpVer
+val akkaSerial        = "ch.jodersky"            %% "akka-serial-core"            % akkaSerialVer
+val akkaSerialNative  = "ch.jodersky"            %  "akka-serial-native"          % akkaSerialVer
+val akkaStream        = "com.typesafe.akka"      %% "akka-stream"                 % akkaVer
+val akkaStreamTestkit = "com.typesafe.akka"      %% "akka-stream-testkit"         % akkaVer
+val akkaSlf4j         = "com.typesafe.akka"      %% "akka-slf4j"                  % akkaVer
+val akkaTestKit       = "com.typesafe.akka"      %% "akka-testkit"                % akkaVer
+val logback           = "ch.qos.logback"         %  "logback-classic"             % logbackVer
+val parserComb        = "org.scala-lang.modules" %% "scala-parser-combinators"    % parserCombVer
+val postgresql        = "org.postgresql"         %  "postgresql"                  % postgresqlVer
+val restAssured       = "io.rest-assured"        %  "rest-assured"                % restAssuredVer
+val restAssuredScala  = "io.rest-assured"        %  "scala-support"               % restAssuredVer
+val scalaMock         = "org.scalamock"          %% "scalamock-scalatest-support" % scalaMockVer
+val scalaTest         = "org.scalatest"          %% "scalatest"                   % scalaTestVer
+val slick             = "com.typesafe.slick"     %% "slick"                       % slickVer
+val sprayJson         = "io.spray"               %% "spray-json"                  % sprayJsonVer
 
 
 //
@@ -84,6 +85,7 @@ val app = (project in file("app"))
       akkaSerial,
       akkaSerialNative,
       akkaStream,
+      akkaStreamTestkit,
       akkaSlf4j,
       akkaTestKit % "test",
       logback,
