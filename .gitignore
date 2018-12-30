@@ -1,7 +1,6 @@
 target
 hs_err_pid*
 *.iml
-.idea
+.idea/
 *.log
-node_modules
-web/build
+.scannerwork/

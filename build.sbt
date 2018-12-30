@@ -62,9 +62,28 @@ val commonSettings = Seq(
       "scm:git:git@github.com:mthmulders/hyperion.git",
       Some("scm:git:git@github.com:mthmulders/hyperion.git")
     )
+  ),
+  scapegoatVersion in ThisBuild := "1.3.3",
+)
+val sonarSettings = Seq(
+  sonarProperties ++= Map(
+    "sonar.host.url" -> "https://sonarcloud.io",
+    "sonar.modules" -> "app,test-app",
+    "sonar.projectKey" -> "mthmulders_hyperion",
+    "sonar.organization" -> "mthmulders-github",
+
+    "sonar.sourceEncoding" -> "UTF-8",
+    "sonar.scala.version" -> "2.12.8",
+
+    "app.sonar.scala.coverage.reportPaths" -> "target/scala-2.12/scoverage-report/scoverage.xml",
+    "app.sonar.scala.scapegoat.reportPath" -> "target/scala-2.12/scapegoat-report/scapegoat.xml",
+    "app.sonar.sources" -> "src/main/scala",
+
+    "test-app.sonar.scala.coverage.reportPaths" -> "target/scala-2.12/scoverage-report/scoverage.xml",
+    "test-app.sonar.scala.scapegoat.reportPath" -> "target/scala-2.12/scapegoat-report/scapegoat.xml",
+    "test-app.sonar.sources" -> "src/main/scala",
   )
 )
-
 //
 // Per-module settings
 //
@@ -125,4 +144,6 @@ val testApp = (project in file("test-app"))
 
 val root = (project in file("."))
   .settings(commonSettings: _*)
+  .settings(sonarSettings)
+  .settings(aggregate in sonarScan := false)
   .aggregate(app, testApp)

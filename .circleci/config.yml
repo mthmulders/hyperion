@@ -46,19 +46,31 @@ jobs:
       - run:
           name: Run tests (with coverage)
           # Specify different config file, see https://stackoverflow.com/a/21433585
+          command: sbt -Dconfig.file=.circleci/environment.conf coverage test coverageOff
+
+      - run:
+          name: Prepare SonarCloud analysis
           command: |
-            sbt -Dconfig.file=.circleci/environment.conf coverage test
-            sbt coverageReport coverageAggregate
+            mkdir ~/tools
+            pushd ~/tools
+            if [ ! -d "sonar-scanner-3.2.0.1227-linux" ]; then
+              wget https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-3.2.0.1227-linux.zip
+              unzip sonar-scanner-cli-3.2.0.1227-linux.zip
+            fi
+            popd
+
+      - run:
+          name: Run code analysis
+          command: |
+            sbt coverageReport scapegoat
+            SONAR_SCANNER_HOME=~/tools/sonar-scanner-3.2.0.1227-linux sbt -Dsonar.login=$SONAR_LOGIN sonarScan
 
       - save_cache:
           paths:
             - ~/.sbt
             - ./.ivy2
+            - ~/tools
           key: hyperion-{{ .Branch }}-{{ checksum "build.sbt" }}
-
-      - run:
-          name: Report coverage to Codacy
-          command: sbt codacyCoverage
 
       - run:
           name: Run integration tests
