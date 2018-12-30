@@ -65,6 +65,10 @@ jobs:
           command: sbt -Dconfig.file=.circleci/environment.conf app/it:test
 
       - run:
+          name: Perform mutation testing
+          command: sbt -Dconfig.file=app/src/test/resources/environment.conf "project app" stryker
+
+      - run:
           name: Create Debian packages
           command: sbt debian:packageBin
 
