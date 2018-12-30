@@ -23,42 +23,41 @@ object P1TelegramParser extends RegexParsers {
   }
   def asBigDecimal(input: String): BigDecimal = BigDecimal(input)
   def asInt(input: String): Int = input.toInt
-  def asString(input: String): String = input
   def asNone(input: String): Option[Nothing] = None
 
-  private[this] val make                 = "/" ~> "[A-Za-z0-9]{3}".r ^^ { asString }
-  private[this] val identification       = "5" ~> ".*".r             ^^ { asString }
-  private[this] val header = make ~ identification ^^ {
+  private[this] val MAKE                 = "/" ~> "[A-Za-z0-9]{3}".r
+  private[this] val IDENTIFICATION       = "5" ~> ".*".r
+  private[this] val HEADER = MAKE ~ IDENTIFICATION ^^ {
     case make ~ identification => P1Header(make, identification)
   }
 
-  private[this] val versionInfo          = "1-3:0.2.8("   ~> """\d*""".r       <~ ")"            ^^ { asString }
-  private[this] val telegramTimestamp    = "0-0:1.0.0("   ~> """\d{12}""".r    <~ """[SW]\)""".r ^^ { asTimestamp }
-  private[this] val equipmentIdentifier  = "0-0:96.1.1("  ~> """\w*""".r       <~ ")"            ^^ { asString }
-  private[this] val metadata = versionInfo ~ telegramTimestamp ~ equipmentIdentifier ^^ {
+  private[this] val VERSION_INFO          = "1-3:0.2.8("   ~> """\d*""".r       <~ ")"
+  private[this] val TELEGRAM_TIMESTAMP    = "0-0:1.0.0("   ~> """\d{12}""".r    <~ """[SW]\)""".r ^^ { asTimestamp }
+  private[this] val EQUIPMENT_IDENTIFIER  = "0-0:96.1.1("  ~> """\w*""".r       <~ ")"
+  private[this] val METADATA = VERSION_INFO ~ TELEGRAM_TIMESTAMP ~ EQUIPMENT_IDENTIFIER ^^ {
     case versionInfo ~ telegramTimestamp ~ equipmentIdentifier =>
       P1MetaData(versionInfo, telegramTimestamp, equipmentIdentifier)
   }
 
-  private[this] val tariffIndicator      = "0-0:96.14.0(" ~> """\d{4}""".r     <~ ")"            ^^ { asString }
-  private[this] val elecCons1            = "1-0:1.8.1("   ~> """\d*\.?\d*""".r <~ "*kWh)"        ^^ { asBigDecimal }
-  private[this] val elecCons2            = "1-0:1.8.2("   ~> """\d*\.?\d*""".r <~ "*kWh)"        ^^ { asBigDecimal }
-  private[this] val elecProd1            = "1-0:2.8.1("   ~> """\d*\.?\d*""".r <~ "*kWh)"        ^^ { asBigDecimal }
-  private[this] val elecProd2            = "1-0:2.8.2("   ~> """\d*\.?\d*""".r <~ "*kWh)"        ^^ { asBigDecimal }
-  private[this] val currentCons          = "1-0:1.7.0("   ~> """\d*\.?\d*""".r <~ "*kW)"         ^^ { asBigDecimal }
-  private[this] val currentProd          = "1-0:2.7.0("   ~> """\d*\.?\d*""".r <~ "*kW)"         ^^ { asBigDecimal }
+  private[this] val TARIFF_INDICATOR       = "0-0:96.14.0(" ~> """\d{4}""".r     <~ ")"
+  private[this] val ELEC_CONS_1            = "1-0:1.8.1("   ~> """\d*\.?\d*""".r <~ "*kWh)"        ^^ { asBigDecimal }
+  private[this] val ELEC_CONS_2            = "1-0:1.8.2("   ~> """\d*\.?\d*""".r <~ "*kWh)"        ^^ { asBigDecimal }
+  private[this] val ELEC_PROD_1            = "1-0:2.8.1("   ~> """\d*\.?\d*""".r <~ "*kWh)"        ^^ { asBigDecimal }
+  private[this] val ELEC_PROD_2            = "1-0:2.8.2("   ~> """\d*\.?\d*""".r <~ "*kWh)"        ^^ { asBigDecimal }
+  private[this] val CURRENT_CONS           = "1-0:1.7.0("   ~> """\d*\.?\d*""".r <~ "*kW)"         ^^ { asBigDecimal }
+  private[this] val CURRENT_PROD           = "1-0:2.7.0("   ~> """\d*\.?\d*""".r <~ "*kW)"         ^^ { asBigDecimal }
 
-  private[this] val externalDeviceId                  = "0-"                     ~> "[1-4]".r         <~ """:24.1.0\(\d{2,3}\)""".r ^^ { asInt }
-  private[this] val externalDeviceEquipmentId         = """0-[1-4]:96.1.0\(""".r ~> """\w{0,96}""".r    <~ ")"                   ^^ { asString }
-  private[this] val externalDeviceGasReadingTimestamp = """0-[1-4]:24.2.1\(""".r ~> """\d{12}""".r    <~ """[SW]\)""".r             ^^ { asTimestamp }
-  private[this] val externalDeviceGasReadingValue     = "("                      ~> """\d*\.?\d*""".r <~ "*m3)"                     ^^ { asBigDecimal }
-  private[this] val externalDeviceGasValvePosition    = """0-[1-4]:24.4.0\(""".r ~> """\d{1}""".r     <~ ")"                   ^^ { asInt }
-  private[this] val gasMeter = externalDeviceId ~ externalDeviceEquipmentId ~ externalDeviceGasReadingTimestamp ~
-    externalDeviceGasReadingValue ~ externalDeviceGasValvePosition.? ^^ {
+  private[this] val EXTERNAL_DEVICE_ID                    = "0-"                     ~> "[1-4]".r         <~ """:24.1.0\(\d{2,3}\)""".r ^^ { asInt }
+  private[this] val EXTERNAL_DEVICE_EQUIPMENT_ID          = """0-[1-4]:96.1.0\(""".r ~> """\w{0,96}""".r    <~ ")"
+  private[this] val EXTERNAL_DEVICE_GAS_READING_TIMESTAMP = """0-[1-4]:24.2.1\(""".r ~> """\d{12}""".r    <~ """[SW]\)""".r             ^^ { asTimestamp }
+  private[this] val EXTERNAL_DEVICE_GAS_READING_VALUE     = "("                      ~> """\d*\.?\d*""".r <~ "*m3)"                     ^^ { asBigDecimal }
+  private[this] val EXTERNAL_DEVICE_GAS_VALVE_POSITION    = """0-[1-4]:24.4.0\(""".r ~> """\d{1}""".r     <~ ")"                   ^^ { asInt }
+  private[this] val GAS_METER = EXTERNAL_DEVICE_ID ~ EXTERNAL_DEVICE_EQUIPMENT_ID ~ EXTERNAL_DEVICE_GAS_READING_TIMESTAMP ~
+    EXTERNAL_DEVICE_GAS_READING_VALUE ~ EXTERNAL_DEVICE_GAS_VALVE_POSITION.? ^^ {
     case deviceId ~ equipmentId ~ timestamp ~ reading ~ _ => P1GasMeter(deviceId, equipmentId, timestamp, reading)
   }
 
-  private[this] val data = elecCons1 ~ elecCons2 ~ elecProd1 ~ elecProd2 ~ tariffIndicator ~ currentCons ~ currentProd ~ ignored ~ gasMeter.? ^^ {
+  private[this] val DATA = ELEC_CONS_1 ~ ELEC_CONS_2 ~ ELEC_PROD_1 ~ ELEC_PROD_2 ~ TARIFF_INDICATOR ~ CURRENT_CONS ~ CURRENT_PROD ~ IGNORED ~ GAS_METER.? ^^ {
     case elecCons1 ~ elecCons2 ~ elecProd1 ~ elecProd2 ~ tariffIndicator ~ currentCons ~ currentProd ~ _ ~ gasMeter =>
 
       val totalConsumption = immutable.Map(lowTariff -> elecCons1, normalTariff -> elecCons2)
@@ -68,8 +67,8 @@ object P1TelegramParser extends RegexParsers {
       P1Data(tariffIndicator, currentCons, currentProd, totalConsumption, totalProduction, devices)
   }
 
-  private[this] val checksum = "!" ~> """[A-Za-z0-9]{4}""".r ^^ { asString }
-  private[this] val ignored =
+  private[this] val CHECKSUM = "!" ~> """[A-Za-z0-9]{4}""".r
+  private[this] val IGNORED =
     """0-0:17.0.0\(\d*\.?\d*\*kW\)""".r.?                                       ~ // The actual thresh- old Electricity in kW
     """0-0:96.3.10\(\d\)""".r.?                                                 ~ // Switch position Electricity (in/out/enabled)
     """0-0:96.7.21\(\d{5}\)""".r                                                ~ // Number of power failures in any phase
@@ -93,14 +92,13 @@ object P1TelegramParser extends RegexParsers {
     """1-0:61.7.0\(\d*\.?\d*\*kW\)""".r.?                                       ~ // Instantaneous active power L3 (+P) in W resolution
     """1-0:22.7.0\(\d*\.?\d*\*kW\)""".r.?                                         // Instantaneous active power L1 (-P) in W resolution
 
-  private[this] val telegram = header ~ metadata ~ data ~ checksum
-  private[this] val parser: Parser[P1Telegram] = telegram ^^ {
+  private[this] val TELEGRAM = HEADER ~ METADATA ~ DATA ~ CHECKSUM
+  private[this] val parser: Parser[P1Telegram] = TELEGRAM ^^ {
     case header ~ metadata ~ data ~ checksum => P1Telegram(header, metadata, data, checksum)
   } | failure("Not all required lines are found")
 
   def parseTelegram(text: String): Try[P1Telegram] = parseAll(parser, text) match {
     case Success(result, _) => scala.util.Success(result)
-    case Failure(msg, _)    => scala.util.Failure(TelegramParseException(msg))
-    case Error(msg, _)      => scala.util.Failure(TelegramParseException(msg))
+    case NoSuccess(msg, _)  => scala.util.Failure(TelegramParseException(msg))
   }
 }

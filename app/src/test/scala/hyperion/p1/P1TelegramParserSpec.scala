@@ -35,10 +35,6 @@ class P1TelegramParserSpec extends BaseSpec with Inside with TryValues {
       asInt("5") shouldBe 5
     }
 
-    "parse strings" in {
-      asString("Hello") shouldBe "Hello"
-    }
-
     "parse voids" in {
       asNone("Hello") shouldBe None
     }
