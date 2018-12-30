@@ -44,7 +44,7 @@ val commonSettings = Seq(
   organization := "hyperion",
   version := "2.1.0-SNAPSHOT",
   description := "Hyperion",
-  scalaVersion := "2.12.5",
+  scalaVersion := "2.12.8",
   scalacOptions ++= Seq(
     "-unchecked",
     "-deprecation",
