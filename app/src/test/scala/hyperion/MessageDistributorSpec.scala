@@ -33,7 +33,7 @@ class MessageDistributorSpec extends BaseAkkaSpec {
       md ! msg
 
       // Assert
-      probe.expectNoMsg(1 second)
+      probe.expectNoMessage(1 second)
     }
   }
 }
