@@ -57,7 +57,7 @@ class UsageCalculationActor(database: ActorRef) extends Actor with ActorLogging 
         )
       }).toSeq
     } else {
-      log.warning(s"Not enough data available to calculate usage")
+      log.warning("Not enough data available to calculate usage")
       Seq.empty
     }
   }
