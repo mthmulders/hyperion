@@ -93,7 +93,6 @@ val app = (project in file("app"))
   .enablePlugins(JavaServerAppPackaging, SystemVPlugin)
   .enablePlugins(BuildInfoPlugin)
   .settings(commonSettings: _*)
-  .settings(Defaults.itSettings)
   .settings(Seq(
     name := "hyperion",
     libraryDependencies ++= Seq(
@@ -110,10 +109,8 @@ val app = (project in file("app"))
       logback,
       parserComb,
       postgresql,
-      restAssured % "it",
-      restAssuredScala % "it",
       scalaMock % "test",
-      scalaTest % "test,it",
+      scalaTest % "test",
       slick
     ),
     buildInfoOptions += BuildInfoOption.BuildTime,
@@ -142,8 +139,21 @@ val testApp = (project in file("test-app"))
   )
 ).dependsOn(app % "compile->test")
 
+val integrationTest = (project in file("integration-test"))
+  .settings(commonSettings: _*)
+  .settings(Defaults.itSettings)
+  .settings(Seq(
+    name := "hyperion-integration-tests",
+    libraryDependencies ++= Seq(
+      restAssured % "test",
+      restAssuredScala % "test",
+      scalaTest % "test",
+    )
+  )
+).dependsOn(app % "test->test")
+
 val root = (project in file("."))
   .settings(commonSettings: _*)
   .settings(sonarSettings)
   .settings(aggregate in sonarScan := false)
-  .aggregate(app, testApp)
+  .aggregate(app, integrationTest, testApp)
