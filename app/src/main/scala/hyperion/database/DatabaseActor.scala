@@ -69,7 +69,7 @@ class DatabaseActor(meterReadingDAO: MeterReadingDAO) extends Actor with ActorLo
     val startDate = LocalDate.of(year, month, 1)
     val endDate = startDate.plusMonths(1).minusDays(1)
 
-    retrieveMeterReadingByDateRange(sender, startDate, endDate)
+    retrieveMeterReadingByDateRange(receiver, startDate, endDate)
   }
 
   private def storeMeterReading(reading: HistoricalMeterReading) = {
