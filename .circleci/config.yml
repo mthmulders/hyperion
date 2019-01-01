@@ -51,9 +51,9 @@ jobs:
       - run:
           name: Prepare SonarCloud analysis
           command: |
-            mkdir ~/tools
-            pushd ~/tools
-            if [ ! -d "sonar-scanner-3.2.0.1227-linux" ]; then
+            if [[ ! -d "~/tools/sonar-scanner-3.2.0.1227-linux" ]]; then
+              mkdir -p ~/tools
+              pushd ~/tools
               wget https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-3.2.0.1227-linux.zip
               unzip sonar-scanner-cli-3.2.0.1227-linux.zip
             fi
