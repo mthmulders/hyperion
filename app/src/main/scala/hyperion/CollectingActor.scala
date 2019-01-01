@@ -48,8 +48,8 @@ class CollectingActor(receiver: ActorRef) extends Actor with ActorLogging {
       case (None, None)       => ;
       case (None, Some(last)) => lineBuffer --= lineBuffer.slice(0, lineBuffer.indexOf(last) + 1)
       case (Some(_), None)    => ;
-      case (Some(_), Some(_)) =>
-        val telegramLines = lineBuffer.slice(0, lineBuffer.indexOf(lastLine.get) + 1)
+      case (Some(_), Some(last)) =>
+        val telegramLines = lineBuffer.slice(0, lineBuffer.indexOf(last) + 1)
         lineBuffer --= telegramLines
         processBuffer(telegramLines)
     }
