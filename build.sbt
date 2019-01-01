@@ -76,11 +76,11 @@ val sonarSettings = Seq(
     "sonar.scala.version" -> "2.12.8",
 
     "app.sonar.scala.coverage.reportPaths" -> "target/scala-2.12/scoverage-report/scoverage.xml",
-    "app.sonar.scala.scapegoat.reportPath" -> "target/scala-2.12/scapegoat-report/scapegoat.xml",
+    "app.sonar.scala.scapegoat.reportPaths" -> "target/scala-2.12/scapegoat-report/scapegoat-scalastyle.xml",
     "app.sonar.sources" -> "src/main/scala",
 
     "test-app.sonar.scala.coverage.reportPaths" -> "target/scala-2.12/scoverage-report/scoverage.xml",
-    "test-app.sonar.scala.scapegoat.reportPath" -> "target/scala-2.12/scapegoat-report/scapegoat.xml",
+    "test-app.sonar.scala.scapegoat.reportPaths" -> "target/scala-2.12/scapegoat-report/scapegoat-scalastyle.xml",
     "test-app.sonar.sources" -> "src/main/scala",
   )
 )
