@@ -40,10 +40,6 @@ jobs:
           name: Prepare data for integration tests
           command: psql -h localhost -p 5432 -f scripts/database/test-data.sql circle_test
       - run:
-          name: Work-around sbt-codacy-coverage issue 20
-          # https://github.com/codacy/sbt-codacy-coverage/issues/20
-          command: mkdir -p target/scala-2.11/coverage-report/
-      - run:
           name: Run tests (with coverage)
           # Specify different config file, see https://stackoverflow.com/a/21433585
           command: sbt -Dconfig.file=.circleci/environment.conf coverage test coverageOff
