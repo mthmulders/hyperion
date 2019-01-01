@@ -13,10 +13,10 @@ object RecentHistoryActor {
   case object Sleeping extends State
   case object Receiving extends State
   sealed trait Data
-  case class History(telegrams: RingBuffer[P1Telegram]) extends Data
+  final case class History(telegrams: RingBuffer[P1Telegram]) extends Data
 
   case object GetRecentHistory
-  case class RecentReadings(telegrams: immutable.Vector[P1Telegram])
+  final case class RecentReadings(telegrams: immutable.Vector[P1Telegram])
 }
 
 /**

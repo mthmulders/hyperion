@@ -15,12 +15,12 @@ import java.time.OffsetDateTime
   * @param elecProdLow Low tariff electricity production meter reading in kWh.
   * @param elecProdNormal Normal tariff electricity production meter reading in kWh.
   */
-case class MeterReading(ts: OffsetDateTime,
-                        tariff: String,
-                        elecCon: BigDecimal,
-                        elecProd: BigDecimal,
-                        gas: Option[BigDecimal],
-                        elecConsLow: Option[BigDecimal],
-                        elecConsNormal: BigDecimal,
-                        elecProdLow: Option[BigDecimal],
-                        elecProdNormal: BigDecimal)
+final case class MeterReading(ts: OffsetDateTime,
+                              tariff: String,
+                              elecCon: BigDecimal,
+                              elecProd: BigDecimal,
+                              gas: Option[BigDecimal],
+                              elecConsLow: Option[BigDecimal],
+                              elecConsNormal: BigDecimal,
+                              elecProdLow: Option[BigDecimal],
+                              elecProdNormal: BigDecimal)

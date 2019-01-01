@@ -7,7 +7,7 @@ import akka.serial.{Serial, SerialSettings}
 import MeterAgent._
 
 object MeterAgent {
-  case class IncomingData(data: String)
+  final case class IncomingData(data: String)
 }
 
 /**

@@ -15,9 +15,9 @@ import scala.concurrent.ExecutionContextExecutor
 import scala.util.{Failure, Success}
 
 object UsageCalculationActor {
-  case class UsageDataRecord(date: LocalDate, gas: BigDecimal, electricityNormal: BigDecimal, electricityLow: BigDecimal)
+  final case class UsageDataRecord(date: LocalDate, gas: BigDecimal, electricityNormal: BigDecimal, electricityLow: BigDecimal)
 
-  case class CalculateUsage(start: LocalDate, end: LocalDate)
+  final case class CalculateUsage(start: LocalDate, end: LocalDate)
 
   def props(database: ActorRef): Props = {
     Props(new UsageCalculationActor(database))

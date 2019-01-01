@@ -13,11 +13,11 @@ import akka.actor.{Actor, ActorLogging, ActorRef}
 import hyperion.database.DatabaseActor._
 
 object DatabaseActor {
-  case class RetrieveMeterReadingForDate(date: LocalDate)
-  case class RetrieveMeterReadingForDateRange(start: LocalDate, end: LocalDate)
-  case class RetrieveMeterReadingForMonth(month: Month, year: Int)
-  case class RetrievedMeterReadings(readings: Seq[HistoricalMeterReading])
-  case class StoreMeterReading(reading: HistoricalMeterReading)
+  final case class RetrieveMeterReadingForDate(date: LocalDate)
+  final case class RetrieveMeterReadingForDateRange(start: LocalDate, end: LocalDate)
+  final case class RetrieveMeterReadingForMonth(month: Month, year: Int)
+  final case class RetrievedMeterReadings(readings: Seq[HistoricalMeterReading])
+  final case class StoreMeterReading(reading: HistoricalMeterReading)
 }
 
 class DatabaseActor(meterReadingDAO: MeterReadingDAO) extends Actor with ActorLogging {

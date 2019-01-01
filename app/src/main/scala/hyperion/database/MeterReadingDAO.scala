@@ -10,7 +10,7 @@ import scala.util.{Failure, Success}
 import org.slf4j.LoggerFactory
 import slick.jdbc.PostgresProfile.api._
 
-case class HistoricalMeterReading (
+final case class HistoricalMeterReading (
   recordDate: LocalDate,
   gas: BigDecimal,
   electricityNormal: BigDecimal,
