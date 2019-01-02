@@ -34,7 +34,7 @@ class RecentHistoryActor(messageDistributor: ActorRef)
   }
 
   private[this] val historyLimit = (settings.history.limit / settings.history.resolution).toInt
-  log.info(s"Allocating buffer for $historyLimit entries")
+  log.info(s"Keeping readings every ${settings.history.resolution} for ${settings.history.limit} - allocating buffer for $historyLimit entries")
 
   startWith(Receiving, History(RingBuffer[P1Telegram](historyLimit)))
 

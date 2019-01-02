@@ -17,7 +17,7 @@ class AppSettingsSpec extends BaseSpec {
   "Inspecting 'history'" should {
     "return correct values" in {
       settings.history.resolution  shouldBe (100 millis)
-      settings.history.limit       shouldBe (24 hours)
+      settings.history.limit       shouldBe (1 minutes)
     }
   }
 

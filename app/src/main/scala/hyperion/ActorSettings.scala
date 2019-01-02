@@ -24,7 +24,7 @@ class AppSettingsImpl(config: Config) extends Extension {
 
   object history {
     val resolution        = hyperion getDuration("history.resolution", MILLISECONDS) millis
-    val limit             = hyperion getDuration("history.limit", HOURS) hours
+    val limit             = hyperion getDuration("history.limit", MINUTES) minutes
   }
 
   object database {

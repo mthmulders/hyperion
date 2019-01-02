@@ -19,7 +19,6 @@ class RecentHistoryActorSpec extends BaseAkkaSpec {
 
     "go to sleep after having received one Telegram" in {
       // Arrange
-      val messageDispatcher = TestProbe("message-distributor")
       val telegram = TestSupport.randomTelegram()
 
       // Act
@@ -32,8 +31,6 @@ class RecentHistoryActorSpec extends BaseAkkaSpec {
     "wake up after resolution time" in {
       // Arrange
       // Sleep time is set in src/test/resources/application.conf: 100 millis
-      val messageDispatcher = TestProbe("message-distributor")
-      val telegram = TestSupport.randomTelegram()
       val history = RingBuffer[P1Telegram](2)
 
       // Act
@@ -47,7 +44,6 @@ class RecentHistoryActorSpec extends BaseAkkaSpec {
     "store telegrams in memory" in {
       // Arrange
       val telegram = TestSupport.randomTelegram()
-      val history = RingBuffer[P1Telegram](2)
 
       // Act
       rha ! TelegramReceived(telegram)
