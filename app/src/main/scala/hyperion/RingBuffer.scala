@@ -12,7 +12,8 @@ import scala.reflect.ClassTag
   *
   * @param limit Maximum number of elements in this collection.
   */
-class RingBuffer[T](limit: Int)(implicit m: ClassTag[T]) extends mutable.AbstractBuffer[T] with GenTraversable[T] {
+class RingBuffer[T](limit: Int) extends mutable.AbstractSeq[T] {
+  val x = List()
   private[this] val items = Array.fill[Option[T]](limit)(None)
   private[this] val cursor = new AtomicInteger(0)
   private[this] val monitor = new ReentrantReadWriteLock()
@@ -42,26 +43,9 @@ class RingBuffer[T](limit: Int)(implicit m: ClassTag[T]) extends mutable.Abstrac
     }
   }
 
-  override def clear(): Unit = {
-    // Not needed, as this implementation will overwrite previous items either way.
-  }
-
   override def length: Int = items.count(_.isDefined)
 
-  /**
-    * Removes the element at a given index from this buffer.
-    * Maintains the contract, but does not actually remove the element.
-    *
-    * @param n the index which refers to the element to delete.
-    * @return the previous element at index `n`.
-    */
-  override def remove(n: Int): T = apply(n)
-
-  /** @inheritdoc */
-  override def +=:(elem: T): RingBuffer.this.type = ???
-
-  /** @inheritdoc */
-  override def +=(elem: T): RingBuffer.this.type = {
+  def +=(elem: T): RingBuffer.this.type = {
     monitor.writeLock().lock()
     try {
       items.update(cursor.get(), Some(elem))
@@ -73,14 +57,8 @@ class RingBuffer[T](limit: Int)(implicit m: ClassTag[T]) extends mutable.Abstrac
   }
 
   /** @inheritdoc */
-  override def insertAll(n: Int, elems: scala.Traversable[T]): Unit = {
-    val elemsList = elems.seq.toList
-    for (i <- 0 until elems.size) update(n + i, elemsList(i))
-  }
-
-  /** @inheritdoc */
   override def iterator: scala.Iterator[T] = {
-    new RingBufferIterator[T](this, cursor.get(), monitor)
+    new RingBufferIterator[T](this, monitor)
   }
 }
 
@@ -90,7 +68,7 @@ object RingBuffer {
   }
 }
 
-class RingBufferIterator[T](src: RingBuffer[T], startPos: Int, monitor: ReentrantReadWriteLock) extends Iterator[T] {
+class RingBufferIterator[T](src: RingBuffer[T], monitor: ReentrantReadWriteLock) extends Iterator[T] {
   private[this] val cursor = new AtomicInteger(0)
 
   override def hasNext: Boolean = cursor.get() < src.length

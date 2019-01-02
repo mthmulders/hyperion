@@ -28,6 +28,7 @@ class RingBufferSpec extends BaseSpec {
 
       // Assert
       buffer should contain inOrderOnly (2, 3, 4)
+      buffer should not contain 1
     }
 
     "correctly report the number of items it contains when it is not fully occupied" in {
@@ -67,6 +68,8 @@ class RingBufferSpec extends BaseSpec {
 
       // Assert
       buffer should contain inOrderOnly ("3", "4", "5")
+      buffer should not contain "1"
+      buffer should not contain "2"
     }
 
     "replace items in the buffer without touching other elements" in {
@@ -80,21 +83,7 @@ class RingBufferSpec extends BaseSpec {
 
       // Assert
       buffer should contain inOrderOnly ("foo", "2")
-    }
-
-    "insert multiple elements in one call without touching other elements" in {
-      // Arrange
-      val buffer = RingBuffer[String](4)
-      buffer += "1"
-      buffer += "2"
-      buffer += "3"
-      buffer += "4"
-
-      // Act
-      buffer.insertAll(1, Seq("a", "b"))
-
-      // Assert
-      buffer should contain inOrderOnly ("1", "a", "b", "4")
+      buffer should not contain "1"
     }
 
     "should throw an exception when an element is accessed that is not yet initialised" in {
