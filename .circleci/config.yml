@@ -41,6 +41,8 @@ jobs:
           command: psql -h localhost -p 5432 -f scripts/database/test-data.sql circle_test
       - run:
           name: Run tests (with coverage)
+          environment:
+            SBT_OPTS: -Xms512m -Xmx3G
           # Specify different config file, see https://stackoverflow.com/a/21433585
           command: sbt -Dconfig.file=.circleci/environment.conf coverage test coverageOff
 
@@ -62,6 +64,8 @@ jobs:
 
       - run:
           name: Run code analysis
+          environment:
+            SBT_OPTS: -Xms512m -Xmx3G
           command: |
             sbt coverageReport scapegoat
             SONAR_SCANNER_HOME=~/tools/sonar-scanner-3.2.0.1227-linux sbt -Dsonar.login=$SONAR_LOGIN sonarScan
@@ -72,6 +76,8 @@ jobs:
 
       - run:
           name: Create Debian packages
+          environment:
+            SBT_OPTS: -Xms512m -Xmx3G
           command: sbt debian:packageBin
 
       - run:
