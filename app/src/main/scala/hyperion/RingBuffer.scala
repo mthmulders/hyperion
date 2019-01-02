@@ -9,7 +9,7 @@ import scala.reflect.ClassTag
 /**
   * A collection that is limited in size and will purge the oldest items when the limit is exceeded.
   * This allows for efficient memory allocation and drops the need to re-allocate arrays.
- *
+  *
   * @param limit Maximum number of elements in this collection.
   */
 class RingBuffer[T](limit: Int)(implicit m: ClassTag[T]) extends mutable.AbstractBuffer[T] with GenTraversable[T] {
@@ -24,7 +24,7 @@ class RingBuffer[T](limit: Int)(implicit m: ClassTag[T]) extends mutable.Abstrac
   override def apply(n: Int): T = {
     monitor.readLock().lock()
     try {
-      items(positionInArray(n)).getOrElse(null.asInstanceOf[T])
+      items(positionInArray(n)).get
     } finally {
       monitor.readLock().unlock()
     }
@@ -80,7 +80,7 @@ class RingBuffer[T](limit: Int)(implicit m: ClassTag[T]) extends mutable.Abstrac
 }
 
 object RingBuffer {
-  def apply[T: ClassTag](size: Int) = {
+  def apply[T: ClassTag](size: Int): RingBuffer[T] = {
     new RingBuffer[T](size)
   }
 }
