@@ -30,6 +30,16 @@ jobs:
           environment:
             DOCKERIZE_VERSION: v0.5.0
       - run:
+          name: Install Sonar Scanner
+          command: |
+            mkdir -p ~/tools
+            pushd ~/tools
+            wget https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-$SONAR_SCANNER_VERSION-linux.zip
+            unzip -qo sonar-scanner-cli-$SONAR_SCANNER_VERSION-linux.zip
+            popd
+          environment:
+            SONAR_SCANNER_VERSION: 3.2.0.1227
+      - run:
           name: Wait for database
           command: dockerize -wait tcp://localhost:5432 -timeout 1m
 
@@ -45,15 +55,6 @@ jobs:
             SBT_OPTS: -Xms512m -Xmx3G
           # Specify different config file, see https://stackoverflow.com/a/21433585
           command: sbt -Dconfig.file=.circleci/environment.conf coverage test coverageOff
-
-      - run:
-          name: Prepare SonarCloud analysis
-          command: |
-            mkdir -p ~/tools
-            pushd ~/tools
-            wget https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-3.2.0.1227-linux.zip
-            unzip -qo sonar-scanner-cli-3.2.0.1227-linux.zip
-            popd
 
       - save_cache:
           paths:
