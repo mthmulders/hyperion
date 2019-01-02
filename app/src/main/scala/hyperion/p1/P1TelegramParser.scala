@@ -23,7 +23,6 @@ object P1TelegramParser extends RegexParsers {
   }
   def asBigDecimal(input: String): BigDecimal = BigDecimal(input)
   def asInt(input: String): Int = input.toInt
-  def asNone(input: String): Option[Nothing] = None
 
   private[this] val MAKE                 = "/" ~> "[A-Za-z0-9]{3}".r
   private[this] val IDENTIFICATION       = "5" ~> ".*".r

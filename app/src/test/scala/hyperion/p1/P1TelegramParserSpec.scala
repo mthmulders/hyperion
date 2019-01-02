@@ -35,10 +35,6 @@ class P1TelegramParserSpec extends BaseSpec with Inside with TryValues {
       asInt("5") shouldBe 5
     }
 
-    "parse voids" in {
-      asNone("Hello") shouldBe None
-    }
-
     "parse a complete telegram" in {
       // Arrange
       val source = Source.fromInputStream(getClass.getResourceAsStream("/valid-telegram1.txt"))
