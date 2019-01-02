@@ -34,7 +34,7 @@ class DailyHistoryActor(messageDistributor: ActorRef,
     extends FSM[DailyHistoryActor.State, DailyHistoryActor.Data]
     with ActorLogging with AppSettings {
 
-  override def preStart: Unit = {
+  override def preStart(): Unit = {
     messageDistributor ! RegisterReceiver
 
     scheduleNextAwakening()
