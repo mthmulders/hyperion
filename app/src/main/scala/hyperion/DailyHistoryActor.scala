@@ -56,7 +56,12 @@ class DailyHistoryActor(messageDistributor: ActorRef,
 
   private def prepareMeterReading(telegram: P1Telegram) = {
     val today = LocalDate.now()
-    val gas = telegram.data.devices.find(_.isInstanceOf[P1GasMeter]).map(_.asInstanceOf[P1GasMeter].gasDelivered).orNull
+
+    val gas = telegram.data.devices.map({
+      case P1GasMeter(_, _, _, gasDelivered) => gasDelivered
+      case _ => BigDecimal.apply(0)
+    }).sum
+
     val electricityNormal = telegram.data.totalConsumption(P1Constants.normalTariff)
     val electricityLow = telegram.data.totalConsumption(P1Constants.lowTariff)
 
