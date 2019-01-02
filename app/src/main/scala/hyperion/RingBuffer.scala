@@ -24,7 +24,10 @@ class RingBuffer[T](limit: Int)(implicit m: ClassTag[T]) extends mutable.Abstrac
   override def apply(n: Int): T = {
     monitor.readLock().lock()
     try {
-      items(positionInArray(n)).get
+      items(positionInArray(n)) match {
+        case Some(item) => item
+        case None => throw new NoSuchElementException
+      }
     } finally {
       monitor.readLock().unlock()
     }
