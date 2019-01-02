@@ -1,6 +1,6 @@
 package hyperion.rest
 
-import hyperion.p1.{P1Constants, P1GasMeter, P1Telegram}
+import hyperion.p1.{P1Constants, P1ExtraDevice, P1GasMeter, P1Telegram}
 
 /**
   * Provides implicit conversions to data structures for the REST API.
@@ -12,7 +12,7 @@ trait HyperionConversions {
     * @return a [[MeterReading]] value
     */
   implicit def p1Telegram2MeterReading(telegram: P1Telegram): MeterReading = {
-    val gasUsage = {
+    val gasUsage: PartialFunction[P1ExtraDevice, BigDecimal] = {
       case P1GasMeter(_, _, _, gasDelivered) => gasDelivered
     }
     val gasConsumption: Option[BigDecimal] = telegram.data.devices.collect(gasUsage).reduceOption(_ + _)
