@@ -42,7 +42,9 @@ class RingBuffer[T](limit: Int)(implicit m: ClassTag[T]) extends mutable.Abstrac
     }
   }
 
-  override def clear(): Unit = {}
+  override def clear(): Unit = {
+    // Not needed, as this implementation will overwrite previous items either way.
+  }
 
   override def length: Int = items.count(_.isDefined)
 
