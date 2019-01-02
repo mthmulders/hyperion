@@ -17,6 +17,7 @@ object P1TelegramParser extends RegexParsers {
 
   private val dateFormat = DateTimeFormatter.ofPattern("yyMMddHHmmss")
   private val currentTimeZone = ZoneId.systemDefault()
+  private val decimalNumber = """\d*\.?\d*""".r
   def asTimestamp(input: String): OffsetDateTime = {
     val localDateTime = LocalDateTime.parse(input, dateFormat)
     localDateTime.atOffset(currentTimeZone.getRules.getOffset(localDateTime))
@@ -39,17 +40,17 @@ object P1TelegramParser extends RegexParsers {
   }
 
   private[this] val TARIFF_INDICATOR       = "0-0:96.14.0(" ~> """\d{4}""".r     <~ ")"
-  private[this] val ELEC_CONS_1            = "1-0:1.8.1("   ~> """\d*\.?\d*""".r <~ "*kWh)"        ^^ { asBigDecimal }
-  private[this] val ELEC_CONS_2            = "1-0:1.8.2("   ~> """\d*\.?\d*""".r <~ "*kWh)"        ^^ { asBigDecimal }
-  private[this] val ELEC_PROD_1            = "1-0:2.8.1("   ~> """\d*\.?\d*""".r <~ "*kWh)"        ^^ { asBigDecimal }
-  private[this] val ELEC_PROD_2            = "1-0:2.8.2("   ~> """\d*\.?\d*""".r <~ "*kWh)"        ^^ { asBigDecimal }
-  private[this] val CURRENT_CONS           = "1-0:1.7.0("   ~> """\d*\.?\d*""".r <~ "*kW)"         ^^ { asBigDecimal }
-  private[this] val CURRENT_PROD           = "1-0:2.7.0("   ~> """\d*\.?\d*""".r <~ "*kW)"         ^^ { asBigDecimal }
+  private[this] val ELEC_CONS_1            = "1-0:1.8.1("   ~> decimalNumber <~ "*kWh)"        ^^ { asBigDecimal }
+  private[this] val ELEC_CONS_2            = "1-0:1.8.2("   ~> decimalNumber <~ "*kWh)"        ^^ { asBigDecimal }
+  private[this] val ELEC_PROD_1            = "1-0:2.8.1("   ~> decimalNumber <~ "*kWh)"        ^^ { asBigDecimal }
+  private[this] val ELEC_PROD_2            = "1-0:2.8.2("   ~> decimalNumber <~ "*kWh)"        ^^ { asBigDecimal }
+  private[this] val CURRENT_CONS           = "1-0:1.7.0("   ~> decimalNumber <~ "*kW)"         ^^ { asBigDecimal }
+  private[this] val CURRENT_PROD           = "1-0:2.7.0("   ~> decimalNumber <~ "*kW)"         ^^ { asBigDecimal }
 
   private[this] val EXTERNAL_DEVICE_ID                    = "0-"                     ~> "[1-4]".r         <~ """:24.1.0\(\d{2,3}\)""".r ^^ { asInt }
-  private[this] val EXTERNAL_DEVICE_EQUIPMENT_ID          = """0-[1-4]:96.1.0\(""".r ~> """\w{0,96}""".r    <~ ")"
+  private[this] val EXTERNAL_DEVICE_EQUIPMENT_ID          = """0-[1-4]:96.1.0\(""".r ~> """\w{0,96}""".r  <~ ")"
   private[this] val EXTERNAL_DEVICE_GAS_READING_TIMESTAMP = """0-[1-4]:24.2.1\(""".r ~> """\d{12}""".r    <~ """[SW]\)""".r             ^^ { asTimestamp }
-  private[this] val EXTERNAL_DEVICE_GAS_READING_VALUE     = "("                      ~> """\d*\.?\d*""".r <~ "*m3)"                     ^^ { asBigDecimal }
+  private[this] val EXTERNAL_DEVICE_GAS_READING_VALUE     = "("                      ~> decimalNumber     <~ "*m3)"                     ^^ { asBigDecimal }
   private[this] val EXTERNAL_DEVICE_GAS_VALVE_POSITION    = """0-[1-4]:24.4.0\(""".r ~> """\d{1}""".r     <~ ")"                   ^^ { asInt }
   private[this] val GAS_METER = EXTERNAL_DEVICE_ID ~ EXTERNAL_DEVICE_EQUIPMENT_ID ~ EXTERNAL_DEVICE_GAS_READING_TIMESTAMP ~
     EXTERNAL_DEVICE_GAS_READING_VALUE ~ EXTERNAL_DEVICE_GAS_VALVE_POSITION.? ^^ {
