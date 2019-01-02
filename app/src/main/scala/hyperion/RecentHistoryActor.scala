@@ -40,11 +40,10 @@ class RecentHistoryActor(messageDistributor: ActorRef)
 
   when(Receiving) {
     case Event(TelegramReceived(telegram), History(history)) =>
-      log.debug("Sleeping for {}", settings.history.resolution)
-      goto(Sleeping) using History(history += telegram)
-    case Event(GetRecentHistory, History(history)) =>
-      sender() ! RecentReadings(history.toVector)
-      stay()
+      log.debug("Adding received telegram {} to {} items in history", telegram, history.size)
+      val data = history += telegram
+      log.debug("Sleeping for {}, system has {} records buffered", settings.history.resolution, data.size)
+      goto(Sleeping) using History(data)
     case Event(StateTimeout, _) =>
       // Ignored
       stay()
@@ -53,12 +52,18 @@ class RecentHistoryActor(messageDistributor: ActorRef)
   when(Sleeping) {
     case Event(_: TelegramReceived, _) =>
       stay()
-    case Event(GetRecentHistory, History(history)) =>
-      sender() ! RecentReadings(history.toVector)
-      stay()
     case Event(StateTimeout, history) =>
       log.debug("Awaking to receive new meter reading")
       goto(Receiving) using history
+  }
+
+  whenUnhandled {
+    // common code for both states
+    case Event(GetRecentHistory, History(history)) =>
+      val data = history.toVector
+      log.debug("Sending back {} item(s) in buffer", data.size)
+      sender() ! RecentReadings(data)
+      stay()
   }
 
   setTimer("recent-awake", StateTimeout, settings.history.resolution, repeat = true)
