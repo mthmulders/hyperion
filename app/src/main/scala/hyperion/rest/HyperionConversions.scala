@@ -12,9 +12,10 @@ trait HyperionConversions {
     * @return a [[MeterReading]] value
     */
   implicit def p1Telegram2MeterReading(telegram: P1Telegram): MeterReading = {
-    val gasConsumption = telegram.data.devices
-      .find(_.isInstanceOf[P1GasMeter])
-      .map(_.asInstanceOf[P1GasMeter].gasDelivered)
+    val gasUsage = {
+      case P1GasMeter(_, _, _, gasDelivered) => gasDelivered
+    }
+    val gasConsumption: Option[BigDecimal] = telegram.data.devices.collect(gasUsage).reduceOption(_ + _)
 
     MeterReading(
       telegram.metadata.timestamp,
