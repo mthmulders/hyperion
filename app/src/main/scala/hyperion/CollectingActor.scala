@@ -45,9 +45,9 @@ class CollectingActor(receiver: ActorRef) extends Actor with ActorLogging {
     val lastLine = lineBuffer.find(s => s.length > 0 && s.charAt(0) == '!')
 
     (firstLine, lastLine) match {
-      case (None, None)       => ;
+      case (None, None)       => /* buffer doesn't contain a complete telegram yet */
       case (None, Some(last)) => lineBuffer --= lineBuffer.slice(0, lineBuffer.indexOf(last) + 1)
-      case (Some(_), None)    => ;
+      case (Some(_), None)    => /* buffer doesn't contain a complete telegram yet */
       case (Some(_), Some(last)) =>
         val telegramLines = lineBuffer.slice(0, lineBuffer.indexOf(last) + 1)
         lineBuffer --= telegramLines
