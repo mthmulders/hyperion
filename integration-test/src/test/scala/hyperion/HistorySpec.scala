@@ -1,17 +1,19 @@
 package hyperion
 
-import io.restassured.RestAssured.when
-import io.restassured.module.scala.RestAssuredSupport.AddThenToResponse
+import io.restassured.RestAssured.given
 import org.hamcrest.Matchers._
 
 class HistorySpec extends BaseIntegrationSpec {
   "The History API" should {
     "expose meter readings by date" should {
       "return meter reading if data is present" in {
+        given().
+          port(port).
+
         when().
           get("/history?date=2017-01-01").
 
-        Then().
+        `then`().
           statusCode(200).
           body("recordDate", equalTo("2017-01-01")).
           body("gas", is(1.5f)).
@@ -20,20 +22,26 @@ class HistorySpec extends BaseIntegrationSpec {
       }
 
       "return \'Not Found\' if no data is present" in {
+        given().
+          port(port).
+
         when().
           get("/history?date=2016-12-31").
 
-        Then().
+        `then`().
           statusCode(404)
       }
     }
 
     "expose meter readings by month" should {
       "return meter reading if data is present" in {
+        given().
+          port(port).
+
         when().
           get("/history?month=01&year=2017").
 
-        Then().
+        `then`().
           statusCode(200).
           body("[0].recordDate", equalTo("2017-01-01")).
           body("[0].gas", is(1.5f)).
@@ -42,10 +50,13 @@ class HistorySpec extends BaseIntegrationSpec {
       }
 
       "return \'Not Found\' if no data is present" in {
+        given().
+          port(port).
+
         when().
           get("/history?month=12&year=2016").
 
-        Then().
+        `then`().
           statusCode(404)
       }
     }

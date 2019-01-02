@@ -27,10 +27,10 @@ abstract class BaseIntegrationSpec
     .jsonConfig(jsonConfig().numberReturnType(FLOAT_AND_DOUBLE))
 
   private[this] val logger = LoggerFactory.getLogger(getClass)
-  private[this] var app: IntegrationTestApp = _
+  protected[this] var app: IntegrationTestApp = _
+  protected[this] val port: Int = BaseIntegrationSpec.port.getAndIncrement
 
   override def beforeAll(): Unit = {
-    val port = BaseIntegrationSpec.port.getAndIncrement
     logger.info(s"Starting new instance of Hyperion for ${getClass.getSimpleName} at port $port")
     app = IntegrationTestApp(port)
   }
