@@ -10,7 +10,7 @@ val postgresqlVer = "42.2.5"
 val restAssuredVer = "3.2.0"
 val scalaMockVer = "3.6.0"
 val scalaTestVer = "3.0.5"
-val slickVer = "3.2.3"
+val slickVer = "3.3.0"
 val sprayJsonVer = "1.3.3"
 val sprayWsVer = "0.1.4"
 
