@@ -57,7 +57,7 @@ To run the tests locally, issue
 
     sbt \
         -Dconfig.file=app/src/test/resources/environment.conf \
-        app/it:test
+        integrationTest/test
 
 
 # License
