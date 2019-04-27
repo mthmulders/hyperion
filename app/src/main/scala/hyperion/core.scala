@@ -2,7 +2,7 @@ package hyperion
 
 import scala.concurrent.duration.DurationInt
 import scala.concurrent.ExecutionContext.Implicits.global
-import akka.actor.{ActorSystem, Props}
+import akka.actor.{ActorSystem, DeadLetter, Props}
 import akka.event.Logging
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.server.Route
@@ -46,6 +46,9 @@ trait BootedCore extends Core with HttpApi {
   * ``BootedCore`` for running code or ``TestKit`` for unit and integration tests.
   */
 trait HyperionActors { this: Core =>
+  val deadLetterLogger = system.actorOf(DeadLetterLoggingActor.props(), "dead-letter-logging")
+  system.eventStream.subscribe(deadLetterLogger, classOf[DeadLetter])
+
   val messageDistributor = system.actorOf(Props(new MessageDistributor()), "receiver")
   val collectingActor = system.actorOf(Props(new CollectingActor(messageDistributor)), "collecting-actor")
   val meterAgent = system.actorOf(Props(new MeterAgent(collectingActor)), "meter-agent")
