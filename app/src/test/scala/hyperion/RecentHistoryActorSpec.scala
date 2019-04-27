@@ -6,8 +6,9 @@ import hyperion.RecentHistoryActor.{GetRecentHistory, History, Receiving, Recent
 import hyperion.p1.{P1Telegram, TelegramReceived}
 import org.scalatest.OneInstancePerTest
 import org.scalatest.concurrent.Eventually
+import org.scalatest.time.SpanSugar
 
-class RecentHistoryActorSpec extends BaseAkkaSpec with Eventually with OneInstancePerTest {
+class RecentHistoryActorSpec extends BaseAkkaSpec with Eventually with OneInstancePerTest with SpanSugar {
   private val messageDistributor: TestProbe = TestProbe("message-distributor")
 
   private val rha = TestFSMRef(new RecentHistoryActor(messageDistributor.ref), "recent-history-actor")
@@ -26,7 +27,7 @@ class RecentHistoryActorSpec extends BaseAkkaSpec with Eventually with OneInstan
       rha ! TelegramReceived(telegram)
 
       // Assert
-      eventually {
+      eventually(timeout(5 seconds), interval(500 millis)) {
         rha.stateName shouldBe Sleeping
       }
     }
@@ -40,7 +41,7 @@ class RecentHistoryActorSpec extends BaseAkkaSpec with Eventually with OneInstan
       rha.setState(Sleeping, History(history))
 
       // Assert
-      eventually {
+      eventually(timeout(5 seconds), interval(500 millis)) {
         rha.stateName shouldBe Receiving
       }
     }
@@ -53,7 +54,7 @@ class RecentHistoryActorSpec extends BaseAkkaSpec with Eventually with OneInstan
       rha ! TelegramReceived(telegram)
 
       // Assert
-      eventually {
+      eventually(timeout(5 seconds), interval(500 millis)) {
         rha.stateData shouldBe an[History]
         rha.stateData.asInstanceOf[History].telegrams.length shouldBe 1
       }
@@ -69,7 +70,7 @@ class RecentHistoryActorSpec extends BaseAkkaSpec with Eventually with OneInstan
       client.send(rha, GetRecentHistory)
 
       // Assert
-      eventually {
+      eventually(timeout(5 seconds), interval(500 millis)) {
         val result = client.expectMsgClass(classOf[RecentReadings])
         result.telegrams.length should (be > 0 and be <= 10)
       }
