@@ -13,6 +13,9 @@ class RecentHistoryActorSpec extends BaseAkkaSpec with Eventually with OneInstan
 
   private val rha = TestFSMRef(new RecentHistoryActor(messageDistributor.ref), "recent-history-actor")
 
+  private val interval = interval(500 millis)
+  private val timeout = timeout(10 seconds)
+
   "The Recent History Actor" should {
     "register itself with the Message Distributor" in {
       // Assert
@@ -27,7 +30,7 @@ class RecentHistoryActorSpec extends BaseAkkaSpec with Eventually with OneInstan
       rha ! TelegramReceived(telegram)
 
       // Assert
-      eventually(timeout(5 seconds), interval(500 millis)) {
+      eventually(timeout, interval) {
         rha.stateName shouldBe Sleeping
       }
     }
@@ -41,7 +44,7 @@ class RecentHistoryActorSpec extends BaseAkkaSpec with Eventually with OneInstan
       rha.setState(Sleeping, History(history))
 
       // Assert
-      eventually(timeout(5 seconds), interval(500 millis)) {
+      eventually(timeout, interval) {
         rha.stateName shouldBe Receiving
       }
     }
@@ -54,7 +57,7 @@ class RecentHistoryActorSpec extends BaseAkkaSpec with Eventually with OneInstan
       rha ! TelegramReceived(telegram)
 
       // Assert
-      eventually(timeout(5 seconds), interval(500 millis)) {
+      eventually(timeout, interval) {
         rha.stateData shouldBe an[History]
         rha.stateData.asInstanceOf[History].telegrams.length shouldBe 1
       }
@@ -70,7 +73,7 @@ class RecentHistoryActorSpec extends BaseAkkaSpec with Eventually with OneInstan
       client.send(rha, GetRecentHistory)
 
       // Assert
-      eventually(timeout(5 seconds), interval(500 millis)) {
+      eventually(timeout, interval) {
         val result = client.expectMsgClass(classOf[RecentReadings])
         result.telegrams.length should (be > 0 and be <= 10)
       }
