@@ -16,7 +16,7 @@ object AppSettings extends ExtensionId[AppSettingsImpl] with ExtensionIdProvider
 }
 
 class AppSettingsImpl(config: Config) extends Extension {
-  private val hyperion = config getConfig "hyperion"
+  protected val hyperion = config getConfig "hyperion"
 
   object api {
     val port              = hyperion getInt    "api.port"

@@ -7,12 +7,13 @@ import scala.collection.immutable.Seq
 import scala.concurrent.ExecutionContextExecutor
 import scala.concurrent.duration.DurationInt
 import scala.util.{Failure, Success}
-
 import akka.actor.{Actor, ActorLogging, ActorRef}
-
+import hyperion.AppSettings
 import hyperion.database.DatabaseActor._
+import slick.jdbc.JdbcBackend.Database
 
 object DatabaseActor {
+  final case object GetDatabaseInfo
   final case class RetrieveMeterReadingForDate(date: LocalDate)
   final case class RetrieveMeterReadingForDateRange(start: LocalDate, end: LocalDate)
   final case class RetrieveMeterReadingForMonth(month: Month, year: Int)
@@ -20,20 +21,44 @@ object DatabaseActor {
   final case class StoreMeterReading(reading: HistoricalMeterReading)
 }
 
-class DatabaseActor(meterReadingDAO: MeterReadingDAO) extends Actor with ActorLogging {
+class DatabaseActor extends Actor with ActorLogging with AppSettings {
   implicit val executionContext: ExecutionContextExecutor = context.dispatcher
 
+  log.info("Connecting to database {}", settings.database.url)
+  private[this] val db = Database.forURL(
+    url = settings.database.url,
+    user = settings.database.user,
+    password = settings.database.password,
+    driver = settings.database.driver
+  )
+
+  private[this] val dao = createDao()
+  protected def createDao() = new MeterReadingDAO(db)
+
+  private[this] val session = db.createSession()
+  log.info("Database connection established: {} {}",
+    session.metaData.getDatabaseProductName: Any,
+    session.metaData.getDatabaseProductVersion: Any
+  )
+
   override def receive: Receive = {
+    case GetDatabaseInfo => getDatabaseInfo(sender())
     case RetrieveMeterReadingForDate(date) => retrieveMeterReadingByDate(sender(), date)
     case RetrieveMeterReadingForDateRange(start, end) => retrieveMeterReadingByDateRange(sender(), start, end)
     case RetrieveMeterReadingForMonth(month, year) => retrieveMeterReadingsByMonth(sender(), month, year)
     case StoreMeterReading(reading) => storeMeterReading(reading)
   }
 
+  private def getDatabaseInfo(receiver: ActorRef) = {
+    log.info("Retrieving database metadata")
+    val metadata = session.metaData
+    receiver ! s"${metadata.getDatabaseProductName} ${metadata.getDatabaseProductVersion}"
+  }
+
   private def retrieveMeterReadingByDateRange(receiver: ActorRef, start: LocalDate, end: LocalDate) = {
     log.info(s"Retrieve meter reading from $start to $end")
 
-    meterReadingDAO.retrieveMeterReadings(start, end) andThen {
+    dao.retrieveMeterReadings(start, end) andThen {
       case Success(result) if result.nonEmpty =>
         receiver ! RetrievedMeterReadings(result)
 
@@ -50,7 +75,7 @@ class DatabaseActor(meterReadingDAO: MeterReadingDAO) extends Actor with ActorLo
   private def retrieveMeterReadingByDate(receiver: ActorRef, date: LocalDate) = {
     log.info(s"Retrieve meter reading for $date")
 
-    meterReadingDAO.retrieveMeterReading(date) andThen {
+    dao.retrieveMeterReading(date) andThen {
       case Success(Some(result)) =>
         receiver ! RetrievedMeterReadings(Seq(result))
 
@@ -79,7 +104,7 @@ class DatabaseActor(meterReadingDAO: MeterReadingDAO) extends Actor with ActorLo
     log.info(s"  Electricity normal : ${reading.electricityNormal}")
     log.info(s"  Electricity low    : ${reading.electricityLow}")
 
-    meterReadingDAO.recordMeterReading(reading)
+    dao.recordMeterReading(reading)
       .recover { case e: SQLException => scheduleRetry(e, reading) }
   }
 

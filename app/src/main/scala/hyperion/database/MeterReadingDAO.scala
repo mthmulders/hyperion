@@ -8,6 +8,7 @@ import scala.concurrent.Future
 import scala.util.{Failure, Success}
 
 import org.slf4j.LoggerFactory
+import slick.jdbc.JdbcBackend.Database
 import slick.jdbc.PostgresProfile.api._
 
 final case class HistoricalMeterReading (
@@ -17,7 +18,7 @@ final case class HistoricalMeterReading (
   electricityLow: BigDecimal
 )
 
-class MeterReadingDAO extends DatabaseSupport with DateTimeColumns {
+class MeterReadingDAO(db: Database) extends DateTimeColumns {
   private[this] val log = LoggerFactory.getLogger(getClass)
 
   private class MeterReadings(tag: Tag) extends Table[HistoricalMeterReading](tag, "meter_readings") {

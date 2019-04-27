@@ -1,11 +1,9 @@
 package hyperion.rest
 
-import hyperion.database.DatabaseSupport
-
 /**
   * Helper functions for retrieving some application information
   */
-object AppInfoHelper extends DatabaseSupport {
+object AppInfoHelper {
   private val runtime = Runtime.getRuntime
 
   val javaVersion: String = {
@@ -19,11 +17,6 @@ object AppInfoHelper extends DatabaseSupport {
     val osVersion = System.getProperty("os.version")
     val bits = System.getProperty("sun.arch.data.model")
     s"$osName $osVersion ($bits bits)"
-  }
-
-  val database: String = {
-    val metadata = session.metaData
-    s"${metadata.getDatabaseProductName} ${metadata.getDatabaseProductVersion}"
   }
 
   def totalMem(): String = {

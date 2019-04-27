@@ -15,17 +15,18 @@ import org.scalatest.OneInstancePerTest
 import org.scalatest.concurrent.ScalaFutures
 
 import hyperion.BaseAkkaSpec
-
 import hyperion.database.DatabaseActor._
 
 class DatabaseActorSpec extends BaseAkkaSpec with OneInstancePerTest with MockFactory with ScalaFutures {
   private implicit val timeout: Timeout = Timeout(500 milliseconds)
-  private val meterReadingDAO = stub[MeterReadingDAO]
-
-  private val da = system.actorOf(Props(new DatabaseActor(meterReadingDAO)), "database-actor")
 
   private def dateRange(start: LocalDate, end: LocalDate): Seq[LocalDate] =
     Iterator.iterate(start)(_.plusDays(1)).takeWhile(!_.isAfter(end)).to[Seq]
+
+  private val meterReadingDAO = stub[MeterReadingDAO]
+  private val da = system.actorOf(Props(new DatabaseActor() {
+    protected override def createDao() = meterReadingDAO
+  }))
 
   "The database actor" should {
     "store new meter readings in the database" in {
@@ -36,6 +37,7 @@ class DatabaseActorSpec extends BaseAkkaSpec with OneInstancePerTest with MockFa
       da ! StoreMeterReading(reading)
 
       // Assert
+      Thread.sleep(500)
       (meterReadingDAO.recordMeterReading _).verify(reading)
     }
 
