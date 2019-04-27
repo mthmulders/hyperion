@@ -154,6 +154,9 @@ val integrationTest = (project in file("integration-test"))
 
 val root = (project in file("."))
   .settings(commonSettings: _*)
+  .settings(Seq(
+    name := "hyperion-parent"
+  ))
   .settings(sonarSettings)
   .settings(aggregate in sonarScan := false)
   .aggregate(app, integrationTest, testApp)
