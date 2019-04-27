@@ -1,0 +1,17 @@
+<configuration>
+    <appender name="stdout" class="ch.qos.logback.core.ConsoleAppender">
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>WARN</level>
+        </filter>
+        <encoder>
+            <pattern>%date  %-5level  %50.50logger -- %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <logger name="hyperion" level="debug"/>
+
+    <root level="info">
+        <appender-ref ref="file"/>
+        <appender-ref ref="stdout"/>
+    </root>
+</configuration>
