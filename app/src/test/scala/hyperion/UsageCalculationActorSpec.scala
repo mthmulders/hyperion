@@ -18,7 +18,7 @@ import scala.concurrent.Future
 import scala.concurrent.duration.DurationInt
 
 class UsageCalculationActorSpec extends BaseAkkaSpec with ScalaFutures {
-  private implicit val timeout: Timeout = Timeout(500 milliseconds)
+  private implicit val timeout: Timeout = Timeout(1000 milliseconds)
 
   private val numberOfDays = 5
   private val firstDay = LocalDate.now()
@@ -73,12 +73,13 @@ class UsageCalculationActorSpec extends BaseAkkaSpec with ScalaFutures {
 
     "return empty result if there is not enough data" in {
       // Arrange
+      val request = CalculateUsage(LocalDate.parse("1970-01-01"), LocalDate.parse("1970-01-02"))
 
       // Act
-      val answer: Future[Any] = uca ? CalculateUsage(LocalDate.parse("1970-01-01"), LocalDate.parse("1970-01-02"))
+      val answer = (uca ? request).mapTo[Seq[UsageDataRecord]]
 
       // Assert
-      whenReady(answer.mapTo[Seq[UsageDataRecord]]) { records =>
+      whenReady(answer) { records =>
         records.length shouldBe 0
       }
     }
