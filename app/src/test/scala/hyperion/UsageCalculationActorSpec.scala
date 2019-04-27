@@ -11,13 +11,14 @@ import akka.util.Timeout
 import hyperion.UsageCalculationActor.{CalculateUsage, UsageDataRecord}
 import hyperion.database.DatabaseActor.{RetrieveMeterReadingForDateRange, RetrievedMeterReadings}
 import hyperion.database.HistoricalMeterReading
+import org.scalatest.OneInstancePerTest
 import org.scalatest.concurrent.ScalaFutures
 
 import scala.collection.immutable.Seq
 import scala.concurrent.Future
 import scala.concurrent.duration.DurationInt
 
-class UsageCalculationActorSpec extends BaseAkkaSpec with ScalaFutures {
+class UsageCalculationActorSpec extends BaseAkkaSpec with ScalaFutures with OneInstancePerTest {
   private implicit val timeout: Timeout = Timeout(1000 milliseconds)
 
   private val numberOfDays = 5
