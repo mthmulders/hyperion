@@ -11,7 +11,6 @@
     <logger name="hyperion" level="debug"/>
 
     <root level="info">
-        <appender-ref ref="file"/>
         <appender-ref ref="stdout"/>
     </root>
 </configuration>
