@@ -4,9 +4,10 @@ import akka.testkit.{TestFSMRef, TestProbe}
 import hyperion.MessageDistributor.RegisterReceiver
 import hyperion.RecentHistoryActor.{GetRecentHistory, History, Receiving, RecentReadings, Sleeping}
 import hyperion.p1.{P1Telegram, TelegramReceived}
+import org.scalatest.OneInstancePerTest
 import org.scalatest.concurrent.Eventually
 
-class RecentHistoryActorSpec extends BaseAkkaSpec with Eventually {
+class RecentHistoryActorSpec extends BaseAkkaSpec with Eventually with OneInstancePerTest {
   private val messageDistributor: TestProbe = TestProbe("message-distributor")
 
   private val rha = TestFSMRef(new RecentHistoryActor(messageDistributor.ref), "recent-history-actor")
