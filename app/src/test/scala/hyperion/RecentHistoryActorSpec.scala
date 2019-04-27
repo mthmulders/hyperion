@@ -23,6 +23,7 @@ class RecentHistoryActorSpec extends BaseAkkaSpec {
 
       // Act
       rha ! TelegramReceived(telegram)
+      Thread.sleep(1000)
 
       // Assert
       rha.stateName shouldBe Sleeping
