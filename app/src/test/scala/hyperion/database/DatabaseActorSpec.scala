@@ -37,7 +37,7 @@ class DatabaseActorSpec extends BaseAkkaSpec with OneInstancePerTest with MockFa
       da ! StoreMeterReading(reading)
 
       // Assert
-      Thread.sleep(500)
+      Thread.sleep(1000)
       (meterReadingDAO.recordMeterReading _).verify(reading)
     }
 
