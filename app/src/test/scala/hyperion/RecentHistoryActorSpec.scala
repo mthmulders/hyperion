@@ -1,12 +1,12 @@
 package hyperion
 
 import akka.testkit.{TestFSMRef, TestProbe}
-
 import hyperion.MessageDistributor.RegisterReceiver
 import hyperion.RecentHistoryActor.{GetRecentHistory, History, Receiving, RecentReadings, Sleeping}
 import hyperion.p1.{P1Telegram, TelegramReceived}
+import org.scalatest.concurrent.Eventually
 
-class RecentHistoryActorSpec extends BaseAkkaSpec {
+class RecentHistoryActorSpec extends BaseAkkaSpec with Eventually {
   private val messageDistributor: TestProbe = TestProbe("message-distributor")
 
   private val rha = TestFSMRef(new RecentHistoryActor(messageDistributor.ref), "recent-history-actor")
@@ -23,10 +23,11 @@ class RecentHistoryActorSpec extends BaseAkkaSpec {
 
       // Act
       rha ! TelegramReceived(telegram)
-      Thread.sleep(1000)
 
       // Assert
-      rha.stateName shouldBe Sleeping
+      eventually {
+        rha.stateName shouldBe Sleeping
+      }
     }
 
     "wake up after resolution time" in {
@@ -36,10 +37,11 @@ class RecentHistoryActorSpec extends BaseAkkaSpec {
 
       // Act
       rha.setState(Sleeping, History(history))
-      Thread.sleep(1000)
 
       // Assert
-      rha.stateName shouldBe Receiving
+      eventually {
+        rha.stateName shouldBe Receiving
+      }
     }
 
     "store telegrams in memory" in {
@@ -50,8 +52,10 @@ class RecentHistoryActorSpec extends BaseAkkaSpec {
       rha ! TelegramReceived(telegram)
 
       // Assert
-      rha.stateData shouldBe an[History]
-      rha.stateData.asInstanceOf[History].telegrams.length shouldBe 1
+      eventually {
+        rha.stateData shouldBe an[History]
+        rha.stateData.asInstanceOf[History].telegrams.length shouldBe 1
+      }
     }
 
     "return all recent readings when asked" in {
@@ -64,8 +68,10 @@ class RecentHistoryActorSpec extends BaseAkkaSpec {
       client.send(rha, GetRecentHistory)
 
       // Assert
-      val result = client.expectMsgClass(classOf[RecentReadings])
-      result.telegrams.length should (be > 0 and be <= 10)
+      eventually {
+        val result = client.expectMsgClass(classOf[RecentReadings])
+        result.telegrams.length should (be > 0 and be <= 10)
+      }
     }
   }
 }
