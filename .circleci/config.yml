@@ -20,7 +20,9 @@ jobs:
 
       - run:
           name: Install build dependencies
-          command: sudo apt install -y postgresql-client fakeroot
+          command: |
+            sudo apt-get update
+            sudo apt install -y postgresql-client fakeroot
       - run:
           name: Install dockerize
           command: |
@@ -54,7 +56,10 @@ jobs:
           environment:
             SBT_OPTS: -Xms512m -Xmx3G
           # Specify different config file, see https://stackoverflow.com/a/21433585
-          command: sbt -Dconfig.file=.circleci/environment.conf coverage test coverageOff
+          command: |
+            sbt -Dconfig.file=.circleci/environment.conf coverage test
+            sbt coverageAggregate
+
 
       - save_cache:
           paths:
@@ -100,3 +105,9 @@ jobs:
       - store_artifacts:
           destination: "packages/debian"
           path: "app/target/native/debian"
+
+      - run:
+          name: Perform mutation testing
+          command: |
+            export SBT_OPTS="-XX:+CMSClassUnloadingEnabled -XX:MaxPermSize=4G -Xmx4G"
+            sbt -Dconfig.file=../.circleci/environment.conf "project app" stryker
