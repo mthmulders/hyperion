@@ -39,8 +39,6 @@ Hyperion is written in Scala using the Akka-framework.
 
 Build status: [![Circle CI](https://circleci.com/gh/mthmulders/hyperion/tree/master.svg?style=svg)](https://circleci.com/gh/mthmulders/hyperion/tree/master)
 
-Code quality: [![Codacy Badge](https://api.codacy.com/project/badge/grade/13a2d2b6f4fc43c1bdcd7f5c0306bd4f)](https://www.codacy.com/app/m-th-mulders/hyperion)
-
 # Getting Hyperion
 Pre-built Debian packages can be downloaded from [CircleCI](https://circleci.com/gh/mthmulders/hyperion).
 Click on the latest green build and move to the 'Artifacts' tab.

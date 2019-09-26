@@ -50,17 +50,13 @@ jobs:
           # Specify different config file, see https://stackoverflow.com/a/21433585
           command: |
             sbt -Dconfig.file=.circleci/environment.conf coverage test
-            sbt coverageReport coverageAggregate
+            sbt coverageAggregate
 
       - save_cache:
           paths:
             - ~/.sbt
             - ./.ivy2
           key: hyperion-{{ .Branch }}-{{ checksum "build.sbt" }}
-
-      - run:
-          name: Report coverage to Codacy
-          command: sbt codacyCoverage
 
       - run:
           name: Run integration tests
