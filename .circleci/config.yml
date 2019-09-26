@@ -63,12 +63,6 @@ jobs:
           command: sbt -Dconfig.file=.circleci/environment.conf app/it:test
 
       - run:
-          name: Perform mutation testing
-          command: |
-            export SBT_OPTS="-XX:+CMSClassUnloadingEnabled -XX:MaxPermSize=4G -Xmx4G"
-            sbt -Dconfig.file=../.circleci/environment.conf "project app" stryker
-
-      - run:
           name: Create Debian packages
           command: sbt debian:packageBin
 
@@ -91,3 +85,9 @@ jobs:
       - store_artifacts:
           destination: "packages/debian"
           path: "app/target/native/debian"
+
+      - run:
+          name: Perform mutation testing
+          command: |
+            export SBT_OPTS="-XX:+CMSClassUnloadingEnabled -XX:MaxPermSize=4G -Xmx4G"
+            sbt -Dconfig.file=../.circleci/environment.conf "project app" stryker
