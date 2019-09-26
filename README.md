@@ -37,7 +37,9 @@ It is maintained in a [separate Git repository](https://github.com/mthmulders/hy
 ## About the code
 Hyperion is written in Scala using the Akka-framework.
 
-Build status: [![Circle CI](https://circleci.com/gh/mthmulders/hyperion/tree/master.svg?style=svg)](https://circleci.com/gh/mthmulders/hyperion/tree/master)
+[![Circle CI](https://circleci.com/gh/mthmulders/hyperion/tree/master.svg?style=svg)](https://circleci.com/gh/mthmulders/hyperion/tree/master)
+[![Mutation testing badge](https://badge.stryker-mutator.io/github.com/mthmulders/hyperion/master)](https://stryker-mutator.github.io)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=mthmulders_hyperion&metric=alert_status)](https://sonarcloud.io/dashboard?id=mthmulders_hyperion)
 
 # Getting Hyperion
 Pre-built Debian packages can be downloaded from [CircleCI](https://circleci.com/gh/mthmulders/hyperion).
