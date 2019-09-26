@@ -20,7 +20,9 @@ jobs:
 
       - run:
           name: Install build dependencies
-          command: sudo apt install -y postgresql-client fakeroot
+          command: |
+            sudo apt-get update
+            sudo apt install -y postgresql-client fakeroot
       - run:
           name: Install dockerize
           command: |
