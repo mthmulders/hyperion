@@ -25,7 +25,7 @@ class UsageCalculationActorSpec extends BaseAkkaSpec with ScalaFutures with OneI
   private val firstDay = LocalDate.now()
   private val lastDay = firstDay.plusDays(numberOfDays)
 
-  private val meterReadings = (0l until numberOfDays + 1)
+  private val meterReadings = (0L until numberOfDays + 1)
     .map(day => HistoricalMeterReading(firstDay.plusDays(day), 0, day, 0))
 
   private val database = TestProbe("database")

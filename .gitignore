@@ -4,3 +4,6 @@ hs_err_pid*
 .idea/
 *.log
 .scannerwork/
+
+.bloop/
+.metals/

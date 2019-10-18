@@ -25,7 +25,7 @@ class UsageServiceSpec extends BaseSpec with ScalatestRouteTest with HyperionJso
   private val firstDayOfCurrentMonth = today.withDayOfMonth(1)
   private val firstDayOfNextMonth = today.plusMonths(1).withDayOfMonth(1)
 
-  private val usageDataRecords = (0l until DAYS.between(firstDayOfCurrentMonth, firstDayOfNextMonth))
+  private val usageDataRecords = (0L until DAYS.between(firstDayOfCurrentMonth, firstDayOfNextMonth))
     .map(day => firstDayOfCurrentMonth.plusDays(day))
     .map(date => UsageDataRecord(date, 0, 0, 0))
 

@@ -26,7 +26,7 @@ class UsageService(usageCalculationActor: ActorRef)(implicit executionContext: E
 
   val route: Route = path("usage") {
     get {
-      parameters('month.as[Month], 'year.as[Int]) { (month, year) =>
+      parameters(Symbol("month").as[Month], Symbol("year").as[Int]) { (month, year) =>
         val start = LocalDate.of(year, month, 1)
         val end = start.plusMonths(1)
         val query = (usageCalculationActor ? CalculateUsage(start, end)).mapTo[Seq[UsageDataRecord]]
