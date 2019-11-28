@@ -11,6 +11,7 @@ val restAssuredVer = "4.1.2"
 val scalaMockVer = "4.4.0"
 val scalaTestVer = "3.0.8"
 val slickVer = "3.3.2"
+val sprayJsonVer = "1.3.5"
 
 //
 // Define dependencies
@@ -33,6 +34,7 @@ val restAssuredScala  = "io.rest-assured"        %  "scala-support"             
 val scalaMock         = "org.scalamock"          %% "scalamock"                   % scalaMockVer
 val scalaTest         = "org.scalatest"          %% "scalatest"                   % scalaTestVer
 val slick             = "com.typesafe.slick"     %% "slick"                       % slickVer
+val sprayJson         = "io.spray"               %% "spray-json"                  % sprayJsonVer
 
 //
 // Shared settings
@@ -107,7 +109,8 @@ val app = (project in file("app"))
       postgresql,
       scalaMock % "test",
       scalaTest % "test",
-      slick
+      slick,
+      sprayJson
     ),
     buildInfoOptions += BuildInfoOption.BuildTime,
     buildInfoPackage := "hyperion",
