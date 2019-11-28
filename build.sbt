@@ -124,7 +124,7 @@ val app = (project in file("app"))
     },
     daemonUser in Linux := "hyperion",
     daemonGroup in Linux := "hyperion",
-    debianPackageDependencies in Debian ++= Seq("oracle-java8-jdk"),
+    debianPackageDependencies in Debian ++= Seq("java8-runtime-headless"),
     bashScriptExtraDefines += """addJava "-Dconfig.file=${app_home}/../conf/hyperion.conf"""",
     maintainerScripts in Debian := maintainerScriptsAppend((maintainerScripts in Debian).value)(
       DebianConstants.Postinst -> "usermod -a -G dialout hyperion"
