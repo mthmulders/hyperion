@@ -107,8 +107,63 @@ jobs:
           destination: "packages/debian"
           path: "app/target/native/debian"
 
+  mutation-testing:
+
+    docker:
+      - image: circleci/openjdk:8-jdk
+        environment:
+          SBT_VERSION: 0.13.9
+      - image: circleci/postgres:9.3-alpine
+        environment:
+          PGDATA: /dev/shm/pgdata/data
+          POSTGRES_USER: circleci
+          POSTGRES_DB: circle_test
+
+    steps:
+      - checkout
+
+      - restore_cache:
+          key: hyperion-{{ .Branch }}-{{ checksum "build.sbt" }}
+
+      - run:
+          name: Install build dependencies
+          command: |
+            sudo apt-get update
+            sudo apt install -y postgresql-client fakeroot
+      - run:
+          name: Install dockerize
+          command: |
+            wget https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz
+            sudo tar -C /usr/local/bin -xzvf dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz
+            rm dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz
+          environment:
+            DOCKERIZE_VERSION: v0.5.0
+      - run:
+          name: Wait for database
+          command: dockerize -wait tcp://localhost:5432 -timeout 1m
+      - run:
+          name: Create PostgreSQL schema
+          command: psql -h localhost -p 5432 -f scripts/database/schema.sql circle_test
+      - run:
+          name: Prepare data for integration tests
+          command: psql -h localhost -p 5432 -f scripts/database/test-data.sql circle_test
+
       - run:
           name: Perform mutation testing
           command: |
             export SBT_OPTS="-XX:+CMSClassUnloadingEnabled -XX:MaxPermSize=4G -Xmx4G"
             sbt -Dconfig.file=../.circleci/environment.conf "project app" stryker
+
+
+workflows:
+  version: 2
+  build:
+    jobs:
+      - build
+  mutation-testing:
+    jobs:
+      - mutation-testing:
+          filters:
+            branches:
+              only:
+                - master
