@@ -72,7 +72,7 @@ jobs:
           name: Run code analysis
           environment:
             SBT_OPTS: -Xms512m -Xmx3G
-            SONAR_SCANNER_HOME: ~/tools/sonar-scanner-3.2.0.1227-linux
+            SONAR_SCANNER_HOME: /home/circleci/tools/sonar-scanner-3.2.0.1227-linux
           command: |
             sbt coverageReport scapegoat
             if [ -z "{CI_PULL_REQUEST:-}" ]; then
