@@ -117,9 +117,6 @@ jobs:
           PGDATA: /dev/shm/pgdata/data
           POSTGRES_USER: circleci
           POSTGRES_DB: circle_test
-      - run:
-          name: Wait for database
-          command: dockerize -wait tcp://localhost:5432 -timeout 1m
 
     steps:
       - checkout
@@ -140,6 +137,9 @@ jobs:
             rm dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz
           environment:
             DOCKERIZE_VERSION: v0.5.0
+      - run:
+          name: Wait for database
+          command: dockerize -wait tcp://localhost:5432 -timeout 1m
       - run:
           name: Create PostgreSQL schema
           command: psql -h localhost -p 5432 -f scripts/database/schema.sql circle_test
