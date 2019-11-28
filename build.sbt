@@ -3,7 +3,7 @@
 //
 val akkaVer = "2.5.26"
 val akkaHttpVer = "10.1.10"
-val akkaSerialVer = "4.1.4"
+val akkaSerialVer = "4.2.0"
 val logbackVer = "1.2.3"
 val parserCombVer = "1.1.2"
 val postgresqlVer = "42.2.8"
