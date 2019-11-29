@@ -8,11 +8,10 @@ val logbackVer = "1.2.3"
 val parserCombVer = "1.1.2"
 val postgresqlVer = "42.2.8"
 val restAssuredVer = "4.1.2"
-val scalaMockVer = "3.6.0"
+val scalaMockVer = "4.4.0"
 val scalaTestVer = "3.0.8"
 val slickVer = "3.3.2"
-val sprayJsonVer = "1.3.3"
-val sprayWsVer = "0.1.4"
+val sprayJsonVer = "1.3.5"
 
 //
 // Define dependencies
@@ -32,11 +31,10 @@ val parserComb        = "org.scala-lang.modules" %% "scala-parser-combinators"  
 val postgresql        = "org.postgresql"         %  "postgresql"                  % postgresqlVer
 val restAssured       = "io.rest-assured"        %  "rest-assured"                % restAssuredVer
 val restAssuredScala  = "io.rest-assured"        %  "scala-support"               % restAssuredVer
-val scalaMock         = "org.scalamock"          %% "scalamock-scalatest-support" % scalaMockVer
+val scalaMock         = "org.scalamock"          %% "scalamock"                   % scalaMockVer
 val scalaTest         = "org.scalatest"          %% "scalatest"                   % scalaTestVer
 val slick             = "com.typesafe.slick"     %% "slick"                       % slickVer
 val sprayJson         = "io.spray"               %% "spray-json"                  % sprayJsonVer
-
 
 //
 // Shared settings
@@ -45,7 +43,7 @@ val commonSettings = Seq(
   organization := "hyperion",
   version := "2.1.2-SNAPSHOT",
   description := "Hyperion",
-  scalaVersion := "2.12.8",
+  scalaVersion := "2.13.1",
   scalacOptions ++= Seq(
     "-unchecked",
     "-deprecation",
@@ -63,7 +61,7 @@ val commonSettings = Seq(
       Some("scm:git:git@github.com:mthmulders/hyperion.git")
     )
   ),
-  scapegoatVersion in ThisBuild := "1.3.3",
+  scapegoatVersion in ThisBuild := "1.4.1",
 )
 val sonarSettings = Seq(
   sonarProperties ++= Map(
@@ -73,14 +71,14 @@ val sonarSettings = Seq(
     "sonar.organization" -> "mthmulders-github",
 
     "sonar.sourceEncoding" -> "UTF-8",
-    "sonar.scala.version" -> "2.12.8",
+    "sonar.scala.version" -> "2.13.1",
 
-    "app.sonar.scala.coverage.reportPaths" -> "target/scala-2.12/scoverage-report/scoverage.xml",
-    "app.sonar.scala.scapegoat.reportPaths" -> "target/scala-2.12/scapegoat-report/scapegoat-scalastyle.xml",
+    "app.sonar.scala.coverage.reportPaths" -> "target/scala-2.13/scoverage-report/scoverage.xml",
+    "app.sonar.scala.scapegoat.reportPaths" -> "target/scala-2.13/scapegoat-report/scapegoat-scalastyle.xml",
     "app.sonar.sources" -> "src/main/scala",
 
-    "test-app.sonar.scala.coverage.reportPaths" -> "target/scala-2.12/scoverage-report/scoverage.xml",
-    "test-app.sonar.scala.scapegoat.reportPaths" -> "target/scala-2.12/scapegoat-report/scapegoat-scalastyle.xml",
+    "test-app.sonar.scala.coverage.reportPaths" -> "target/scala-2.13/scoverage-report/scoverage.xml",
+    "test-app.sonar.scala.scapegoat.reportPaths" -> "target/scala-2.13/scapegoat-report/scapegoat-scalastyle.xml",
     "test-app.sonar.sources" -> "src/main/scala",
   )
 )
@@ -111,7 +109,8 @@ val app = (project in file("app"))
       postgresql,
       scalaMock % "test",
       scalaTest % "test",
-      slick
+      slick,
+      sprayJson
     ),
     buildInfoOptions += BuildInfoOption.BuildTime,
     buildInfoPackage := "hyperion",

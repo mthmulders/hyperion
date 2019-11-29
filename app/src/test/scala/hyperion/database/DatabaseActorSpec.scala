@@ -21,7 +21,7 @@ class DatabaseActorSpec extends BaseAkkaSpec with OneInstancePerTest with MockFa
   private implicit val timeout: Timeout = Timeout(500 milliseconds)
 
   private def dateRange(start: LocalDate, end: LocalDate): Seq[LocalDate] =
-    Iterator.iterate(start)(_.plusDays(1)).takeWhile(!_.isAfter(end)).to[Seq]
+    Iterator.iterate(start)(_.plusDays(1)).takeWhile(!_.isAfter(end)).toSeq
 
   private val meterReadingDAO = stub[MeterReadingDAO]
   private val da = system.actorOf(Props(new DatabaseActor() {

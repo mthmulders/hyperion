@@ -48,6 +48,6 @@ class MeterReadingDAO(db: Database) extends DateTimeColumns {
 
   def retrieveMeterReadings(startDate: LocalDate, endDate: LocalDate): Future[Seq[HistoricalMeterReading]] = {
     val query = meterReadings.filter(_.recordDate.between(startDate, endDate))
-    db.run(query.result) map(a => a.to[Seq])
+    db.run(query.result) map(a => a.toSeq)
   }
 }

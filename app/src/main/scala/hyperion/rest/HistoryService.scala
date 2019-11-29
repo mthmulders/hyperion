@@ -25,7 +25,7 @@ class HistoryService(databaseActor: ActorRef)(implicit executionContext: Executi
 
   val route: Route = path("history") {
     get {
-      parameters('date.as[LocalDate]) { date =>
+      parameters(Symbol("date").as[LocalDate]) { date =>
         val query = (databaseActor ? RetrieveMeterReadingForDate(date)).mapTo[RetrievedMeterReadings]
         onSuccess(query) { result =>
           complete(result.readings match {
@@ -34,7 +34,7 @@ class HistoryService(databaseActor: ActorRef)(implicit executionContext: Executi
           })
         }
       } ~
-      parameters('month.as[Month], 'year.as[Int]) { (month, year) =>
+      parameters(Symbol("month").as[Month], Symbol("year").as[Int]) { (month, year) =>
         val query = (databaseActor ? RetrieveMeterReadingForMonth(month, year)).mapTo[RetrievedMeterReadings]
         onSuccess(query) { result =>
           complete(result.readings match {

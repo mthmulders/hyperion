@@ -33,7 +33,7 @@ abstract class BaseAkkaSpec extends TestKit(ActorSystem())
         case ActorIdentity(otherPath, _) => log.warn(s"Expected Some(ActorRef) for path $path but got one for path $otherPath")
         case msg: Any => log.warn(s"Expected Some(ActorRef) for path $path but got $msg")
       }
-      immutable.Seq(actors:_*)
+      actors.toSeq
     }
   }
 

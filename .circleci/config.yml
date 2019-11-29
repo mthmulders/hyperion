@@ -63,6 +63,7 @@ jobs:
           paths:
             - ~/.sbt
             - ./.ivy2
+            - ~/.coursier
             - ~/tools
           key: hyperion-{{ .Branch }}-{{ checksum "build.sbt" }}
 
