@@ -33,6 +33,7 @@ abstract class BaseIntegrationSpec
   override def beforeAll(): Unit = {
     logger.info(s"Starting new instance of Hyperion for ${getClass.getSimpleName} at port $port")
     app = IntegrationTestApp(port)
+    io.restassured.RestAssured.enableLoggingOfRequestAndResponseIfValidationFails();
   }
 
   override def afterAll(): Unit = {

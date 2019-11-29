@@ -4,8 +4,6 @@ jobs:
 
     docker:
       - image: circleci/openjdk:8-jdk
-        environment:
-          SBT_VERSION: 1.3.3
       - image: circleci/postgres:9.3-alpine
         environment:
           PGDATA: /dev/shm/pgdata/data
@@ -73,9 +71,15 @@ jobs:
           name: Run code analysis
           environment:
             SBT_OPTS: -Xms512m -Xmx3G
+            SONAR_SCANNER_HOME: /home/circleci/tools/sonar-scanner-3.2.0.1227-linux
           command: |
             sbt coverageReport scapegoat
-            SONAR_SCANNER_HOME=~/tools/sonar-scanner-3.2.0.1227-linux sbt -Dsonar.login=$SONAR_LOGIN sonarScan
+            if [ -z "{CI_PULL_REQUEST:-}" ]; then
+              sbt -Dsonar.login=$SONAR_LOGIN -Dsonar.pullrequest.branch=$CIRCLE_BRANCH sonarScan
+            else
+              sbt -Dsonar.login=$SONAR_LOGIN sonarScan
+            fi
+            
 
       - run:
           name: Run integration tests
@@ -111,8 +115,6 @@ jobs:
 
     docker:
       - image: circleci/openjdk:8-jdk
-        environment:
-          SBT_VERSION: 0.13.9
       - image: circleci/postgres:9.3-alpine
         environment:
           PGDATA: /dev/shm/pgdata/data
@@ -161,9 +163,12 @@ workflows:
     jobs:
       - build
   mutation-testing:
-    jobs:
-      - mutation-testing:
+    triggers:
+      - schedule:
+          cron: "14 3 * * *"
           filters:
             branches:
               only:
                 - master
+    jobs:
+      - mutation-testing
