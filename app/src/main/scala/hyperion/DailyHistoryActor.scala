@@ -76,6 +76,6 @@ class DailyHistoryActor(messageDistributor: ActorRef,
     val midnight = LocalDate.now().plusDays(1).atStartOfDay()
     val untilMidnight = Duration.between(LocalDateTime.now(), midnight)
     log.info("Sleeping for {} milliseconds", untilMidnight.toMillis)
-    setTimer("wake-up", StateTimeout, untilMidnight.toMillis millis, repeat = false)
+    startTimerAtFixedRate("wake-up", StateTimeout, untilMidnight.toMillis millis)
   }
 }

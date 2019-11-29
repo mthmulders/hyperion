@@ -66,7 +66,7 @@ class RecentHistoryActor(messageDistributor: ActorRef)
       stay()
   }
 
-  setTimer("recent-awake", StateTimeout, settings.history.resolution, repeat = true)
+  startTimerAtFixedRate("recent-awake", StateTimeout, settings.history.resolution)
 
   initialize()
 }
