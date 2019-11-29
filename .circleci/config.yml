@@ -166,9 +166,12 @@ workflows:
     jobs:
       - build
   mutation-testing:
-    jobs:
-      - mutation-testing:
+    triggers:
+      - schedule:
+          cron: "14 3 * * *"
           filters:
             branches:
               only:
                 - master
+    jobs:
+      - mutation-testing
