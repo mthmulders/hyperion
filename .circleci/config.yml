@@ -74,10 +74,10 @@ jobs:
             SONAR_SCANNER_HOME: /home/circleci/tools/sonar-scanner-3.2.0.1227-linux
           command: |
             sbt coverageReport scapegoat
-            if [ -z "{CI_PULL_REQUEST:-}" ]; then
-              sbt -Dsonar.login=$SONAR_LOGIN -Dsonar.pullrequest.branch=$CIRCLE_BRANCH sonarScan
-            else
+            if [ -z "${CI_PULL_REQUEST:-}" ]; then
               sbt -Dsonar.login=$SONAR_LOGIN sonarScan
+            else
+              sbt -Dsonar.login=$SONAR_LOGIN -Dsonar.pullrequest.branch=$CIRCLE_BRANCH sonarScan
             fi
             
 
