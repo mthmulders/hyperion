@@ -13,7 +13,7 @@ import hyperion.p1.TelegramReceived
   */
 class ActualValuesHandlerActor(val source: ActorRef, val messageDistributor: ActorRef) extends Actor with ActorLogging {
   override def preStart(): Unit = {
-    log.info("Registering for live updates")
+    log.debug("Registering for live updates")
     messageDistributor ! RegisterReceiver
   }
 
