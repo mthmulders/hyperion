@@ -9,7 +9,7 @@ val parserCombVer = "1.1.2"
 val postgresqlVer = "42.2.8"
 val restAssuredVer = "4.1.2"
 val scalaMockVer = "4.4.0"
-val scalaTestVer = "3.0.8"
+val scalaTestVer = "3.1.0"
 val slickVer = "3.3.2"
 val sprayJsonVer = "1.3.5"
 

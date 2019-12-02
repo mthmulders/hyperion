@@ -3,17 +3,19 @@ package hyperion
 import akka.actor.{ActorIdentity, ActorRef, ActorSystem, Identify}
 import akka.testkit.{EventFilter, ImplicitSender, TestEvent, TestKit, TestProbe}
 import org.scalactic.TypeCheckedTripleEquals
-import org.scalatest.{BeforeAndAfterAll, BeforeAndAfterEach, Matchers, WordSpecLike}
+import org.scalatest.{BeforeAndAfterAll, BeforeAndAfterEach}
 import org.slf4j.LoggerFactory
 
 import scala.collection.{immutable, mutable}
 import scala.concurrent.Await
 import scala.concurrent.duration.{Duration, DurationInt, FiniteDuration}
+import org.scalatest.matchers.should.Matchers
+import org.scalatest.wordspec.AnyWordSpecLike
 
 abstract class BaseAkkaSpec extends TestKit(ActorSystem())
   with Core
   with ImplicitSender
-  with WordSpecLike
+  with AnyWordSpecLike
   with Matchers
   with BeforeAndAfterAll
   with BeforeAndAfterEach
