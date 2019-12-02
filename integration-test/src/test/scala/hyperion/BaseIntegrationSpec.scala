@@ -9,17 +9,19 @@ import io.restassured.config.RestAssuredConfig
 import org.scalactic.TypeCheckedTripleEquals
 import org.scalatest._
 import org.slf4j.LoggerFactory
+import org.scalatest.matchers.should.Matchers
+import org.scalatest.wordspec.{ AnyWordSpec, AnyWordSpecLike }
 
 private object BaseIntegrationSpec {
   private val port = new AtomicInteger(8080)
 }
 
 abstract class BaseIntegrationSpec
-  extends WordSpec
+  extends AnyWordSpec
     with Matchers
     with TypeCheckedTripleEquals
     with Inspectors
-    with WordSpecLike
+    with AnyWordSpecLike
     with BeforeAndAfterAll
     with BeforeAndAfterEach {
 
