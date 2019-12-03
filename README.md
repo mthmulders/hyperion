@@ -41,7 +41,7 @@ Hyperion is written in Scala using the Akka-framework.
 [![SonarCloud quality gate](https://sonarcloud.io/api/project_badges/measure?project=mthmulders_hyperion&metric=alert_status)](https://sonarcloud.io/dashboard?id=mthmulders_hyperion)
 [![SonarCloud vulnerability count](https://sonarcloud.io/api/project_badges/measure?project=mthmulders_hyperion&metric=vulnerabilities)](https://sonarcloud.io/dashboard?id=mthmulders_hyperion)
 [![SonarCloud technical debt](https://sonarcloud.io/api/project_badges/measure?project=mthmulders_hyperion&metric=sqale_index)](https://sonarcloud.io/dashboard?id=mthmulders_hyperion)
-[![Mutation testing badge](https://badge.stryker-mutator.io/github.com/mthmulders/hyperion/master)](https://stryker-mutator.github.io)
+[![Mutation testing badge](https://badge.stryker-mutator.io/github.com/mthmulders/hyperion/master)](https://dashboard.stryker-mutator.io/reports/github.com/mthmulders/hyperion/master)
 [![Scala Steward badge](https://img.shields.io/badge/Scala_Steward-helping-blue.svg?style=flat&logo=data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA4AAAAQCAMAAAARSr4IAAAAVFBMVEUAAACHjojlOy5NWlrKzcYRKjGFjIbp293YycuLa3pYY2LSqql4f3pCUFTgSjNodYRmcXUsPD/NTTbjRS+2jomhgnzNc223cGvZS0HaSD0XLjbaSjElhIr+AAAAAXRSTlMAQObYZgAAAHlJREFUCNdNyosOwyAIhWHAQS1Vt7a77/3fcxxdmv0xwmckutAR1nkm4ggbyEcg/wWmlGLDAA3oL50xi6fk5ffZ3E2E3QfZDCcCN2YtbEWZt+Drc6u6rlqv7Uk0LdKqqr5rk2UCRXOk0vmQKGfc94nOJyQjouF9H/wCc9gECEYfONoAAAAASUVORK5CYII=)](https://scala-steward.org)
 
 
