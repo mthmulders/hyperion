@@ -68,18 +68,6 @@ jobs:
           key: hyperion-{{ .Branch }}-{{ checksum "build.sbt" }}
 
       - run:
-          name: Show CI_PULL_REQUEST
-          command: echo "CI_PULL_REQUEST is ${CI_PULL_REQUEST}"
-
-      - run:
-          name: Show CIRCLE_PULL_REQUEST
-          command: echo "CIRCLE_PULL_REQUEST is ${CIRCLE_PULL_REQUEST}"
-
-      - run:
-          name: Show CIRCLE_BRANCH
-          command: echo "CIRCLE_BRANCH is ${CIRCLE_BRANCH}"
-
-      - run:
           name: Run code analysis
           environment:
             SBT_OPTS: -Xms512m -Xmx3G
@@ -93,7 +81,6 @@ jobs:
             else
               sbt -Dsonar.login=$SONAR_LOGIN -Dsonar.pullrequest.branch=$CIRCLE_BRANCH -Dsonar.pullrequest.key=$PR_KEY sonarScan
             fi
-            
 
       - run:
           name: Run integration tests
