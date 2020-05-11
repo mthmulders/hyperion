@@ -2,7 +2,7 @@
 // Define dependency versions
 //
 val akkaVer = "2.6.5"
-val akkaHttpVer = "10.1.11"
+val akkaHttpVer = "10.1.12"
 val akkaSerialVer = "4.2.0"
 val logbackVer = "1.2.3"
 val parserCombVer = "1.1.2"
