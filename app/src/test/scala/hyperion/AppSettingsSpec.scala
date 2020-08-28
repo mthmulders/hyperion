@@ -21,13 +21,6 @@ class AppSettingsSpec extends BaseSpec {
     }
   }
 
-  "Inspecting 'database'" should {
-    "return correct values" in {
-      settings.database.driver     shouldBe "org.postgresql.Driver"
-      // others vary with environment, so are not tested here
-    }
-  }
-
   "Inspecting 'meter'" should {
     "return correct values" in {
       settings.meter.serialPort    shouldBe "/dev/ttyUSB0"

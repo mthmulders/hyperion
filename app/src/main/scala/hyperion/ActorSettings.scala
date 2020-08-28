@@ -27,15 +27,8 @@ class AppSettingsImpl(config: Config) extends Extension {
     val limit             = hyperion getDuration("history.limit", MINUTES) minutes
   }
 
-  object database {
-    val driver            = hyperion getString "database.driver"
-    val user              = hyperion getString "database.user"
-    val password          = hyperion getString "database.password"
-    val url               = hyperion getString "database.url"
-  }
-
   object meter {
-    private val __parity = hyperion getString "meter.parity"
+    private val __parity   = hyperion getString "meter.parity"
 
     val serialPort: String = hyperion getString "meter.serial-port"
     val baudRate: Int      = hyperion getInt    "meter.baud-rate"

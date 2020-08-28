@@ -34,6 +34,7 @@ val restAssuredScala  = "io.rest-assured"        %  "scala-support"             
 val scalaMock         = "org.scalamock"          %% "scalamock"                   % scalaMockVer
 val scalaTest         = "org.scalatest"          %% "scalatest"                   % scalaTestVer
 val slick             = "com.typesafe.slick"     %% "slick"                       % slickVer
+val slickHikari       = "com.typesafe.slick"     %% "slick-hikaricp"              % slickVer
 val sprayJson         = "io.spray"               %% "spray-json"                  % sprayJsonVer
 
 //
@@ -112,6 +113,7 @@ val app = (project in file("app"))
       scalaMock % "test",
       scalaTest % "test",
       slick,
+      slickHikari,
       sprayJson
     ),
     buildInfoOptions += BuildInfoOption.BuildTime,

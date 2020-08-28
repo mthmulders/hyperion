@@ -24,13 +24,8 @@ object DatabaseActor {
 class DatabaseActor extends Actor with ActorLogging with AppSettings {
   implicit val executionContext: ExecutionContextExecutor = context.dispatcher
 
-  log.info("Connecting to database {}", settings.database.url)
-  private[this] val db = Database.forURL(
-    url = settings.database.url,
-    user = settings.database.user,
-    password = settings.database.password,
-    driver = settings.database.driver
-  )
+  log.info("Connecting to database...")
+  private[this] val db = Database.forConfig("hyperion.database")
 
   private[this] val dao = createDao()
   protected def createDao() = new MeterReadingDAO(db)
