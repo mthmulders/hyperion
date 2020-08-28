@@ -163,6 +163,7 @@ workflows:
   build:
     jobs:
       - build
+      - mutation-testing
   mutation-testing:
     triggers:
       - schedule:
