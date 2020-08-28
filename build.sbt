@@ -54,6 +54,7 @@ val commonSettings = Seq(
   licenses := Seq(
     ("MIT License", url("http://www.opensource.org/licenses/mit-license.php"))
   ),
+  resolvers += Resolver.sonatypeRepo("snapshots"),
   scmInfo := Some(
     ScmInfo(
       url("https://github.com/mthmulders/hyperion"),
