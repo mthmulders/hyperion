@@ -1,6 +1,14 @@
 <configuration>
+    <appender name="nop" class="ch.qos.logback.core.helpers.NOPAppender" />
+    <appender name="stdout" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%date  %-5level  %50.50logger -- %msg%n</pattern>
+        </encoder>
+    </appender>
+
     <logger name="hyperion" level="debug" />
 
-    <root level="error">
+    <root level="warn">
+        <appender-ref ref="nop" />
     </root>
 </configuration>
