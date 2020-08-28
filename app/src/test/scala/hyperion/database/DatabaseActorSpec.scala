@@ -18,7 +18,7 @@ import hyperion.BaseAkkaSpec
 import hyperion.database.DatabaseActor._
 
 class DatabaseActorSpec extends BaseAkkaSpec with OneInstancePerTest with MockFactory with ScalaFutures {
-  private implicit val timeout: Timeout = Timeout(1000 milliseconds)
+  private implicit val timeout: Timeout = Timeout(5000 milliseconds)
 
   private def dateRange(start: LocalDate, end: LocalDate): Seq[LocalDate] =
     Iterator.iterate(start)(_.plusDays(1)).takeWhile(!_.isAfter(end)).toSeq
