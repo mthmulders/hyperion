@@ -41,6 +41,11 @@ class DatabaseActor extends Actor with ActorLogging with AppSettings {
     session.metaData.getDatabaseProductVersion: Any
   )
 
+  override def postStop(): Unit = {
+    session.close()
+    db.close()
+  }
+
   override def receive: Receive = {
     case GetDatabaseInfo => getDatabaseInfo(sender())
     case RetrieveMeterReadingForDate(date) => retrieveMeterReadingByDate(sender(), date)
