@@ -4,7 +4,7 @@ import akka.actor.{ActorIdentity, ActorRef, ActorSystem, Identify}
 import akka.testkit.{EventFilter, ImplicitSender, TestEvent, TestKit, TestProbe}
 import org.scalactic.TypeCheckedTripleEquals
 import org.scalatest.{BeforeAndAfterAll, BeforeAndAfterEach}
-import org.slf4j.LoggerFactory
+import org.slf4j.{Logger, LoggerFactory}
 
 import scala.collection.{immutable, mutable}
 import scala.concurrent.Await
@@ -21,7 +21,7 @@ abstract class BaseAkkaSpec extends TestKit(ActorSystem())
   with BeforeAndAfterEach
   with TypeCheckedTripleEquals {
 
-  protected[this] val log = LoggerFactory.getLogger(getClass)
+  protected[this] val log: Logger = LoggerFactory.getLogger(getClass)
 
   implicit class TestProbeOps(probe: TestProbe) {
     private val maxWaitForActor = 100 milliseconds
