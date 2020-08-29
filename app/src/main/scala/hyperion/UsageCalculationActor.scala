@@ -38,7 +38,7 @@ class UsageCalculationActor(database: ActorRef) extends Actor with ActorLogging 
       .mapTo[RetrievedMeterReadings]
       .onComplete {
         case Success(data)      => sender ! combineMeterReadingsToUsageData(data.readings)
-        case Failure(throwable) => log.error(s"Could not retrieve readings from $start to $end", throwable)
+        case Failure(throwable) => log.error(throwable, s"Could not retrieve readings from $start to $end")
       }
   }
 
