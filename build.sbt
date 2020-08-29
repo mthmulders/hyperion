@@ -64,7 +64,6 @@ val commonSettings = Seq(
     )
   ),
   scapegoatVersion in ThisBuild := "1.4.1",
-  logLevel in stryker := Level.Debug,
 )
 val sonarSettings = Seq(
   sonarProperties ++= Map(
