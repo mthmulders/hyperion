@@ -5,7 +5,6 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import akka.actor.{ActorSystem, DeadLetter, Props}
 import akka.event.Logging
 import akka.http.scaladsl.Http
-import akka.http.scaladsl.server.Route
 import akka.pattern.{BackoffOpts, BackoffSupervisor}
 import akka.stream.{ActorMaterializer, Materializer}
 import hyperion.database.DatabaseActor
@@ -31,7 +30,7 @@ trait BootedCore extends Core with HttpApi {
 
   log.info(s"Starting Hyperion at port ${settings.api.port}")
 
-  private[this] val bindingFuture = Http().bindAndHandle(Route.handlerFlow(routes), "0.0.0.0", settings.api.port)
+  private[this] val bindingFuture = Http().newServerAt("0.0.0.0", settings.api.port).bindFlow(routes)
 
   sys.addShutdownHook({
     log.info("Shutting down Hyperion")
