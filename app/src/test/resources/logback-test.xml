@@ -9,6 +9,6 @@
     <logger name="hyperion" level="debug" />
 
     <root level="warn">
-        <appender-ref ref="nop" />
+        <appender-ref ref="stdout" />
     </root>
 </configuration>
