@@ -25,20 +25,14 @@ class DatabaseActor extends Actor with ActorLogging with AppSettings {
   implicit val executionContext: ExecutionContextExecutor = context.dispatcher
 
   log.info("Connecting to database...")
-  private[this] val db = Database.forConfig("hyperion.database")
-
+  private[this] val database = createDatabase()
+  protected def createDatabase(): Database = Database.forConfig("hyperion.database")
   private[this] val dao = createDao()
-  protected def createDao() = new MeterReadingDAO(db)
+  protected def createDao(): MeterReadingDAO = new MeterReadingDAO(database)
 
-  private[this] val session = db.createSession()
-  log.info("Database connection established: {} {}",
-    session.metaData.getDatabaseProductName: Any,
-    session.metaData.getDatabaseProductVersion: Any
-  )
-
-  override def postStop(): Unit = {
-    session.close()
-    db.close()
+  override def postStop: Unit = {
+    database.close()
+    database.source.close()
   }
 
   override def receive: Receive = {
@@ -51,8 +45,11 @@ class DatabaseActor extends Actor with ActorLogging with AppSettings {
 
   private def getDatabaseInfo(receiver: ActorRef) = {
     log.info("Retrieving database metadata")
+    val session = database.createSession()
     val metadata = session.metaData
-    receiver ! s"${metadata.getDatabaseProductName} ${metadata.getDatabaseProductVersion}"
+    val result = s"${metadata.getDatabaseProductName} ${metadata.getDatabaseProductVersion}"
+    session.close()
+    receiver ! result
   }
 
   private def retrieveMeterReadingByDateRange(receiver: ActorRef, start: LocalDate, end: LocalDate) = {

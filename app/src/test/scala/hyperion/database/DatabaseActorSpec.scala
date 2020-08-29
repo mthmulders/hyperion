@@ -13,6 +13,8 @@ import akka.util.Timeout
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.OneInstancePerTest
 import org.scalatest.concurrent.ScalaFutures
+import slick.jdbc.JdbcBackend
+import slick.jdbc.JdbcBackend.Database
 
 import hyperion.BaseAkkaSpec
 import hyperion.database.DatabaseActor._
@@ -24,8 +26,10 @@ class DatabaseActorSpec extends BaseAkkaSpec with OneInstancePerTest with MockFa
     Iterator.iterate(start)(_.plusDays(1)).takeWhile(!_.isAfter(end)).toSeq
 
   private val meterReadingDAO = stub[MeterReadingDAO]
+  private val database = stub[JdbcBackend.DatabaseDef]
   private val da = system.actorOf(Props(new DatabaseActor() {
-    protected override def createDao() = meterReadingDAO
+    protected override def createDatabase(): Database = database
+    protected override def createDao(): MeterReadingDAO = meterReadingDAO
   }))
 
   "The database actor" should {
