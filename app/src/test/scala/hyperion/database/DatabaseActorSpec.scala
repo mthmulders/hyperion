@@ -12,6 +12,7 @@ import akka.pattern.ask
 import akka.util.Timeout
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.OneInstancePerTest
+import org.scalatest.concurrent.Eventually.eventually
 import org.scalatest.concurrent.ScalaFutures
 import slick.jdbc.JdbcBackend
 import slick.jdbc.JdbcBackend.Database
@@ -39,10 +40,11 @@ class DatabaseActorSpec extends BaseAkkaSpec with OneInstancePerTest with MockFa
 
       // Act
       da ! StoreMeterReading(reading)
-      Thread.sleep(1500)
 
       // Assert
-      (meterReadingDAO.recordMeterReading _).verify(reading)
+      eventually {
+        (meterReadingDAO.recordMeterReading _).verify(reading)
+      }
     }
 
     "retrieve meter readings from the database" should {
