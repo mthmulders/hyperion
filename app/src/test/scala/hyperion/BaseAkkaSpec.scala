@@ -7,8 +7,7 @@ import org.scalatest.{BeforeAndAfterAll, BeforeAndAfterEach}
 import org.slf4j.{Logger, LoggerFactory}
 
 import scala.collection.{immutable, mutable}
-import scala.concurrent.Await
-import scala.concurrent.duration.{Duration, DurationInt, FiniteDuration}
+import scala.concurrent.duration.{DurationInt, FiniteDuration}
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpecLike
 
@@ -44,8 +43,7 @@ abstract class BaseAkkaSpec extends TestKit(ActorSystem())
   system.eventStream.publish(TestEvent.Mute(EventFilter.warning()))
   system.eventStream.publish(TestEvent.Mute(EventFilter.error()))
 
-  override protected def afterAll(): Unit = {
-    system.terminate()
-    Await.result(system.whenTerminated, Duration.Inf)
+  override protected def afterAll: Unit = {
+    TestKit.shutdownActorSystem(system)
   }
 }
