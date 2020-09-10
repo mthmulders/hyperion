@@ -55,6 +55,7 @@ jobs:
           psql -h postgres -p 5432 -f scripts/database/schema.sql circle_test
           psql -h postgres -p 5432 -f scripts/database/test-data.sql circle_test
         env:
+          PGUSER: postgres
           PGPASSWORD: postgres
         
 
