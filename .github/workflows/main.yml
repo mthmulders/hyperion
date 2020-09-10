@@ -5,10 +5,13 @@ on: [push, pull_request]
 jobs:
   build:
     runs-on: ubuntu-latest
+    container: node:10.18-jessie
 
     services:
       postgres:
         image: postgres:9.3
+        ports:
+          - 5432:5432
         env:
           POSTGRES_DB: hyperion
           POSTGRES_PASSWORD: postgres
@@ -47,8 +50,8 @@ jobs:
     
       - name: Populate database
         run: |
-          sudo apt-get update
-          sudo apt-get install -y postgresql-client-11
+          apt-get update
+          apt-get install -y postgresql-client-9.4
           psql -h postgres -p 5432 -f scripts/database/schema.sql circle_test
           psql -h postgres -p 5432 -f scripts/database/test-data.sql circle_test
 
