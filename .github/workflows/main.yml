@@ -52,8 +52,8 @@ jobs:
         run: |
           apt-get update
           apt-get install -y postgresql-client-9.4
-          psql -h postgres -p 5432 -f scripts/database/schema.sql circle_test
-          psql -h postgres -p 5432 -f scripts/database/test-data.sql circle_test
+          psql -h postgres -p 5432 -f scripts/database/schema.sql hyperion
+          psql -h postgres -p 5432 -f scripts/database/test-data.sql hyperion
         env:
           PGUSER: postgres
           PGPASSWORD: postgres
