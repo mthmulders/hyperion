@@ -7,7 +7,7 @@ jobs:
     runs-on: ubuntu-latest
 
     services:
-      postgresql:
+      postgres:
         image: postgres:9.3
         env:
           POSTGRES_DB: hyperion
@@ -17,8 +17,6 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
-        ports:
-          - "5432:5432"
 
     steps:
       - name: Checkout
@@ -51,8 +49,8 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y postgresql-client-11
-          psql -h postgresql -p 5432 -f scripts/database/schema.sql circle_test
-          psql -h postgresql -p 5432 -f scripts/database/test-data.sql circle_test
+          psql -h postgres -p 5432 -f scripts/database/schema.sql circle_test
+          psql -h postgres -p 5432 -f scripts/database/test-data.sql circle_test
 
       - name: Run tests (with coverage)
         run: |
@@ -63,5 +61,5 @@ jobs:
         uses: actions/upload-artifact@v2
         if: github.ref == 'refs/heads/master'
         with:
-          name: mpb-application.war
-          path: presentation/target/presentation.war
+          name: hyperion.deb
+          path: app/target/*.deb
