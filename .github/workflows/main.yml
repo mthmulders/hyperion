@@ -1,0 +1,67 @@
+name: Main workflow
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    services:
+      postgresql:
+        image: postgres:9.3
+        env:
+          POSTGRES_DB: hyperion
+          POSTGRES_PASSWORD: postgres
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - "5432:5432"
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Set up cache for SBT
+        uses: actions/cache@v1
+        with:
+          path: |
+            ~/.sbt
+            ./.ivy2
+            ~/.coursier
+            ~/tools
+          key: hyperion-{{ checksum "build.sbt" }}
+          restore-keys: |
+            hyperion-
+
+      - name: Set up JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: 11
+      
+      - name: Download SBT
+        run: |
+          pushd /tmp
+          curl -L -o sbt-1.3.13.tgz https://piccolo.link/sbt-1.3.13.tgz
+          tar -xzf sbt*tgz
+    
+      - name: Populate database
+        run: |
+          apt-get update
+          apt-get install -y postgresql-client-11
+          psql -h postgresql -p 5432 -f scripts/database/schema.sql circle_test
+          psql -h postgresql -p 5432 -f scripts/database/test-data.sql circle_test
+
+      - name: Run tests (with coverage)
+        run: |
+          /tmp/sbt/bin/sbt -Dconfig.file=.github/environment.conf coverage test
+          /tmp/sbt/bin/sbt coverageAggregate
+
+      - name: Upload application
+        uses: actions/upload-artifact@v2
+        if: github.ref == 'refs/heads/master'
+        with:
+          name: mpb-application.war
+          path: presentation/target/presentation.war
