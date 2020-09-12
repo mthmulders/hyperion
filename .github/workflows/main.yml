@@ -96,3 +96,4 @@ jobs:
           SONAR_LOGIN: ${{ secrets.SONAR_LOGIN }}
           GIT_BRANCH: ${{ github.ref }}
           PULL_REQUEST: ${{ github.head_ref }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
