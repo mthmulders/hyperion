@@ -84,7 +84,7 @@ jobs:
         run: |
           /tmp/sbt/bin/sbt coverageReport scapegoat
 
-          PR_KEY=$(echo $PULL_REQUEST | cut -d '/' -f 7)
+          PR_KEY=$(echo $GITHUB_REF | awk 'BEGIN { FS = "/" } ; { print $3 }')
           if [ -z "${PULL_REQUEST:-}" ]; then
             /tmp/sbt/bin/sbt -Dsonar.login=$SONAR_LOGIN sonarScan
           else
