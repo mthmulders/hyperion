@@ -58,7 +58,6 @@ jobs:
           PGUSER: postgres
           PGPASSWORD: postgres
         
-
       - name: Run tests (with coverage)
         run: |
           /tmp/sbt/bin/sbt -Dconfig.file=.github/environment.conf coverage test
