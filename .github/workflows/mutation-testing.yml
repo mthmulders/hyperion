@@ -61,6 +61,6 @@ jobs:
           PGPASSWORD: postgres
         
       - name: Run Stryker
-        run: sbt -Dconfig.file=../.circleci/environment.conf "project app" stryker
+        run: /tmp/sbt/bin/sbt -Dconfig.file=../.circleci/environment.conf "project app" stryker
         env:
           SBT_OPTS: "-XX:+CMSClassUnloadingEnabled -XX:MaxPermSize=4G -Xmx4G"
