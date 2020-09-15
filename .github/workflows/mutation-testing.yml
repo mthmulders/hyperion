@@ -64,3 +64,4 @@ jobs:
         run: /tmp/sbt/bin/sbt -Dconfig.file=../.circleci/environment.conf "project app" stryker
         env:
           SBT_OPTS: "-XX:+CMSClassUnloadingEnabled -XX:MaxPermSize=4G -Xmx4G"
+          STRYKER_DASHBOARD_API_KEY: ${{ secrets.STRYKER_DASHBOARD_API_KEY }}
