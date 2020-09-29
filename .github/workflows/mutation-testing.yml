@@ -28,7 +28,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Set up cache for SBT
-        uses: actions/cache@v1
+        uses: actions/cache@v2.1.1
         with:
           path: |
             ~/.sbt
