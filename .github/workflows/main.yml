@@ -59,6 +59,7 @@ jobs:
           cd ~/tools
           wget https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-$SONAR_SCANNER_VERSION-linux.zip
           unzip -qo sonar-scanner-cli-$SONAR_SCANNER_VERSION-linux.zip
+        if: ${{ github.ref == 'master' }}
 
       - name: Populate database
         run: |
