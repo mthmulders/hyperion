@@ -11,7 +11,7 @@ val restAssuredVer = "4.3.2"
 val scalaMockVer = "5.0.0"
 val scalaTestVer = "3.2.3"
 val slickVer = "3.3.3"
-val sprayJsonVer = "1.3.5"
+val sprayJsonVer = "1.3.6"
 
 //
 // Define dependencies
