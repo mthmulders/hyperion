@@ -1,8 +1,9 @@
 name: Mutation testing
 
 on:
-  schedule:
-    - cron:  '14 3 * * *'
+  push:
+    branches:
+      - master
 
 jobs:
   mutation-testing:
