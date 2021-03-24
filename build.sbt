@@ -63,7 +63,7 @@ val commonSettings = Seq(
       Some("scm:git:git@github.com:mthmulders/hyperion.git")
     )
   ),
-  scapegoatVersion in ThisBuild := "1.4.4",
+  scapegoatVersion in ThisBuild := "1.4.8",
 )
 val sonarSettings = Seq(
   sonarProperties ++= Map(
