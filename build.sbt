@@ -44,7 +44,7 @@ val commonSettings = Seq(
   organization := "hyperion",
   version := "2.1.3-SNAPSHOT",
   description := "Hyperion",
-  scalaVersion := "2.13.1",
+  scalaVersion := "2.13.5",
   scalacOptions ++= Seq(
     "-unchecked",
     "-deprecation",
@@ -63,7 +63,7 @@ val commonSettings = Seq(
       Some("scm:git:git@github.com:mthmulders/hyperion.git")
     )
   ),
-  scapegoatVersion in ThisBuild := "1.4.4",
+  scapegoatVersion in ThisBuild := "1.4.8",
 )
 val sonarSettings = Seq(
   sonarProperties ++= Map(
@@ -73,7 +73,7 @@ val sonarSettings = Seq(
     "sonar.organization" -> "mthmulders-github",
 
     "sonar.sourceEncoding" -> "UTF-8",
-    "sonar.scala.version" -> "2.13.1",
+    "sonar.scala.version" -> "2.13.5",
 
     "app.sonar.scala.coverage.reportPaths" -> "target/scala-2.13/scoverage-report/scoverage.xml",
     "app.sonar.scala.scapegoat.reportPaths" -> "target/scala-2.13/scapegoat-report/scapegoat-scalastyle.xml",
