@@ -44,7 +44,9 @@ jobs:
         uses: actions/setup-java@v2
         with:
           java-version: 11
-      
+          distribution: 'adopt'
+          check-latest: true
+ 
       - name: Download SBT
         run: |
           cd /tmp
