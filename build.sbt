@@ -63,7 +63,7 @@ val commonSettings = Seq(
       Some("scm:git:git@github.com:mthmulders/hyperion.git")
     )
   ),
-  scapegoatVersion in ThisBuild := "1.4.8",
+  ThisBuild / scapegoatVersion := "1.4.8",
 )
 val sonarSettings = Seq(
   sonarProperties ++= Map(
@@ -117,18 +117,18 @@ val app = (project in file("app"))
     ),
     buildInfoOptions += BuildInfoOption.BuildTime,
     buildInfoPackage := "hyperion",
-    packageName in Linux := "hyperion",
-    maintainer in Linux := "Maarten Mulders",
-    packageSummary in Linux := "Hyperion",
-    packageDescription in Linux := "The Hyperion system that shows realtime data from a Smart Meter",
-    mappings in Universal += {
+    Linux / packageName := "hyperion",
+    Linux / maintainer := "Maarten Mulders",
+    Linux / packageSummary := "Hyperion",
+    Linux / packageDescription := "The Hyperion system that shows realtime data from a Smart Meter",
+    Universal / mappings += {
       sourceDirectory.value / "main" / "deb" / "environment.conf" -> "conf/hyperion.conf"
     },
-    daemonUser in Linux := "hyperion",
-    daemonGroup in Linux := "hyperion",
-    debianPackageDependencies in Debian ++= Seq("java8-runtime-headless"),
+    Linux / daemonUser := "hyperion",
+    Linux / daemonGroup := "hyperion",
+    Debian / debianPackageDependencies ++= Seq("java8-runtime-headless"),
     bashScriptExtraDefines += """addJava "-Dconfig.file=${app_home}/../conf/hyperion.conf"""",
-    maintainerScripts in Debian := maintainerScriptsAppend((maintainerScripts in Debian).value)(
+    Debian / maintainerScripts := maintainerScriptsAppend((Debian / maintainerScripts).value)(
       DebianConstants.Postinst -> "usermod -a -G dialout hyperion"
     )
   )
@@ -160,5 +160,5 @@ val root = (project in file("."))
     name := "hyperion-parent"
   ))
   .settings(sonarSettings)
-  .settings(aggregate in sonarScan := false)
+  .settings(sonarScan / aggregate := false)
   .aggregate(app, integrationTest, testApp)
