@@ -33,9 +33,9 @@ object AppInfoHelper {
     if (bytes < unit) {
       s"$bytes B"
     } else {
-      val exp = (Math.log(bytes) / Math.log(unit)).toInt
+      val exp = (Math.log(bytes.toDouble) / Math.log(unit.toDouble)).toInt
       val prefix = "KMGTPE".charAt(exp - 1)
-      val amount = (bytes / Math.pow(unit, exp)).toInt
+      val amount = (bytes / Math.pow(unit.toDouble, exp)).toInt
 
       s"$amount ${prefix}B"
     }
