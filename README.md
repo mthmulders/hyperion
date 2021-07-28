@@ -1,3 +1,14 @@
+# Status
+I do no longer actively maintain this code base.
+I have archived it; this means you can still inspect it and check it out.
+Take care: the ideas on which I have initially built this project may now be outdated.
+
+The code in this repo is NOT production grade anymore.
+Its primary purpose has been learning Scala and Akka concepts.
+I have been running it in production myself, but I had additional security measures in place back then.
+
+You can in no way hold me liable for damage caused directly or indirectly by using this code; see also the [license](#license).
+
 # Hyperion
 Hyperion (Υπερίων) was probably the [god of observation](https://en.wikipedia.org/wiki/Hyperion_%28mythology%29) in ancient Greece.
 Fast-forward to the present, Hyperion is a system that observes a ['Smart Meter'](https://en.wikipedia.org/wiki/Smart_meter) system.
